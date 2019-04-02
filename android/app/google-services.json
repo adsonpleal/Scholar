@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "333894565881",
+    "firebase_url": "https://adson-tcc.firebaseio.com",
+    "project_id": "adson-tcc",
+    "storage_bucket": "adson-tcc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:333894565881:android:679940009b795068",
+        "android_client_info": {
+          "package_name": "com.adsonpleal.app_tcc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "333894565881-vq80uv7ab8tfuvsgun23tvpdfj75u2iq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAo2CdOopfms-fxL04n-ANAxeKaIc_DtCw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
