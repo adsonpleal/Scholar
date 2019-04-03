@@ -1,4 +1,4 @@
-package com.adsonpleal.app_tcc;
+package com.adsonpleal.scholar;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;
