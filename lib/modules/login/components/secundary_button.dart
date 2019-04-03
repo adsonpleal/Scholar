@@ -16,7 +16,7 @@ class SecondaryButton extends StatelessWidget {
       child: isLogin
           ? Text(Strings.createAnAccount,
           style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300))
-          : Text('Have an account? Sign in',
+          : Text(Strings.haveAnAccount,
           style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300)),
       onPressed: onPressed,
     );

@@ -13,4 +13,5 @@ class Strings {
   static const String errorInvalidEmail = 'Email inválido, verifique o email digitado.';
   static const String errorWrongPassword = 'Senha inválida ou inexistente.';
   static const String errorUserNotFound = 'Usuário não encontrado.';
+  static const String haveAnAccount = 'Possui uma conta? Entrar';
 }
