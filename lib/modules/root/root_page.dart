@@ -1,8 +1,8 @@
-import 'package:app_tcc/modules/login/auth_repository.dart';
-import 'package:app_tcc/modules/login/login_signup_bloc.dart';
 import 'package:app_tcc/modules/login/login_signup_page.dart';
 import 'package:app_tcc/modules/main/main_page.dart';
+import 'package:app_tcc/modules/root/root_bloc.dart';
 import 'package:app_tcc/modules/splash/splash_page.dart';
+import 'package:app_tcc/repositories/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -12,33 +12,34 @@ class RootPage extends StatefulWidget {
 }
 
 class RootPageState extends State<RootPage> {
-  final _loginSignUpBloc = LoginSignUpBloc(FirebaseAuthRepository());
+  final _rootBlock = RootBloc(AuthRepository());
 
   @override
   void initState() {
     super.initState();
-    _loginSignUpBloc.checkAuthentication();
+    _rootBlock.checkAuthentication();
   }
 
   @override
   build(BuildContext context) => BlocProvider(
-        bloc: _loginSignUpBloc,
+        bloc: _rootBlock,
         child: BlocBuilder(
-            bloc: _loginSignUpBloc,
+            bloc: _rootBlock,
             builder: (context, state) {
-              if (state is SplashState) {
-                return SplashPage();
+              switch (state) {
+                case RootState.splash:
+                  return SplashPage();
+                case RootState.unauthenticated:
+                  return LoginSignUpPage();
+                case RootState.authenticated:
+                  return MainPage();
               }
-              if (state is UnauthenticatedState) {
-                return LoginSignUpPage();
-              }
-              return MainPage();
             }),
       );
 
   @override
   void dispose() {
-    _loginSignUpBloc.dispose();
+    _rootBlock.dispose();
     super.dispose();
   }
 }

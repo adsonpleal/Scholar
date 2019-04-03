@@ -1,21 +1,7 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 
-abstract class AuthRepository {
-  Future<String> signIn(String email, String password);
-
-  Future<String> signUp(String email, String password);
-
-  Future<FirebaseUser> getCurrentUser();
-
-  Future<void> sendEmailVerification();
-
-  Future<void> signOut();
-
-  Future<bool> isEmailVerified();
-}
-
-class FirebaseAuthRepository implements AuthRepository {
+class AuthRepository {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   Future<String> signIn(String email, String password) async {

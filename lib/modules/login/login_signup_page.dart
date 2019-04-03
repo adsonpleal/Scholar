@@ -1,7 +1,11 @@
 import 'package:app_tcc/modules/loading/loading_wrapper.dart';
 import 'package:app_tcc/modules/login/login_signup_bloc.dart';
+import 'package:app_tcc/modules/root/root_bloc.dart';
+import 'package:app_tcc/repositories/auth_repository.dart';
+import 'package:app_tcc/resources/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'components/login_components.dart';
 
 class LoginSignUpPage extends StatefulWidget {
@@ -10,7 +14,7 @@ class LoginSignUpPage extends StatefulWidget {
 }
 
 class _LoginSignUpPageState extends State<LoginSignUpPage> {
-
+  LoginSignUpBloc _loginSignUpBloc;
   final _formKey = GlobalKey<FormState>();
 
   bool _validateAndSave() {
@@ -24,18 +28,18 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
 
   @override
   Widget build(BuildContext context) {
-    final _loginSignUpBloc = BlocProvider.of<LoginSignUpBloc>(context);
+    final _rootBloc = BlocProvider.of<RootBloc>(context);
+    _loginSignUpBloc = LoginSignUpBloc(AuthRepository(), _rootBloc);
     return BlocBuilder(
         bloc: _loginSignUpBloc,
         builder: (context, state) {
-          final uState = state as UnauthenticatedState;
-          final isLogin = uState.formMode == FormMode.login;
+          final isLogin = state.formMode == FormMode.login;
           return Scaffold(
               appBar: AppBar(
-                title: Text('Flutter login demo'),
+                title: Text(Strings.appName),
               ),
               body: LoadingWrapper(
-                isLoading: uState.loading,
+                isLoading: state.loading,
                 child: Container(
                     padding: EdgeInsets.all(16.0),
                     child: Form(
@@ -52,20 +56,27 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
                               validator: _loginSignUpBloc.validatePassword,
                               onSaved: _loginSignUpBloc.onPasswordSaved),
                           PrimaryButton(
-                            isLogin: uState.formMode == FormMode.login,
-                            onPressed: () => _loginSignUpBloc.submit(_validateAndSave()),
+                            isLogin: state.formMode == FormMode.login,
+                            onPressed: () =>
+                                _loginSignUpBloc.submit(_validateAndSave()),
                           ),
                           SecondaryButton(
                             isLogin: isLogin,
                             onPressed: _loginSignUpBloc.toggleFormMode,
                           ),
                           ErrorMessage(
-                            errorMessage: uState.errorMessage,
+                            errorMessage: state.errorMessage,
                           )
                         ],
                       ),
                     )),
               ));
         });
+  }
+
+  @override
+  void dispose() {
+    _loginSignUpBloc?.dispose();
+    super.dispose();
   }
 }

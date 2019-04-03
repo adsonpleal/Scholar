@@ -1,4 +1,5 @@
-import 'package:app_tcc/modules/login/auth_repository.dart';
+import 'package:app_tcc/modules/root/root_bloc.dart';
+import 'package:app_tcc/repositories/auth_repository.dart';
 import 'package:app_tcc/resources/strings.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -6,53 +7,42 @@ import 'package:equatable/equatable.dart';
 enum FormMode { login, signUp }
 
 class LoginSignUpState extends Equatable {
-  LoginSignUpState([List props = const []]) : super(props);
-}
-
-class SplashState extends LoginSignUpState {}
-
-class AuthenticatedState extends LoginSignUpState {}
-
-class UnauthenticatedState extends LoginSignUpState {
   final bool loading;
   final FormMode formMode;
   final String errorMessage;
 
-  UnauthenticatedState(
+  LoginSignUpState(
       {this.loading = false,
       this.formMode = FormMode.login,
       this.errorMessage = ""})
       : super([loading, formMode, errorMessage]);
 
-  UnauthenticatedState changeValue({loading, formMode, errorMessage}) =>
-      UnauthenticatedState(
+  factory LoginSignUpState.initial() => LoginSignUpState();
+
+  LoginSignUpState changeValue({loading, formMode, errorMessage}) =>
+      LoginSignUpState(
           loading: loading ?? this.loading,
           formMode: formMode ?? this.formMode,
           errorMessage: errorMessage ?? this.errorMessage);
 }
 
-enum _LoginSignUpEvent { checkAuthentication, logout, submit, toggleForm }
+enum _LoginSignUpEvent { submit, toggleForm }
 
 class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
-  LoginSignUpBloc(this._auth);
+  LoginSignUpBloc(this._auth, this._rootBloc);
 
   String _email;
   String _password;
 
   final AuthRepository _auth;
+  final RootBloc _rootBloc;
 
   @override
-  LoginSignUpState get initialState => SplashState();
+  LoginSignUpState get initialState => LoginSignUpState.initial();
 
   @override
   mapEventToState(_LoginSignUpEvent event) async* {
     switch (event) {
-      case _LoginSignUpEvent.checkAuthentication:
-        yield* _mapCheckAuthToState();
-        break;
-      case _LoginSignUpEvent.logout:
-        yield* _mapLogOutToState();
-        break;
       case _LoginSignUpEvent.submit:
         yield* _mapSubmitToState();
         break;
@@ -61,42 +51,26 @@ class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
     }
   }
 
-  Stream<LoginSignUpState> _mapCheckAuthToState() async* {
-    final user = await _auth.getCurrentUser();
-    if (user != null) {
-      yield AuthenticatedState();
-    } else {
-      yield UnauthenticatedState();
-    }
-  }
-
-  Stream<LoginSignUpState> _mapLogOutToState() async* {
-    await _auth.signOut();
-    yield UnauthenticatedState();
-  }
-
   Stream<LoginSignUpState> _mapSubmitToState() async* {
-    final state = (currentState as UnauthenticatedState);
-    yield state.changeValue(loading: true, errorMessage: "");
+    yield currentState.changeValue(loading: true, errorMessage: "");
     try {
-      if (state.formMode == FormMode.signUp) {
+      if (currentState.formMode == FormMode.signUp) {
         await _auth.signUp(_email, _password);
         _auth.sendEmailVerification();
       } else {
         await _auth.signIn(_email, _password);
       }
-      yield AuthenticatedState();
+      _rootBloc.checkAuthentication();
     } catch (e) {
-      yield state.changeValue(
+      yield currentState.changeValue(
           loading: false, errorMessage: _errorCodeToMessage(e.code));
     }
   }
 
   Stream<LoginSignUpState> _mapToggleToState() async* {
-    final state = (currentState as UnauthenticatedState);
-    final isLogin = state.formMode == FormMode.login;
+    final isLogin = currentState.formMode == FormMode.login;
     final formMode = isLogin ? FormMode.signUp : FormMode.login;
-    yield state.changeValue(formMode: formMode);
+    yield currentState.changeValue(formMode: formMode);
   }
 
   String validateEmail(String value) =>
@@ -116,10 +90,6 @@ class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
   }
 
   toggleFormMode() => dispatch(_LoginSignUpEvent.toggleForm);
-
-  checkAuthentication() => dispatch(_LoginSignUpEvent.checkAuthentication);
-
-  logOut() => dispatch(_LoginSignUpEvent.logout);
 
   String _errorCodeToMessage(String code) {
     switch (code) {
