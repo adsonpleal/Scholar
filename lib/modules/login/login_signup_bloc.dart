@@ -1,32 +1,38 @@
+import 'package:app_tcc/models/single_event.dart';
 import 'package:app_tcc/modules/root/root_bloc.dart';
 import 'package:app_tcc/repositories/auth_repository.dart';
 import 'package:app_tcc/resources/strings.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-enum FormMode { login, signUp }
+enum FormMode { login, signUp, resetPassword }
 
 class LoginSignUpState extends Equatable {
   final bool loading;
   final FormMode formMode;
   final String errorMessage;
+  final SingleEvent<bool> showResetPasswordDialog;
 
   LoginSignUpState(
       {this.loading = false,
       this.formMode = FormMode.login,
+      this.showResetPasswordDialog,
       this.errorMessage = ""})
       : super([loading, formMode, errorMessage]);
 
   factory LoginSignUpState.initial() => LoginSignUpState();
 
-  LoginSignUpState changeValue({loading, formMode, errorMessage}) =>
+  LoginSignUpState changeValue(
+          {loading, formMode, errorMessage, showResetPasswordDialog}) =>
       LoginSignUpState(
           loading: loading ?? this.loading,
           formMode: formMode ?? this.formMode,
+          showResetPasswordDialog:
+              showResetPasswordDialog ?? this.showResetPasswordDialog,
           errorMessage: errorMessage ?? this.errorMessage);
 }
 
-enum _LoginSignUpEvent { submit, toggleForm }
+enum _LoginSignUpEvent { submit, toggleForm, toggleResetPassword }
 
 class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
   LoginSignUpBloc(this._auth, this._rootBloc);
@@ -43,6 +49,9 @@ class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
   @override
   mapEventToState(_LoginSignUpEvent event) async* {
     switch (event) {
+      case _LoginSignUpEvent.toggleResetPassword:
+        yield* _mapToggleResetToState();
+        break;
       case _LoginSignUpEvent.submit:
         yield* _mapSubmitToState();
         break;
@@ -54,13 +63,22 @@ class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
   Stream<LoginSignUpState> _mapSubmitToState() async* {
     yield currentState.changeValue(loading: true, errorMessage: "");
     try {
-      if (currentState.formMode == FormMode.signUp) {
-        await _auth.signUp(_email, _password);
-        _auth.sendEmailVerification();
-      } else {
-        await _auth.signIn(_email, _password);
+      switch (currentState.formMode) {
+        case FormMode.signUp:
+          await _auth.signUp(_email, _password);
+          _auth.sendEmailVerification();
+          _rootBloc.checkAuthentication();
+          break;
+        case FormMode.login:
+          await _auth.signIn(_email, _password);
+          _rootBloc.checkAuthentication();
+          break;
+        case FormMode.resetPassword:
+          await _auth.resetPassword(_email);
+          yield currentState.changeValue(
+              loading: false, showResetPasswordDialog: SingleEvent(true));
+          break;
       }
-      _rootBloc.checkAuthentication();
     } catch (e) {
       yield currentState.changeValue(
           loading: false, errorMessage: _errorCodeToMessage(e.code));
@@ -70,6 +88,12 @@ class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
   Stream<LoginSignUpState> _mapToggleToState() async* {
     final isLogin = currentState.formMode == FormMode.login;
     final formMode = isLogin ? FormMode.signUp : FormMode.login;
+    yield currentState.changeValue(formMode: formMode);
+  }
+
+  Stream<LoginSignUpState> _mapToggleResetToState() async* {
+    final isReset = currentState.formMode == FormMode.resetPassword;
+    final formMode = isReset ? FormMode.login : FormMode.resetPassword;
     yield currentState.changeValue(formMode: formMode);
   }
 
@@ -90,6 +114,7 @@ class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
   }
 
   toggleFormMode() => dispatch(_LoginSignUpEvent.toggleForm);
+  toggleResetPassword() => dispatch(_LoginSignUpEvent.toggleResetPassword);
 
   String _errorCodeToMessage(String code) {
     switch (code) {

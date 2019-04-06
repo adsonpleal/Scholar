@@ -5,6 +5,7 @@ class Strings {
   static const String password = 'Senha';
   static const String login = 'Entrar';
   static const String createAccount = 'Criar conta';
+  static const String resetPassword = 'Resetar senha';
   static const String createAnAccount = 'Criar uma conta';
   static const String unknownError = 'Erro inesperado, tente novamente mais tarde.';
   static const String errorUserDisabled = 'Usuário desativado.';
@@ -14,4 +15,9 @@ class Strings {
   static const String errorWrongPassword = 'Senha inválida ou inexistente.';
   static const String errorUserNotFound = 'Usuário não encontrado.';
   static const String haveAnAccount = 'Possui uma conta? Entrar';
+  static const String backToLogin = 'Voltar para tela de login';
+  static const String forgotPassword = 'Esqueceu sua senha?';
+  static const String emailSent = 'Email enviado';
+  static const String emailSentResetPassword = 'Um email foi enviado com instruções para a redefinição da sua senha';
+  static const String ok = 'ok';
 }

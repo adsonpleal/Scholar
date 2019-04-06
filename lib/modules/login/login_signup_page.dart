@@ -1,4 +1,6 @@
+import 'package:app_tcc/models/single_event.dart';
 import 'package:app_tcc/modules/loading/loading_wrapper.dart';
+import 'package:app_tcc/modules/login/components/forgot_password_button.dart';
 import 'package:app_tcc/modules/login/login_signup_bloc.dart';
 import 'package:app_tcc/modules/login/login_signup_module.dart';
 import 'package:app_tcc/resources/strings.dart';
@@ -45,7 +47,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
     return BlocBuilder(
         bloc: _loginSignUpBloc,
         builder: (context, state) {
-          final isLogin = state.formMode == FormMode.login;
+          _showResetPasswordDialog(context, state.showResetPasswordDialog);
           return Scaffold(
               appBar: AppBar(
                 title: Text(Strings.appName),
@@ -65,16 +67,21 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
                             onSaved: _loginSignUpBloc.onEmailSaved,
                           ),
                           PasswordInput(
+                              formMode: state.formMode,
                               validator: _loginSignUpBloc.validatePassword,
                               onSaved: _loginSignUpBloc.onPasswordSaved),
                           PrimaryButton(
-                            isLogin: state.formMode == FormMode.login,
+                            formMode: state.formMode,
                             onPressed: () =>
                                 _loginSignUpBloc.submit(_validateAndSave()),
                           ),
                           SecondaryButton(
-                            isLogin: isLogin,
+                            formMode: state.formMode,
                             onPressed: _loginSignUpBloc.toggleFormMode,
+                          ),
+                          ForgotPasswordButton(
+                            formMode: state.formMode,
+                            onPressed: _loginSignUpBloc.toggleResetPassword,
                           ),
                           ErrorMessage(
                             errorMessage: state.errorMessage,
@@ -84,6 +91,27 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
                     )),
               ));
         });
+  }
+
+  void _showResetPasswordDialog(
+      BuildContext context, SingleEvent<bool> shouldShow) {
+    if (shouldShow?.value == true) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => showDialog<void>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+                  title: Text(Strings.emailSent),
+                  content: const Text(Strings.emailSentResetPassword),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text(Strings.ok),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+          ));
+    }
   }
 
   @override

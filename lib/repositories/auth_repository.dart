@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthRepository {
-  
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   Future<String> signIn(String email, String password) async {
@@ -15,6 +14,10 @@ class AuthRepository {
     FirebaseUser user = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email, password: password);
     return user.uid;
+  }
+
+  Future<void> resetPassword(String email) async {
+    return _firebaseAuth.sendPasswordResetEmail(email: email);
   }
 
   Future<FirebaseUser> getCurrentUser() async {
@@ -35,5 +38,4 @@ class AuthRepository {
     FirebaseUser user = await _firebaseAuth.currentUser();
     return user.isEmailVerified;
   }
-
 }

@@ -1,24 +1,28 @@
+import 'package:app_tcc/modules/login/login_signup_bloc.dart';
 import 'package:app_tcc/resources/strings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SecondaryButton extends StatelessWidget {
-  const SecondaryButton(
-      {Key key, @required this.isLogin, @required this.onPressed})
-      : super(key: key);
-
-  final bool isLogin;
+  final FormMode formMode;
   final Function() onPressed;
 
+  const SecondaryButton({Key key, this.formMode, this.onPressed})
+      : super(key: key);
+
+  get text {
+    if (formMode == FormMode.login) {
+      return Strings.createAnAccount;
+    }
+    return Strings.haveAnAccount;
+  }
+
   @override
-  Widget build(BuildContext context) {
-    return FlatButton(
-      child: isLogin
-          ? Text(Strings.createAnAccount,
-          style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300))
-          : Text(Strings.haveAnAccount,
+  Widget build(BuildContext context) => Visibility(
+    visible: formMode != FormMode.resetPassword,
+        child: FlatButton(
+      child: Text(text,
           style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300)),
       onPressed: onPressed,
-    );
-  }
+    ));
 }
