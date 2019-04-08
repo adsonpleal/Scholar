@@ -1,4 +1,4 @@
-import 'package:app_tcc/modules/root/root_bloc.dart';
+import 'package:app_tcc/modules/splash/splash_bloc.dart';
 import 'package:app_tcc/repositories/auth_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -8,16 +8,16 @@ class MockAuthRepository extends Mock implements AuthRepository {}
 class MockUser extends Mock implements FirebaseUser {}
 
 void main() {
-  RootBloc rootBloc;
+  SplashBloc rootBloc;
   AuthRepository authRepository;
 
   setUp(() {
     authRepository = MockAuthRepository();
-    rootBloc = RootBloc(authRepository);
+    rootBloc = SplashBloc(authRepository);
   });
 
   test('initial state is correct', () {
-    expect(rootBloc.initialState, RootState.splash);
+    expect(rootBloc.initialState, SplashState.initial());
   });
 
   test('dispose does not emit new states', () {
@@ -29,8 +29,8 @@ void main() {
   });
 
   group('checkAuthentication', () {
-    test('emits [unauthenticated] for invalid token', () {
-      final expectedResponse = [RootState.splash, RootState.unauthenticated];
+    test('emits [login] for invalid token', () {
+      final expectedResponse = [SplashState.initial(), SplashState.login()];
       when(authRepository.getCurrentUser())
           .thenAnswer((_) => Future.value(null));
       expectLater(
@@ -40,8 +40,8 @@ void main() {
       rootBloc.checkAuthentication();
     });
 
-    test('emits [authenticated] for valid token', () {
-      final expectedResponse = [RootState.splash, RootState.authenticated];
+    test('emits [main] for valid token', () {
+      final expectedResponse = [SplashState.initial(), SplashState.main()];
       when(authRepository.getCurrentUser())
           .thenAnswer((_) => Future.value(MockUser()));
       expectLater(
@@ -51,17 +51,5 @@ void main() {
       rootBloc.checkAuthentication();
     });
   });
-
-  group('logout', () {
-    test('emits [unauthenticated]', () {
-      final expectedResponse = [RootState.splash, RootState.unauthenticated];
-      when(authRepository.signOut())
-          .thenAnswer((_) => Future.value());
-      expectLater(
-        rootBloc.state,
-        emitsInOrder(expectedResponse),
-      );
-      rootBloc.logout();
-    });
-  });
+  
 }

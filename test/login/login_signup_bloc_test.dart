@@ -1,5 +1,4 @@
 import 'package:app_tcc/modules/login/login_signup_bloc.dart';
-import 'package:app_tcc/modules/root/root_bloc.dart';
 import 'package:app_tcc/repositories/auth_repository.dart';
 import 'package:app_tcc/resources/strings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -7,9 +6,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
 class MockAuthRepository extends Mock implements AuthRepository {}
-
-class MockRootBlock extends Mock implements RootBloc {}
-
 class MockUser extends Mock implements FirebaseUser {}
 
 class CustomException implements Exception {
@@ -19,13 +15,11 @@ class CustomException implements Exception {
 
 void main() {
   LoginSignUpBloc loginSignUpBloc;
-  MockRootBlock rootBloc;
   AuthRepository authRepository;
 
   setUp(() {
-    rootBloc = MockRootBlock();
     authRepository = MockAuthRepository();
-    loginSignUpBloc = LoginSignUpBloc(authRepository, rootBloc);
+    loginSignUpBloc = LoginSignUpBloc(authRepository);
   });
 
   test('initial state is correct', () {
