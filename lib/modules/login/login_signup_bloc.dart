@@ -1,7 +1,7 @@
 import 'package:app_tcc/models/single_event.dart';
-import 'package:app_tcc/modules/root/root_bloc.dart';
 import 'package:app_tcc/repositories/auth_repository.dart';
 import 'package:app_tcc/resources/strings.dart';
+import 'package:app_tcc/utils/routes.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -11,22 +11,25 @@ class LoginSignUpState extends Equatable {
   final bool loading;
   final FormMode formMode;
   final String errorMessage;
+  final SingleEvent<String> route;
   final SingleEvent<bool> showResetPasswordDialog;
 
   LoginSignUpState(
       {this.loading = false,
       this.formMode = FormMode.login,
       this.showResetPasswordDialog,
+      this.route,
       this.errorMessage = ""})
-      : super([loading, formMode, errorMessage]);
+      : super([loading, formMode, errorMessage, route]);
 
   factory LoginSignUpState.initial() => LoginSignUpState();
 
   LoginSignUpState changeValue(
-          {loading, formMode, errorMessage, showResetPasswordDialog}) =>
+          {loading, formMode, errorMessage, showResetPasswordDialog, route}) =>
       LoginSignUpState(
           loading: loading ?? this.loading,
           formMode: formMode ?? this.formMode,
+          route: route ?? this.route,
           showResetPasswordDialog:
               showResetPasswordDialog ?? this.showResetPasswordDialog,
           errorMessage: errorMessage ?? this.errorMessage);
@@ -35,13 +38,12 @@ class LoginSignUpState extends Equatable {
 enum _LoginSignUpEvent { submit, toggleForm, toggleResetPassword }
 
 class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
-  LoginSignUpBloc(this._auth, this._rootBloc);
+  LoginSignUpBloc(this._auth);
 
   String _email;
   String _password;
 
   final AuthRepository _auth;
-  final RootBloc _rootBloc;
 
   @override
   LoginSignUpState get initialState => LoginSignUpState.initial();
@@ -67,11 +69,11 @@ class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
         case FormMode.signUp:
           await _auth.signUp(_email, _password);
           _auth.sendEmailVerification();
-          _rootBloc.checkAuthentication();
+          yield currentState.changeValue(route: SingleEvent(Routes.main));
           break;
         case FormMode.login:
           await _auth.signIn(_email, _password);
-          _rootBloc.checkAuthentication();
+          yield currentState.changeValue(route: SingleEvent(Routes.main));
           break;
         case FormMode.resetPassword:
           await _auth.resetPassword(_email);

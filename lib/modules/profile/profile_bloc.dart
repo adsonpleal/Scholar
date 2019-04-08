@@ -1,12 +1,18 @@
 import 'dart:async';
 
-import 'package:app_tcc/modules/root/root_bloc.dart';
+import 'package:app_tcc/models/single_event.dart';
+import 'package:app_tcc/repositories/auth_repository.dart';
+import 'package:app_tcc/utils/routes.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:uni_links/uni_links.dart';
 
 class ProfileState extends Equatable {
-  ProfileState([args]) : super(args);
+  final SingleEvent<String> route;
+
+  ProfileState({this.route}) : super([route]);
+  factory ProfileState.initial() => ProfileState();
+  factory ProfileState.login() => ProfileState(route: SingleEvent(Routes.login));
 }
 
 class _ProfileEvent {}
@@ -21,24 +27,27 @@ class _UFSCConnectedEvent extends _ProfileEvent {
 }
 
 class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
-  final RootBloc _rootBloc;
+  final AuthRepository _auth;
   StreamSubscription<Uri> _linksSub;
 
-  ProfileBloc(this._rootBloc) {
+  ProfileBloc(this._auth) {
     _initUniLinks();
   }
 
   @override
-  ProfileState get initialState => ProfileState();
+  ProfileState get initialState => ProfileState.initial();
 
   @override
   Stream<ProfileState> mapEventToState(_ProfileEvent event) async* {
-    if (event is _ProfileLogOutEvent) _rootBloc.logout();
+    if (event is _ProfileLogOutEvent) yield* _logoutToState();
     if (event is _UFSCConnectedEvent) yield* _connectedToState(event);
   }
 
-  Stream<ProfileState> _connectedToState(_UFSCConnectedEvent event) async* {
-    
+  Stream<ProfileState> _connectedToState(_UFSCConnectedEvent event) async* {}
+
+  Stream<ProfileState> _logoutToState() async* {
+    await _auth.signOut();
+    yield ProfileState.login();
   }
 
   @override

@@ -1,42 +1,22 @@
-import 'dart:async';
-
-import 'package:app_tcc/modules/root/root_page.dart';
+import 'package:app_tcc/modules/login/login_signup_page.dart';
+import 'package:app_tcc/modules/main/main_page.dart';
+import 'package:app_tcc/modules/splash/splash_page.dart';
 import 'package:app_tcc/resources/strings.dart';
+import 'package:app_tcc/utils/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_crashlytics/flutter_crashlytics.dart';
-
 
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MaterialApp(
       title: Strings.appName,
-      routes: {'/': (context) => RootPage()},
+      routes: {
+        Routes.root: (c) => SplashPage(),
+        Routes.login: (c) => LoginSignUpPage(),
+        Routes.main: (c) => MainPage(),
+      },
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ));
 }
 
-void main() async {
-  bool isInDebugMode = false;
-
-  FlutterError.onError = (FlutterErrorDetails details) {
-    if (isInDebugMode) {
-      // In development mode simply print to console.
-      FlutterError.dumpErrorToConsole(details);
-    } else {
-      // In production mode report to the application zone to report to
-      // Crashlytics.
-      Zone.current.handleUncaughtError(details.exception, details.stack);
-    }
-  };
-
-  await FlutterCrashlytics().initialize();
-
-  runZoned<Future<Null>>(() async {
-    runApp(App());
-  }, onError: (error, stackTrace) async {
-    // Whenever an error occurs, call the `reportCrash` function. This will send
-    // Dart errors to our dev console or Crashlytics depending on the environment.
-    await FlutterCrashlytics().reportCrash(error, stackTrace, forceCrash: false);
-  });
-}
+void main() => runApp(App());

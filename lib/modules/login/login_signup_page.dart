@@ -4,6 +4,7 @@ import 'package:app_tcc/modules/login/components/forgot_password_button.dart';
 import 'package:app_tcc/modules/login/login_signup_bloc.dart';
 import 'package:app_tcc/modules/login/login_signup_module.dart';
 import 'package:app_tcc/resources/strings.dart';
+import 'package:app_tcc/utils/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -20,11 +21,11 @@ class LoginSignUpPage extends StatefulWidget {
 }
 
 class _LoginSignUpPageState extends State<LoginSignUpPage> {
-  final LoginSignUpModule _module;
-  LoginSignUpBloc _loginSignUpBloc;
+  final LoginSignUpBloc _loginSignUpBloc;
   final _formKey = GlobalKey<FormState>();
 
-  _LoginSignUpPageState(this._module);
+  _LoginSignUpPageState(LoginSignUpModule module)
+      : _loginSignUpBloc = module.bloc;
 
   bool _validateAndSave() {
     final form = _formKey.currentState;
@@ -35,63 +36,55 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
     return false;
   }
 
-  _initBloc(BuildContext context) {
-    if (_loginSignUpBloc == null) {
-      _loginSignUpBloc = _module.getBloc(context);
-    }
-  }
-
   @override
-  Widget build(BuildContext context) {
-    _initBloc(context);
-    return BlocBuilder(
-        bloc: _loginSignUpBloc,
-        builder: (context, state) {
-          _showResetPasswordDialog(context, state.showResetPasswordDialog);
-          return Scaffold(
-              appBar: AppBar(
-                title: Text(Strings.appName),
-              ),
-              body: LoadingWrapper(
-                isLoading: state.loading,
-                child: Container(
-                    padding: EdgeInsets.all(16.0),
-                    child: Form(
-                      key: _formKey,
-                      child: ListView(
-                        shrinkWrap: true,
-                        children: <Widget>[
-                          Logo(),
-                          EmailInput(
-                            validator: _loginSignUpBloc.validateEmail,
-                            onSaved: _loginSignUpBloc.onEmailSaved,
-                          ),
-                          PasswordInput(
-                              formMode: state.formMode,
-                              validator: _loginSignUpBloc.validatePassword,
-                              onSaved: _loginSignUpBloc.onPasswordSaved),
-                          PrimaryButton(
+  Widget build(BuildContext context) => BlocBuilder(
+      bloc: _loginSignUpBloc,
+      builder: (context, state) {
+        _showResetPasswordDialog(context, state.showResetPasswordDialog);
+        Routes.replace(context, state.route?.value);
+        return Scaffold(
+            appBar: AppBar(
+              title: Text(Strings.appName),
+            ),
+            body: LoadingWrapper(
+              isLoading: state.loading,
+              child: Container(
+                  padding: EdgeInsets.all(16.0),
+                  child: Form(
+                    key: _formKey,
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: <Widget>[
+                        Logo(),
+                        EmailInput(
+                          validator: _loginSignUpBloc.validateEmail,
+                          onSaved: _loginSignUpBloc.onEmailSaved,
+                        ),
+                        PasswordInput(
                             formMode: state.formMode,
-                            onPressed: () =>
-                                _loginSignUpBloc.submit(_validateAndSave()),
-                          ),
-                          SecondaryButton(
-                            formMode: state.formMode,
-                            onPressed: _loginSignUpBloc.toggleFormMode,
-                          ),
-                          ForgotPasswordButton(
-                            formMode: state.formMode,
-                            onPressed: _loginSignUpBloc.toggleResetPassword,
-                          ),
-                          ErrorMessage(
-                            errorMessage: state.errorMessage,
-                          )
-                        ],
-                      ),
-                    )),
-              ));
-        });
-  }
+                            validator: _loginSignUpBloc.validatePassword,
+                            onSaved: _loginSignUpBloc.onPasswordSaved),
+                        PrimaryButton(
+                          formMode: state.formMode,
+                          onPressed: () =>
+                              _loginSignUpBloc.submit(_validateAndSave()),
+                        ),
+                        SecondaryButton(
+                          formMode: state.formMode,
+                          onPressed: _loginSignUpBloc.toggleFormMode,
+                        ),
+                        ForgotPasswordButton(
+                          formMode: state.formMode,
+                          onPressed: _loginSignUpBloc.toggleResetPassword,
+                        ),
+                        ErrorMessage(
+                          errorMessage: state.errorMessage,
+                        )
+                      ],
+                    ),
+                  )),
+            ));
+      });
 
   void _showResetPasswordDialog(
       BuildContext context, SingleEvent<bool> shouldShow) {
