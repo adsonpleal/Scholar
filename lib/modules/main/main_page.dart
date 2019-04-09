@@ -13,7 +13,7 @@ class Tab {
 
   const Tab({this.icon, this.title, this.page, this.route});
 
-  asNavItem() => BottomNavigationBarItem(icon: Icon(icon), title: Text(title));
+  BottomNavigationBarItem asNavItem() => BottomNavigationBarItem(icon: Icon(icon), title: Text(title));
 }
 
 const tabs = [
