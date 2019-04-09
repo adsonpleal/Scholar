@@ -9,6 +9,8 @@ import 'package:url_launcher/url_launcher.dart';
 class ProfilePage extends StatefulWidget {
   final ProfileModule module;
 
+  static instantiate() => ProfilePage();
+
   const ProfilePage({Key key, this.module = const ProfileModule()})
       : super(key: key);
 

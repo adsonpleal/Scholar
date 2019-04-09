@@ -20,4 +20,7 @@ class Strings {
   static const String emailSent = 'Email enviado';
   static const String emailSentResetPassword = 'Um email foi enviado com instruções para a redefinição da sua senha';
   static const String ok = 'ok';
+  static const String home = 'Home';
+  static const String agenda = 'Agenda';
+  static const String profile = 'Perfil';
 }
