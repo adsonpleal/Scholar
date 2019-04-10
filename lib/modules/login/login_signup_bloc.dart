@@ -1,6 +1,7 @@
 import 'package:app_tcc/models/single_event.dart';
-import 'package:app_tcc/repositories/auth_repository.dart';
+import 'package:app_tcc/modules/auth/auth_repository.dart';
 import 'package:app_tcc/resources/strings.dart';
+import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/routes.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -38,12 +39,11 @@ class LoginSignUpState extends Equatable {
 enum _LoginSignUpEvent { submit, toggleForm, toggleResetPassword }
 
 class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
-  LoginSignUpBloc(this._auth);
 
   String _email;
   String _password;
 
-  final AuthRepository _auth;
+  final AuthRepository _auth = inject();
 
   @override
   LoginSignUpState get initialState => LoginSignUpState.initial();

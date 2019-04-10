@@ -2,6 +2,7 @@ import 'package:app_tcc/modules/agenda/agenda_page.dart';
 import 'package:app_tcc/modules/home/home_page.dart';
 import 'package:app_tcc/modules/profile/profile_page.dart';
 import 'package:app_tcc/resources/strings.dart';
+import 'package:app_tcc/utils/inject.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 
@@ -13,7 +14,8 @@ class Tab {
 
   const Tab({this.icon, this.title, this.page, this.route});
 
-  BottomNavigationBarItem asNavItem() => BottomNavigationBarItem(icon: Icon(icon), title: Text(title));
+  BottomNavigationBarItem asNavItem() =>
+      BottomNavigationBarItem(icon: Icon(icon), title: Text(title));
 }
 
 const tabs = [
@@ -35,20 +37,14 @@ const tabs = [
 ];
 
 class MainPage extends StatefulWidget {
-  final FirebaseAnalyticsObserver _observer;
-
-  const MainPage(this._observer);
-
   @override
-  _MainPageState createState() => _MainPageState(_observer);
+  _MainPageState createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage>
     with SingleTickerProviderStateMixin, RouteAware {
-  final FirebaseAnalyticsObserver _observer;
+  final FirebaseAnalyticsObserver _observer = inject();
   int _selectedIndex = 0;
-
-  _MainPageState(this._observer);
 
   @override
   void didChangeDependencies() {

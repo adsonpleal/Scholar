@@ -1,8 +1,7 @@
 import 'package:app_tcc/modules/login/components/forgot_password_button.dart';
 import 'package:app_tcc/modules/login/login_signup_bloc.dart';
-import 'package:app_tcc/modules/login/login_signup_module.dart';
 import 'package:app_tcc/resources/strings.dart';
-import 'package:app_tcc/utils/routes.dart';
+import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/widgets/info_alert.dart';
 import 'package:app_tcc/utils/widgets/loading_wrapper.dart';
 import 'package:app_tcc/utils/widgets/routing_wrapper.dart';
@@ -12,21 +11,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'components/login_components.dart';
 
 class LoginSignUpPage extends StatefulWidget {
-  final LoginSignUpModule module;
-
-  const LoginSignUpPage({Key key, this.module = const LoginSignUpModule()})
-      : super(key: key);
-
   @override
-  _LoginSignUpPageState createState() => _LoginSignUpPageState(module);
+  _LoginSignUpPageState createState() => _LoginSignUpPageState();
 }
 
 class _LoginSignUpPageState extends State<LoginSignUpPage> {
-  final LoginSignUpBloc _loginSignUpBloc;
+  final LoginSignUpBloc _loginSignUpBloc = inject();
   final _formKey = GlobalKey<FormState>();
-
-  _LoginSignUpPageState(LoginSignUpModule module)
-      : _loginSignUpBloc = module.bloc;
 
   bool _validateAndSave() {
     final form = _formKey.currentState;

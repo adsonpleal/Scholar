@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:app_tcc/models/single_event.dart';
-import 'package:app_tcc/repositories/auth_repository.dart';
+import 'package:app_tcc/modules/auth/auth_repository.dart';
+import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/routes.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -12,7 +13,8 @@ class ProfileState extends Equatable {
 
   ProfileState({this.route}) : super([route]);
   factory ProfileState.initial() => ProfileState();
-  factory ProfileState.login() => ProfileState(route: SingleEvent(Routes.login));
+  factory ProfileState.login() =>
+      ProfileState(route: SingleEvent(Routes.login));
 }
 
 class _ProfileEvent {}
@@ -27,10 +29,10 @@ class _UFSCConnectedEvent extends _ProfileEvent {
 }
 
 class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
-  final AuthRepository _auth;
+  final AuthRepository _auth = inject();
   StreamSubscription<Uri> _linksSub;
 
-  ProfileBloc(this._auth) {
+  ProfileBloc() {
     _initUniLinks();
   }
 

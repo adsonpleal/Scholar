@@ -1,27 +1,20 @@
 import 'package:app_tcc/modules/profile/profile_bloc.dart';
-import 'package:app_tcc/modules/profile/profile_module.dart';
 import 'package:app_tcc/resources/strings.dart';
+import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/widgets/routing_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ProfilePage extends StatefulWidget {
-  final ProfileModule module;
-
   static instantiate() => ProfilePage();
 
-  const ProfilePage({Key key, this.module = const ProfileModule()})
-      : super(key: key);
-
   @override
-  _ProfilePageState createState() => _ProfilePageState(module);
+  _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final ProfileBloc _profileBloc;
-
-  _ProfilePageState(ProfileModule module) : _profileBloc = module.bloc;
+  final ProfileBloc _profileBloc = inject();
 
   @override
   Widget build(BuildContext context) => BlocBuilder(
