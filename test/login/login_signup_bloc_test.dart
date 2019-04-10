@@ -1,11 +1,14 @@
+import 'package:app_tcc/modules/auth/auth_repository.dart';
 import 'package:app_tcc/modules/login/login_signup_bloc.dart';
-import 'package:app_tcc/repositories/auth_repository.dart';
 import 'package:app_tcc/resources/strings.dart';
+import 'package:app_tcc/utils/inject.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kiwi/kiwi.dart';
 import 'package:mockito/mockito.dart';
 
 class MockAuthRepository extends Mock implements AuthRepository {}
+
 class MockUser extends Mock implements FirebaseUser {}
 
 class CustomException implements Exception {
@@ -14,12 +17,19 @@ class CustomException implements Exception {
 }
 
 void main() {
+  final Container container = Container();
   LoginSignUpBloc loginSignUpBloc;
   AuthRepository authRepository;
 
   setUp(() {
     authRepository = MockAuthRepository();
-    loginSignUpBloc = LoginSignUpBloc(authRepository);
+    container.registerFactory((c) => LoginSignUpBloc());
+    container.registerSingleton((c) => authRepository);
+    loginSignUpBloc = inject();
+  });
+
+  tearDown(() {
+    container.clear();
   });
 
   test('initial state is correct', () {
@@ -63,7 +73,8 @@ void main() {
   });
 
   group('submit', () {
-    test('emits [login, signup, loaging] after submiting from signup', () async {
+    test('emits [login, signup, loaging] after submiting from signup',
+        () async {
       final expectedResponse = [
         LoginSignUpState.initial(),
         LoginSignUpState(formMode: FormMode.signUp),
@@ -74,7 +85,7 @@ void main() {
         emitsInOrder(expectedResponse),
       );
       loginSignUpBloc.toggleFormMode();
-      loginSignUpBloc.submit(true);
+      loginSignUpBloc.submit();
       await untilCalled(authRepository.signUp(any, any));
     });
 
@@ -89,7 +100,7 @@ void main() {
         loginSignUpBloc.state,
         emitsInOrder(expectedResponse),
       );
-      loginSignUpBloc.submit(true);
+      loginSignUpBloc.submit();
       await untilCalled(authRepository.signIn(any, any));
     });
 
@@ -105,8 +116,7 @@ void main() {
         loginSignUpBloc.state,
         emitsInOrder(expectedResponse),
       );
-      loginSignUpBloc.submit(true);
+      loginSignUpBloc.submit();
     });
-
   });
 }

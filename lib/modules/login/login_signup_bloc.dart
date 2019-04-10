@@ -109,12 +109,8 @@ class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
 
   onPasswordSaved(String value) => _password = value;
 
-  submit(bool isValid) {
-    if (isValid) {
-      dispatch(_LoginSignUpEvent.submit);
-    }
-  }
-
+  submit() => dispatch(_LoginSignUpEvent.submit);
+    
   toggleFormMode() => dispatch(_LoginSignUpEvent.toggleForm);
   toggleResetPassword() => dispatch(_LoginSignUpEvent.toggleResetPassword);
 

@@ -19,13 +19,12 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   final LoginSignUpBloc _loginSignUpBloc = inject();
   final _formKey = GlobalKey<FormState>();
 
-  bool _validateAndSave() {
+  _validateAndSave() {
     final form = _formKey.currentState;
     if (form.validate()) {
       form.save();
-      return true;
+      _loginSignUpBloc.submit();
     }
-    return false;
   }
 
   @override
@@ -61,8 +60,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
                                   onSaved: _loginSignUpBloc.onPasswordSaved),
                               PrimaryButton(
                                 formMode: state.formMode,
-                                onPressed: () =>
-                                    _loginSignUpBloc.submit(_validateAndSave()),
+                                onPressed: _validateAndSave,
                               ),
                               SecondaryButton(
                                 formMode: state.formMode,

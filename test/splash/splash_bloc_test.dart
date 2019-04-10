@@ -1,31 +1,39 @@
+import 'package:app_tcc/modules/auth/auth_repository.dart';
 import 'package:app_tcc/modules/splash/splash_bloc.dart';
-import 'package:app_tcc/repositories/auth_repository.dart';
+import 'package:app_tcc/utils/inject.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kiwi/kiwi.dart';
 import 'package:mockito/mockito.dart';
 
 class MockAuthRepository extends Mock implements AuthRepository {}
 class MockUser extends Mock implements FirebaseUser {}
 
 void main() {
-  SplashBloc rootBloc;
+  final Container container = Container();
+  SplashBloc splashBloc;
   AuthRepository authRepository;
 
   setUp(() {
     authRepository = MockAuthRepository();
-    rootBloc = SplashBloc(authRepository);
+    container.registerFactory((c) => SplashBloc());
+    container.registerSingleton((c) => authRepository);
+    splashBloc = inject();
   });
 
+  tearDown(() {
+    container.clear();
+  });
   test('initial state is correct', () {
-    expect(rootBloc.initialState, SplashState.initial());
+    expect(splashBloc.initialState, SplashState.initial());
   });
 
   test('dispose does not emit new states', () {
     expectLater(
-      rootBloc.state,
+      splashBloc.state,
       emitsInOrder([]),
     );
-    rootBloc.dispose();
+    splashBloc.dispose();
   });
 
   group('checkAuthentication', () {
@@ -34,10 +42,10 @@ void main() {
       when(authRepository.getCurrentUser())
           .thenAnswer((_) => Future.value(null));
       expectLater(
-        rootBloc.state,
+        splashBloc.state,
         emitsInOrder(expectedResponse),
       );
-      rootBloc.checkAuthentication();
+      splashBloc.checkAuthentication();
     });
 
     test('emits [main] for valid token', () {
@@ -45,10 +53,10 @@ void main() {
       when(authRepository.getCurrentUser())
           .thenAnswer((_) => Future.value(MockUser()));
       expectLater(
-        rootBloc.state,
+        splashBloc.state,
         emitsInOrder(expectedResponse),
       );
-      rootBloc.checkAuthentication();
+      splashBloc.checkAuthentication();
     });
   });
   
