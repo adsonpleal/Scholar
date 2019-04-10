@@ -23,4 +23,10 @@ class _SplashPageState extends State<SplashPage> {
       bloc: _splashBloc,
       builder: (context, state) => RoutingWrapper(
           route: state.route?.value, child: Center(child: Text("Splash"))));
+
+  @override
+  void dispose() {
+    _splashBloc?.dispose();
+    super.dispose();
+  }
 }

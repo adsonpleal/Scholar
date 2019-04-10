@@ -53,4 +53,10 @@ class _ProfilePageState extends State<ProfilePage> {
       throw 'Could not launch $url';
     }
   }
+
+  @override
+  void dispose() {
+    _profileBloc?.dispose();
+    super.dispose();
+  }
 }
