@@ -1,3 +1,3 @@
-import 'package:kiwi/kiwi.dart' as kiwi;
+import 'package:kiwi/kiwi.dart';
 
-T inject<T>() => kiwi.Container()();
+T inject<T>() => Container()();
