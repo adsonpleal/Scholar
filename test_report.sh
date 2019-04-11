@@ -90,7 +90,8 @@ case $1 in
         currentDir=`pwd`
         # if no parameter passed
         if [ -z $1 ]; then
-            rm -f lcov.info
+            rm  "lcov.info"
+            rm -r "coverage"
             dirs=(`find . -maxdepth 2 -type d`)
             for dir in "${dirs[@]}"; do
                 runTests $dir $currentDir

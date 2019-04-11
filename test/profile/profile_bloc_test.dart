@@ -31,18 +31,11 @@ void main() {
   test('initial state is correct', () {
     expect(profilepBloc.initialState, ProfileState.initial());
   });
-
-  test('dispose does not emit new states', () {
-    expectLater(
-      profilepBloc.state,
-      emitsInOrder([]),
-    );
-    profilepBloc.dispose();
-  });
-
-  test('logout emits [initial, login]', () {
+  
+  test('logout emits [initial, loading, login]', () {
     final expectedResponse = [
       ProfileState.initial(),
+      ProfileState.initial().changeValue(loading: true),
       ProfileState.login(),
     ];
     expectLater(
