@@ -1,4 +1,4 @@
-[![Build Status](https://app.bitrise.io/app/af055480b1772c61/status.svg?token=0lViALISROA6JsYT_Wa57g&branch=master)](https://app.bitrise.io/app/af055480b1772c61)
+[![Build Status](https://app.bitrise.io/app/af055480b1772c61/status.svg?token=0lViALISROA6JsYT_Wa57g&branch=master)](https://app.bitrise.io/app/af055480b1772c61) [![codecov](https://codecov.io/gh/adsonpleal/TCC/branch/master/graph/badge.svg?token=Qa8Ei1CWbW)](https://codecov.io/gh/adsonpleal/TCC)
 
 # app_tcc
 
