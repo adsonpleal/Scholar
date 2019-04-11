@@ -1,22 +1,27 @@
 import 'package:app_tcc/modules/auth/auth_repository.dart';
 import 'package:app_tcc/modules/profile/profile_bloc.dart';
-import 'package:app_tcc/utils/inject.dart';
+import 'package:app_tcc/modules/user_data/user_data_repository.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kiwi/kiwi.dart';
-import 'package:mockito/mockito.dart';
 
-class MockAuthRepository extends Mock implements AuthRepository {}
+import '../utils/mocks.dart';
 
 void main() {
   final Container container = Container();
   ProfileBloc profilepBloc;
   AuthRepository authRepository;
+  UserDataRepository userDataRepository;
+  Firestore firestore;
 
   setUp(() {
     authRepository = MockAuthRepository();
-    container.registerFactory((c) => ProfileBloc());
+    userDataRepository = MockUserDataRepository();
+    firestore = MockFirestore();
     container.registerSingleton((c) => authRepository);
-    profilepBloc = inject();
+    container.registerSingleton((c) => userDataRepository);
+    container.registerSingleton((c) => firestore);
+    profilepBloc = ProfileBloc();
   });
 
   tearDown(() {

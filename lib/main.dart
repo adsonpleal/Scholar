@@ -7,6 +7,7 @@ import 'package:app_tcc/modules/main/main_page.dart';
 import 'package:app_tcc/modules/profile/profile_module.dart';
 import 'package:app_tcc/modules/splash/splash_module.dart';
 import 'package:app_tcc/modules/splash/splash_page.dart';
+import 'package:app_tcc/modules/user_data/user_data_module.dart';
 import 'package:app_tcc/resources/strings.dart';
 import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/routes.dart';
@@ -41,6 +42,7 @@ void setupModules() {
   <Module>[
     AuthModule(),
     AnalyticsModule(),
+    UserDataModule(),
     SplashModule(),
     LoginSignUModule(),
     ProfileModule(),

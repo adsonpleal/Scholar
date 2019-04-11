@@ -1,6 +1,7 @@
 import 'package:app_tcc/modules/profile/profile_bloc.dart';
 import 'package:app_tcc/resources/strings.dart';
 import 'package:app_tcc/utils/inject.dart';
+import 'package:app_tcc/utils/widgets/loading_wrapper.dart';
 import 'package:app_tcc/utils/widgets/routing_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,30 +20,33 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) => BlocBuilder(
       bloc: _profileBloc,
-      builder: (context, state) => RoutingWrapper(
-          route: state.route?.value,
-          child: Scaffold(
-            appBar: AppBar(
-              title: Text(Strings.appName),
-            ),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Text('PROFILE'),
-                  FlatButton(
-                    child: Text('Log out'),
-                    onPressed: _profileBloc.logOut,
+      builder: (context, ProfileState state) => RoutingWrapper(
+            route: state.route?.value,
+            child: Scaffold(
+                appBar: AppBar(
+                  title: Text(Strings.appName),
+                ),
+                body: LoadingWrapper(
+                  isLoading: state.loading,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Text('PROFILE'),
+                        Text(state.user?.fullName ?? ""),
+                        FlatButton(
+                          child: Text('Log out'),
+                          onPressed: _profileBloc.logOut,
+                        ),
+                        FlatButton(
+                          child: Text('Conectar UFSC'),
+                          onPressed: _profileBloc.test,
+                        ),
+                      ],
+                    ),
                   ),
-                  FlatButton(
-                    child: Text('Conectar UFSC'),
-                    onPressed: _conectUFSC,
-                  ),
-                ],
-              ),
-            ),
-          )));
+                ))));
 
   _conectUFSC() async {
     const url =

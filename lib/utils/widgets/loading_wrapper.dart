@@ -7,15 +7,12 @@ class LoadingWrapper extends StatelessWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return Stack(
-      children: <Widget>[
-        child,
-        _showCircularProgress(),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => Stack(
+        children: <Widget>[
+          child,
+          _showCircularProgress(),
+        ],
+      );
 
   Widget _showCircularProgress() {
     if (isLoading) {

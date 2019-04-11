@@ -1,15 +1,11 @@
 import 'package:app_tcc/modules/auth/auth_repository.dart';
 import 'package:app_tcc/modules/login/login_signup_bloc.dart';
 import 'package:app_tcc/resources/strings.dart';
-import 'package:app_tcc/utils/inject.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kiwi/kiwi.dart';
 import 'package:mockito/mockito.dart';
 
-class MockAuthRepository extends Mock implements AuthRepository {}
-
-class MockUser extends Mock implements FirebaseUser {}
+import '../utils/mocks.dart';
 
 class CustomException implements Exception {
   final String code;
@@ -23,9 +19,8 @@ void main() {
 
   setUp(() {
     authRepository = MockAuthRepository();
-    container.registerFactory((c) => LoginSignUpBloc());
     container.registerSingleton((c) => authRepository);
-    loginSignUpBloc = inject();
+    loginSignUpBloc = LoginSignUpBloc();
   });
 
   tearDown(() {

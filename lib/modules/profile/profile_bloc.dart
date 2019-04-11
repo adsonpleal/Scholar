@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:app_tcc/models/single_event.dart';
+import 'package:app_tcc/models/user.dart';
 import 'package:app_tcc/modules/auth/auth_repository.dart';
+import 'package:app_tcc/modules/user_data/user_data_repository.dart';
 import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/routes.dart';
 import 'package:bloc/bloc.dart';
@@ -10,16 +12,27 @@ import 'package:uni_links/uni_links.dart';
 
 class ProfileState extends Equatable {
   final SingleEvent<String> route;
+  final User user;
+  final bool loading;
 
-  ProfileState({this.route}) : super([route]);
+  ProfileState({this.route, this.user, this.loading = false})
+      : super([route, user, loading]);
   factory ProfileState.initial() => ProfileState();
   factory ProfileState.login() =>
       ProfileState(route: SingleEvent(Routes.login));
+
+  ProfileState changeValue({route, user, loading}) => ProfileState(
+        route: route ?? this.route,
+        user: user ?? this.user,
+        loading: loading ?? this.loading,
+      );
 }
 
 class _ProfileEvent {}
 
 class _ProfileLogOutEvent extends _ProfileEvent {}
+
+class _TrackUserEvent extends _ProfileEvent {}
 
 class _UFSCConnectedEvent extends _ProfileEvent {
   final String code;
@@ -30,10 +43,12 @@ class _UFSCConnectedEvent extends _ProfileEvent {
 
 class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
   final AuthRepository _auth = inject();
+  final UserDataRepository _userData = inject();
   StreamSubscription<Uri> _linksSub;
 
   ProfileBloc() {
     _initUniLinks();
+    _trackUserData();
   }
 
   @override
@@ -43,9 +58,16 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
   Stream<ProfileState> mapEventToState(_ProfileEvent event) async* {
     if (event is _ProfileLogOutEvent) yield* _logoutToState();
     if (event is _UFSCConnectedEvent) yield* _connectedToState(event);
+    if (event is _TrackUserEvent) yield* _trackUserToState();
   }
 
   Stream<ProfileState> _connectedToState(_UFSCConnectedEvent event) async* {}
+
+  Stream<ProfileState> _trackUserToState() async* {
+    yield currentState.changeValue(loading: true);
+    final userStream = await _userData.userStream;
+    yield* userStream.map((user) => currentState.changeValue(user: user, loading: false));
+  }
 
   Stream<ProfileState> _logoutToState() async* {
     await _auth.signOut();
@@ -60,6 +82,11 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
 
   logOut() => dispatch(_ProfileLogOutEvent());
 
+  //TODO: REMOVE THIS METHOD
+  test() async {
+    await _userData.saveUser(User("teste", "123"));
+  }
+
   _initUniLinks() async {
     _linksSub = getUriLinksStream().listen((Uri uri) {
       final params = uri.queryParameters;
@@ -71,4 +98,6 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
       print(err);
     });
   }
+
+  _trackUserData() => dispatch(_TrackUserEvent());
 }

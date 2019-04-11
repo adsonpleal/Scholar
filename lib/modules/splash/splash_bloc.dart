@@ -24,7 +24,7 @@ class SplashBloc extends Bloc<_SplashEvent, SplashState> {
 
   @override
   Stream<SplashState> mapEventToState(_SplashEvent event) async* {
-    final user = await _auth.getCurrentUser();
+    final user = await _auth.currentUser;
     if (user != null) {
       yield SplashState.main();
     } else {
