@@ -39,7 +39,6 @@ class LoginSignUpState extends Equatable {
 enum _LoginSignUpEvent { submit, toggleForm, toggleResetPassword }
 
 class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
-
   String _email;
   String _password;
 
@@ -100,17 +99,17 @@ class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
   }
 
   String validateEmail(String value) =>
-      value.isEmpty ? 'Email can\'t be empty' : null;
+      value.isEmpty ? Strings.emailCantBeEmpty : null;
 
   String validatePassword(String value) =>
-      value.isEmpty ? 'Password can\'t be empty' : null;
+      value.isEmpty ? Strings.passwordCantBeEmpty : null;
 
   onEmailSaved(String value) => _email = value;
 
   onPasswordSaved(String value) => _password = value;
 
   submit() => dispatch(_LoginSignUpEvent.submit);
-    
+
   toggleFormMode() => dispatch(_LoginSignUpEvent.toggleForm);
   toggleResetPassword() => dispatch(_LoginSignUpEvent.toggleResetPassword);
 

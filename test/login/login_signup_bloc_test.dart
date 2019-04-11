@@ -67,6 +67,54 @@ void main() {
     });
   });
 
+  group('validators', () {
+    test('email validator return null if valid', () {
+      final email = "valid@email.com";
+      expect(null, loginSignUpBloc.validateEmail(email));
+    });
+    test('email validator return error if invalid', () {
+      final email = "";
+      expect(Strings.emailCantBeEmpty, loginSignUpBloc.validateEmail(email));
+    });
+    test('password validator return null if valid', () {
+      final passsword = "passsword";
+      expect(null, loginSignUpBloc.validatePassword(passsword));
+    });
+    test('password validator return error if invalid', () {
+      final passsword = "";
+      expect(Strings.passwordCantBeEmpty,
+          loginSignUpBloc.validatePassword(passsword));
+    });
+  });
+
+  group('toggleResetPassword', () {
+    test('emits [login, resetPassword] after one toggle', () {
+      final expectedResponse = [
+        LoginSignUpState(formMode: FormMode.login),
+        LoginSignUpState(formMode: FormMode.resetPassword)
+      ];
+      expectLater(
+        loginSignUpBloc.state,
+        emitsInOrder(expectedResponse),
+      );
+      loginSignUpBloc.toggleResetPassword();
+    });
+
+    test('emits [login, resetPassword, login] after two toggles', () {
+      final expectedResponse = [
+        LoginSignUpState(formMode: FormMode.login),
+        LoginSignUpState(formMode: FormMode.resetPassword),
+        LoginSignUpState(formMode: FormMode.login)
+      ];
+      expectLater(
+        loginSignUpBloc.state,
+        emitsInOrder(expectedResponse),
+      );
+      loginSignUpBloc.toggleResetPassword();
+      loginSignUpBloc.toggleResetPassword();
+    });
+  });
+
   group('submit', () {
     test('emits [login, signup, loaging] after submiting from signup',
         () async {
@@ -79,9 +127,13 @@ void main() {
         loginSignUpBloc.state,
         emitsInOrder(expectedResponse),
       );
+      final email = "valid@email.com";
+      final password = "password";
       loginSignUpBloc.toggleFormMode();
+      loginSignUpBloc.onEmailSaved(email);
+      loginSignUpBloc.onPasswordSaved(password);
       loginSignUpBloc.submit();
-      await untilCalled(authRepository.signUp(any, any));
+      await untilCalled(authRepository.signUp(email, password));
     });
 
     test('emits [login, loaging] after submiting from login', () async {
@@ -97,6 +149,24 @@ void main() {
       );
       loginSignUpBloc.submit();
       await untilCalled(authRepository.signIn(any, any));
+    });
+
+    test(
+        'emits [login, resetPassword, loaging] after submiting from resetPassword',
+        () async {
+      final expectedResponse = [
+        LoginSignUpState.initial(),
+        LoginSignUpState(formMode: FormMode.resetPassword),
+        LoginSignUpState(formMode: FormMode.resetPassword, loading: true)
+      ];
+      when(authRepository.resetPassword(any)).thenAnswer((_) => Future.value());
+      expectLater(
+        loginSignUpBloc.state,
+        emitsInOrder(expectedResponse),
+      );
+      loginSignUpBloc.toggleResetPassword();
+      loginSignUpBloc.submit();
+      await untilCalled(authRepository.resetPassword(any));
     });
 
     test('emits [login, loaging, error] after submiting with error', () async {

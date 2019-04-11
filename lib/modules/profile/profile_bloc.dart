@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:app_tcc/models/single_event.dart';
 import 'package:app_tcc/models/user.dart';
 import 'package:app_tcc/modules/auth/auth_repository.dart';
+import 'package:app_tcc/modules/profile/link_repository.dart';
 import 'package:app_tcc/modules/user_data/user_data_repository.dart';
 import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/routes.dart';
@@ -44,6 +45,7 @@ class _UFSCConnectedEvent extends _ProfileEvent {
 class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
   final AuthRepository _auth = inject();
   final UserDataRepository _userData = inject();
+  final LinkRepository _link = inject();
   StreamSubscription<Uri> _linksSub;
 
   ProfileBloc() {
@@ -66,7 +68,8 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
   Stream<ProfileState> _trackUserToState() async* {
     yield currentState.changeValue(loading: true);
     final userStream = await _userData.userStream;
-    yield* userStream.map((user) => currentState.changeValue(user: user, loading: false));
+    yield* userStream
+        .map((user) => currentState.changeValue(user: user, loading: false));
   }
 
   Stream<ProfileState> _logoutToState() async* {
@@ -76,27 +79,19 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
 
   @override
   dispose() {
-    _linksSub.cancel();
+    _linksSub?.cancel();
     super.dispose();
   }
 
   logOut() => dispatch(_ProfileLogOutEvent());
 
-  //TODO: REMOVE THIS METHOD
-  test() async {
-    await _userData.saveUser(User("teste", "123"));
-  }
-
   _initUniLinks() async {
-    _linksSub = getUriLinksStream().listen((Uri uri) {
+    _linksSub = await _link.uriLinksStream.map((Uri uri) {
       final params = uri.queryParameters;
       final code = params['code'];
       final state = params['state'];
-      dispatch(_UFSCConnectedEvent(code, state));
-    }, onError: (err) {
-      // TODO: handle link errors
-      print(err);
-    });
+      return _UFSCConnectedEvent(code, state);
+    }).forEach(dispatch);
   }
 
   _trackUserData() => dispatch(_TrackUserEvent());

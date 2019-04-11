@@ -23,4 +23,6 @@ class Strings {
   static const String home = 'Home';
   static const String agenda = 'Agenda';
   static const String profile = 'Perfil';
+  static const String emailCantBeEmpty = 'Email não pode ficar em branco';
+  static const String passwordCantBeEmpty = 'Senha não pode ficar em branco';
 }

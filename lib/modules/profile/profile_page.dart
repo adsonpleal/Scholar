@@ -41,7 +41,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         FlatButton(
                           child: Text('Conectar UFSC'),
-                          onPressed: _profileBloc.test,
+                          onPressed: _conectUFSC,
                         ),
                       ],
                     ),
