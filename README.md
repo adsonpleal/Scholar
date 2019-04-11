@@ -1,3 +1,5 @@
+[![Build Status](https://app.bitrise.io/app/af055480b1772c61/status.svg?token=0lViALISROA6JsYT_Wa57g&branch=master)](https://app.bitrise.io/app/af055480b1772c61)
+
 # app_tcc
 
 A new Flutter application.
