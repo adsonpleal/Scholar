@@ -5,7 +5,6 @@ import 'package:app_tcc/utils/widgets/loading_wrapper.dart';
 import 'package:app_tcc/utils/widgets/routing_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ProfilePage extends StatefulWidget {
   static instantiate() => ProfilePage();
@@ -21,42 +20,44 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) => BlocBuilder(
       bloc: _profileBloc,
       builder: (context, ProfileState state) => RoutingWrapper(
-            route: state.route?.value,
-            child: Scaffold(
-                appBar: AppBar(
-                  title: Text(Strings.appName),
-                ),
-                body: LoadingWrapper(
-                  isLoading: state.loading,
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Text('PROFILE'),
-                        Text(state.user?.fullName ?? ""),
-                        FlatButton(
-                          child: Text('Log out'),
-                          onPressed: _profileBloc.logOut,
-                        ),
-                        FlatButton(
-                          child: Text('Conectar UFSC'),
-                          onPressed: _conectUFSC,
-                        ),
-                      ],
+          route: state.route?.value,
+          child: Scaffold(
+              appBar: AppBar(
+                title: Text(Strings.profile),
+              ),
+              body: LoadingWrapper(
+                isLoading: state.loading,
+                child: ListView(
+                  children: <Widget>[
+                    ListTile(
+                      leading: Icon(Icons.email),
+                      title: Text('adsonpleal@gmail.com'),
                     ),
-                  ),
-                ))));
-
-  _conectUFSC() async {
-    const url =
-        'https://sistemas.ufsc.br/oauth2.0/authorize?client_id=minhaufsc&redirect_uri=minhaufsc://minhaufsc.setic_oauth.ufsc.br&response_type=code&state=E3ZYKC1T6H2yP4z';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
+                    ListTile(
+                      leading: Icon(Icons.exit_to_app),
+                      title: Text('Sair'),
+                      onTap: _profileBloc.logOut,
+                    ),
+                    Divider(),
+                    ListTile(
+                      title: Text(
+                        'Configurações',
+                        style: Theme.of(context).textTheme.headline,
+                      ),
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.school),
+                      title: Text('Conectar UFSC'),
+                      onTap: _profileBloc.conectUFSC,
+                    ),
+                    SwitchListTile(
+                      title: Text('Notificações'),
+                      value: state.settings?.allowNotifications ?? false,
+                      onChanged: _profileBloc.toggleNotifications,
+                    ),
+                  ],
+                ),
+              ))));
 
   @override
   void dispose() {
