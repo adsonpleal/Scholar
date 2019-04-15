@@ -120,12 +120,12 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
       final code = params['code'];
       final state = params['state'];
       return _UFSCConnectedEvent(code, state);
-    }).forEach(dispatch);
+    })?.forEach(dispatch);
   }
 
   _trackUserData() async {
     final settingsStream = await _userData.settingsStream;
     _settingsSub = await settingsStream
-        .forEach((settings) => dispatch(_SettingsChangedEvent(settings)));
+        ?.forEach((settings) => dispatch(_SettingsChangedEvent(settings)));
   }
 }

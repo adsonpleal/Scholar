@@ -47,7 +47,6 @@ void main() {
   test('logout emits [initial, loading, login]', () {
     final expectedResponse = [
       ProfileState.initial(),
-      ProfileState.initial().changeValue(loading: true),
       ProfileState.login(),
     ];
     expectLater(
