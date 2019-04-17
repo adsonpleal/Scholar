@@ -1,12 +1,18 @@
-import 'package:equatable/equatable.dart';
-
-class SingleEvent<T> extends Equatable {
+class SingleEvent<T> {
   final T _value;
   var _didGet = false;
 
-  SingleEvent(this._value) : super([_value]);
+  SingleEvent(this._value);
 
-  T get value {
+  @override
+  bool operator ==(Object other) {
+    if (other is SingleEvent<T>) {
+      return _didGet == other._didGet && !_didGet;
+    }
+    return false;
+  }
+
+  get value {
     if (_didGet) {
       return null;
     }

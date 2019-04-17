@@ -14,6 +14,10 @@ import 'package:app_tcc/utils/routes.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 
+import 'modules/home/home_module.dart';
+import 'modules/ufsc/connect_ufsc_module.dart';
+import 'modules/ufsc/connect_ufsc_page.dart';
+
 class App extends StatelessWidget {
   final FirebaseAnalyticsObserver observer = inject();
 
@@ -27,6 +31,7 @@ class App extends StatelessWidget {
         Routes.root: (c) => SplashPage(),
         Routes.login: (c) => LoginSignUpPage(),
         Routes.main: (c) => MainPage(),
+        Routes.connectUfsc: (c) => ConnectUfscPage(),
       },
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -46,5 +51,7 @@ void setupModules() {
     SplashModule(),
     LoginSignUModule(),
     ProfileModule(),
+    ConnectUfscModule(),
+    HomeModule(),
   ].forEach((module) => module.setup());
 }

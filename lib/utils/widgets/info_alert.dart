@@ -5,9 +5,10 @@ class InfoAlert extends StatelessWidget {
   final Widget child;
   final String title;
   final String content;
+  final Widget widgetContent;
   final bool shouldShow;
 
-  const InfoAlert({this.title, this.content, this.shouldShow, this.child});
+  const InfoAlert({this.title, this.content, this.shouldShow, this.child, this.widgetContent});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,7 @@ class InfoAlert extends StatelessWidget {
             context: context,
             builder: (BuildContext context) => AlertDialog(
                   title: Text(title),
-                  content: Text(content),
+                  content: widgetContent ?? Text(content),
                   actions: <Widget>[
                     FlatButton(
                       child: Text(Strings.ok),

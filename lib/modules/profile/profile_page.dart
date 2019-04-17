@@ -1,6 +1,7 @@
 import 'package:app_tcc/modules/profile/profile_bloc.dart';
 import 'package:app_tcc/resources/strings.dart';
 import 'package:app_tcc/utils/inject.dart';
+import 'package:app_tcc/utils/routes.dart';
 import 'package:app_tcc/utils/widgets/loading_wrapper.dart';
 import 'package:app_tcc/utils/widgets/routing_wrapper.dart';
 import 'package:flutter/material.dart';
@@ -31,27 +32,27 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: <Widget>[
                     ListTile(
                       leading: Icon(Icons.email),
-                      title: Text('adsonpleal@gmail.com'),
+                      title: Text(state.user?.email ?? ""),
                     ),
                     ListTile(
                       leading: Icon(Icons.exit_to_app),
-                      title: Text('Sair'),
+                      title: Text(Strings.exit),
                       onTap: _profileBloc.logOut,
                     ),
                     Divider(),
                     ListTile(
                       title: Text(
-                        'Configurações',
+                        Strings.config,
                         style: Theme.of(context).textTheme.headline,
                       ),
                     ),
                     ListTile(
                       leading: Icon(Icons.school),
-                      title: Text('Conectar UFSC'),
-                      onTap: _profileBloc.conectUFSC,
+                      title: Text(Strings.connectUfsc),
+                      onTap: Routes.toConnectUfsc(context),
                     ),
                     SwitchListTile(
-                      title: Text('Notificações'),
+                      title: Text(Strings.notifications),
                       value: state.settings?.allowNotifications ?? false,
                       onChanged: _profileBloc.toggleNotifications,
                     ),

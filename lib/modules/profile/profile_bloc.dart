@@ -10,7 +10,6 @@ import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/routes.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ProfileState extends Equatable {
   final SingleEvent<String> route;
@@ -71,8 +70,7 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
     if (event is _ProfileLogOutEvent) yield* _logoutToState();
     if (event is _UFSCConnectedEvent) yield* _connectedToState(event);
     if (event is _SettingsChangedEvent) yield* _settingsChangedToState(event);
-    if (event is _ToggleNotificationsEvent)
-      yield* _toggleNotificationsToState();
+    if (event is _ToggleNotificationsEvent) yield* _toggleNotificationsToState();
   }
 
   Stream<ProfileState> _connectedToState(_UFSCConnectedEvent event) async* {}
@@ -83,9 +81,9 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
         settings.changeValue(allowNotifications: !settings.allowNotifications));
   }
 
-  Stream<ProfileState> _settingsChangedToState(
-      _SettingsChangedEvent event) async* {
-    yield currentState.changeValue(settings: event.settings);
+  Stream<ProfileState> _settingsChangedToState(_SettingsChangedEvent event) async* {
+    final user = await _userData.currentUser;
+    yield currentState.changeValue(settings: event.settings, user: user);
   }
 
   Stream<ProfileState> _logoutToState() async* {
@@ -102,17 +100,6 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
 
   logOut() => dispatch(_ProfileLogOutEvent());
   void toggleNotifications(bool value) => dispatch(_ToggleNotificationsEvent());
-
-  //TODO: refactor this
-  conectUFSC() async {
-    const url =
-        'https://sistemas.ufsc.br/oauth2.0/authorize?client_id=minhaufsc&redirect_uri=minhaufsc://minhaufsc.setic_oauth.ufsc.br&response_type=code&state=E3ZYKC1T6H2yP4z';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
 
   _initUniLinks() async {
     _linksSub = await _link.uriLinksStream.map((Uri uri) {

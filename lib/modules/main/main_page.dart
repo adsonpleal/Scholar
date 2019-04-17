@@ -64,13 +64,27 @@ class _MainPageState extends State<MainPage>
     );
   }
 
-  _currentPage() => tabs[_selectedIndex].page();
+  // TODO: improve this mess
+  _currentPage() => Stack(
+        children: tabs.map((tab) {
+          final isSelected = tabs.indexOf(tab) == _selectedIndex;
+          return IgnorePointer(
+            ignoring: !isSelected,
+            child: Opacity(
+              opacity: isSelected ? 1 : 0,
+              child: tab.page(),
+            ),
+          );
+        }).toList(),
+      ); 
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-    _sendCurrentTabToAnalytics();
+    if (_selectedIndex != index) {
+      setState(() {
+        _selectedIndex = index;
+      });
+      _sendCurrentTabToAnalytics();
+    }
   }
 
   @override

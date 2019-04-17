@@ -25,4 +25,8 @@ class Strings {
   static const String profile = 'Perfil';
   static const String emailCantBeEmpty = 'Email não pode ficar em branco';
   static const String passwordCantBeEmpty = 'Senha não pode ficar em branco';
+  static const String exit = 'Sair';
+  static const String config = 'Configurações';
+  static const String connectUfsc = 'Conectar UFSC';
+  static const String notifications = 'Notificações';
 }
