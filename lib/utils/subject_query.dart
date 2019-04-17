@@ -1,5 +1,5 @@
 const subjectQuery = """
-Array.from(document.querySelectorAll('table')[50].querySelectorAll('tr.rich-table-row')).map(function(el) {
+Array.from(Array.from(document.querySelectorAll('th')).filter(el => el.innerText == "Resultados")[0].closest('table').querySelectorAll('tr.rich-table-row')).map(function(el) {
     var tdList = el.querySelectorAll('td');
     return {
         code: tdList[1].innerText,
