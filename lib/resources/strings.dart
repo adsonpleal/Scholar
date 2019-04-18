@@ -29,4 +29,7 @@ class Strings {
   static const String config = 'Configurações';
   static const String connectUfsc = 'Conectar UFSC';
   static const String notifications = 'Notificações';
+  static const String generalChannel = 'Geral';
+  static const String generalChannelDescription = 'Canal geral';
+  static const String classNotification = 'Próxima aula em 10 minutos';
 }

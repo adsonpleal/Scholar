@@ -1,5 +1,7 @@
 import 'package:app_tcc/modules/auth/auth_repository.dart';
 import 'package:app_tcc/modules/login/login_signup_bloc.dart';
+import 'package:app_tcc/modules/notifications/notifications_service.dart';
+import 'package:app_tcc/modules/user_data/user_data_repository.dart';
 import 'package:app_tcc/resources/strings.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kiwi/kiwi.dart';
@@ -15,11 +17,17 @@ class CustomException implements Exception {
 void main() {
   final Container container = Container();
   LoginSignUpBloc loginSignUpBloc;
+  NotificationsService notificationsService;
+  UserDataRepository userDataRepository;
   AuthRepository authRepository;
 
   setUp(() {
     authRepository = MockAuthRepository();
+    notificationsService = MockNotificationsService();
+    userDataRepository = MockUserDataRepository();
+    container.registerSingleton((c) => userDataRepository);
     container.registerSingleton((c) => authRepository);
+    container.registerFactory((c) => notificationsService);
     loginSignUpBloc = LoginSignUpBloc();
   });
 

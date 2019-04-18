@@ -1,5 +1,7 @@
 import 'package:app_tcc/models/single_event.dart';
 import 'package:app_tcc/modules/auth/auth_repository.dart';
+import 'package:app_tcc/modules/notifications/notifications_service.dart';
+import 'package:app_tcc/modules/user_data/user_data_repository.dart';
 import 'package:app_tcc/resources/strings.dart';
 import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/routes.dart';
@@ -43,6 +45,8 @@ class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
   String _password;
 
   final AuthRepository _auth = inject();
+  final NotificationsService _notifications = inject();
+  final UserDataRepository _userData = inject();
 
   @override
   LoginSignUpState get initialState => LoginSignUpState.initial();
@@ -68,22 +72,33 @@ class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
         case FormMode.signUp:
           await _auth.signUp(_email, _password);
           _auth.sendEmailVerification();
-          yield currentState.changeValue(route: SingleEvent(Routes.main));
+          _logUser();
           break;
         case FormMode.login:
           await _auth.signIn(_email, _password);
-          yield currentState.changeValue(route: SingleEvent(Routes.main));
+          _logUser();
           break;
         case FormMode.resetPassword:
           await _auth.resetPassword(_email);
           yield currentState.changeValue(
-              loading: false, showResetPasswordDialog: SingleEvent(true));
+            loading: false,
+            showResetPasswordDialog: SingleEvent(true),
+          );
           break;
       }
     } catch (e) {
       yield currentState.changeValue(
-          loading: false, errorMessage: _errorCodeToMessage(e.code));
+        loading: false,
+        errorMessage: _errorCodeToMessage(e.code),
+      );
     }
+  }
+
+  Stream<LoginSignUpState> _logUser() async* {
+    final subjectsStream = await _userData.subjectsStream;
+    final subjects = await subjectsStream?.first;
+    if (subjects != null) _notifications.addNotifications(subjects);
+    yield currentState.changeValue(route: SingleEvent(Routes.main));
   }
 
   Stream<LoginSignUpState> _mapToggleToState() async* {
@@ -130,5 +145,11 @@ class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
       default:
         return Strings.unknownError;
     }
+  }
+
+  @override
+  void dispose() {
+    _notifications.dispose();
+    super.dispose();
   }
 }

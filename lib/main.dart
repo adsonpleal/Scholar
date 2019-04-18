@@ -15,6 +15,7 @@ import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 
 import 'modules/home/home_module.dart';
+import 'modules/notifications/notifications_module.dart';
 import 'modules/ufsc/connect_ufsc_module.dart';
 import 'modules/ufsc/connect_ufsc_page.dart';
 
@@ -53,5 +54,6 @@ void setupModules() {
     ProfileModule(),
     ConnectUfscModule(),
     HomeModule(),
+    NotificationModule(),
   ].forEach((module) => module.setup());
 }

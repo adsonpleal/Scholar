@@ -1,4 +1,5 @@
 import 'package:app_tcc/modules/auth/auth_repository.dart';
+import 'package:app_tcc/modules/notifications/notifications_service.dart';
 import 'package:app_tcc/modules/profile/link_repository.dart';
 import 'package:app_tcc/modules/profile/profile_bloc.dart';
 import 'package:app_tcc/modules/user_data/user_data_repository.dart';
@@ -14,13 +15,16 @@ void main() {
   AuthRepository authRepository;
   UserDataRepository userDataRepository;
   LinkRepository linkRepository;
+  NotificationsService notificationsService;
   Firestore firestore;
 
   setUp(() {
     authRepository = MockAuthRepository();
     userDataRepository = MockUserDataRepository();
     linkRepository = MockLinkRepository();
+    notificationsService = MockNotificationsService();
     firestore = MockFirestore();
+    container.registerFactory((c) => notificationsService);
     container.registerSingleton((c) => authRepository);
     container.registerSingleton((c) => userDataRepository);
     container.registerSingleton((c) => firestore);

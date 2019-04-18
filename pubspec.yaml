@@ -29,6 +29,7 @@ dependencies:
   cloud_firestore: ^0.9.13+1
   json_serializable: ^2.1.2
   flutter_webview_plugin: ^0.3.3
+  flutter_local_notifications: ^0.6.1
 
 
   # The following adds the Cupertino Icons font to your application.

@@ -4,6 +4,7 @@ import 'package:app_tcc/models/settings.dart';
 import 'package:app_tcc/models/single_event.dart';
 import 'package:app_tcc/models/user.dart';
 import 'package:app_tcc/modules/auth/auth_repository.dart';
+import 'package:app_tcc/modules/notifications/notifications_service.dart';
 import 'package:app_tcc/modules/profile/link_repository.dart';
 import 'package:app_tcc/modules/user_data/user_data_repository.dart';
 import 'package:app_tcc/utils/inject.dart';
@@ -54,6 +55,7 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
   final AuthRepository _auth = inject();
   final UserDataRepository _userData = inject();
   final LinkRepository _link = inject();
+  final NotificationsService _notifications = inject();
   StreamSubscription<Uri> _linksSub;
   StreamSubscription<Settings> _settingsSub;
 
@@ -70,24 +72,37 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
     if (event is _ProfileLogOutEvent) yield* _logoutToState();
     if (event is _UFSCConnectedEvent) yield* _connectedToState(event);
     if (event is _SettingsChangedEvent) yield* _settingsChangedToState(event);
-    if (event is _ToggleNotificationsEvent) yield* _toggleNotificationsToState();
+    if (event is _ToggleNotificationsEvent)
+      yield* _toggleNotificationsToState();
   }
 
   Stream<ProfileState> _connectedToState(_UFSCConnectedEvent event) async* {}
 
   Stream<ProfileState> _toggleNotificationsToState() async* {
     final settings = currentState.settings;
+    final newNotificationsState = !settings.allowNotifications;
     _userData.saveSettings(
-        settings.changeValue(allowNotifications: !settings.allowNotifications));
+      settings.changeValue(allowNotifications: newNotificationsState),
+    );
+    if (newNotificationsState) {
+      final subjectsStream = await _userData.subjectsStream;
+      final subjects = await subjectsStream?.first;
+      if (subjects != null) _notifications.addNotifications(subjects);
+    } else {
+      _notifications.removeAllNotifications();
+    }
   }
 
-  Stream<ProfileState> _settingsChangedToState(_SettingsChangedEvent event) async* {
+  Stream<ProfileState> _settingsChangedToState(
+    _SettingsChangedEvent event,
+  ) async* {
     final user = await _userData.currentUser;
     yield currentState.changeValue(settings: event.settings, user: user);
   }
 
   Stream<ProfileState> _logoutToState() async* {
     await _auth.signOut();
+    _notifications.removeAllNotifications();
     yield ProfileState.login();
   }
 
@@ -95,6 +110,7 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
   dispose() {
     _linksSub?.cancel();
     _settingsSub?.cancel();
+    _notifications.dispose();
     super.dispose();
   }
 
@@ -112,7 +128,8 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
 
   _trackUserData() async {
     final settingsStream = await _userData.settingsStream;
-    _settingsSub = await settingsStream
-        ?.forEach((settings) => dispatch(_SettingsChangedEvent(settings)));
+    _settingsSub = await settingsStream?.forEach((settings) => dispatch(
+          _SettingsChangedEvent(settings),
+        ));
   }
 }
