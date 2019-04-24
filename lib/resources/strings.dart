@@ -159,6 +159,19 @@ class Strings {
         'IGNORAR',
         name: "rejectNotification",
       );
+  static get informations => Intl.message(
+        'Informações',
+        name: "informations",
+      );
+  static get infoAlertContent => Intl.message(
+        "Controle de faltas:\n - Cada falta é um período, caso você tenha duas aulas no mesmo dia adicione duas faltas.",
+        name: "infoAlertContent",
+      );
+
+  static get absenceControl => Intl.message(
+        'Controle de faltas',
+        name: "absenceControl",
+      );
   static String absences(int absenceCount, int maxAbsence) => Intl.message(
         "Faltas $absenceCount/$maxAbsence",
         name: "absences",
@@ -185,6 +198,4 @@ class Strings {
         name: "notificationSubtitle",
         args: [event],
       );
-
-
 }

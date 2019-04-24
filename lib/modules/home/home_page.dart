@@ -14,7 +14,6 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-//TODO: Refactor this class
 class _HomePageState extends State<HomePage> {
   final HomeBloc _homebloc = inject();
 
@@ -23,9 +22,8 @@ class _HomePageState extends State<HomePage> {
       bloc: _homebloc,
       builder: (context, HomeState state) => InfoAlert(
             shouldShow: state.showInfoAlert?.value,
-            title: "Informações",
-            content:
-                "Controle de faltas:\n - Cada falta é um período, caso você tenha duas aulas no mesmo dia adicione duas faltas.",
+            title: Strings.informations,
+            content: Strings.infoAlertContent,
             child: Scaffold(
               appBar: AppBar(
                 title: Text(Strings.home),
@@ -35,7 +33,7 @@ class _HomePageState extends State<HomePage> {
                       Icons.help,
                       color: Colors.white,
                     ),
-                    tooltip: 'Informações',
+                    tooltip: Strings.informations,
                     onPressed: _homebloc.showInfoAlert,
                   )
                 ],
@@ -44,7 +42,7 @@ class _HomePageState extends State<HomePage> {
                 children: <Widget>[
                   ExpansionTile(
                     initiallyExpanded: true,
-                    title: Text("Controle de faltas"),
+                    title: Text(Strings.absenceControl),
                     children: state.subjects
                             ?.map((subject) => SubjectItem(
                                   onAdd: () => _homebloc.addAbsence(subject),
