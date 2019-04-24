@@ -15,13 +15,34 @@ class AgendaState extends Equatable {
   }) : super([events, notifications]);
 
   factory AgendaState.initial() => AgendaState();
+
+  AgendaState changeValues({
+    List<Event> events,
+    List<EventNotification> notifications,
+  }) =>
+      AgendaState(
+        events: events ?? this.events,
+        notifications: notifications ?? this.notifications,
+      );
 }
 
-enum _AgendaEvent { start }
+class _AgendaEvent {}
+
+class _StartEvent extends _AgendaEvent {}
+
+class _AcceptNotificationEvent extends _AgendaEvent {
+  final EventNotification notification;
+  _AcceptNotificationEvent(this.notification);
+}
+
+class _RejectNotificationEvent extends _AgendaEvent {
+  final EventNotification notification;
+  _RejectNotificationEvent(this.notification);
+}
 
 class AgendaBloc extends Bloc<_AgendaEvent, AgendaState> {
   AgendaBloc() {
-    dispatch(_AgendaEvent.start);
+    dispatch(_StartEvent());
   }
 
   @override
@@ -29,7 +50,31 @@ class AgendaBloc extends Bloc<_AgendaEvent, AgendaState> {
 
   @override
   Stream<AgendaState> mapEventToState(_AgendaEvent event) async* {
-    if (event == _AgendaEvent.start) yield* _startToState();
+    if (event is _StartEvent) yield* _startToState();
+    if (event is _AcceptNotificationEvent)
+      yield* _acceptNotificationToState(event.notification);
+    if (event is _RejectNotificationEvent)
+      yield* _rejectNotificationToState(event.notification);
+  }
+
+  Stream<AgendaState> _rejectNotificationToState(
+    EventNotification notification,
+  ) async* {
+    yield currentState.changeValues(
+      notifications: List<EventNotification>.from(currentState.notifications)
+        ..remove(notification),
+      events: List<Event>.from(currentState.events)..add(notification.event),
+    );
+  }
+
+  Stream<AgendaState> _acceptNotificationToState(
+    EventNotification notification,
+  ) async* {
+    yield currentState.changeValues(
+      notifications: List<EventNotification>.from(
+        currentState.notifications,
+      )..remove(notification),
+    );
   }
 
   Stream<AgendaState> _startToState() async* {
@@ -137,10 +182,10 @@ class AgendaBloc extends Bloc<_AgendaEvent, AgendaState> {
   }
 
   void onAcceptNotification(EventNotification notification) {
-    // TODO: do stuff
+    dispatch(_AcceptNotificationEvent(notification));
   }
 
   void onIgnoreNotification(EventNotification notification) {
-    // TODO: do stuff
+    dispatch(_RejectNotificationEvent(notification));
   }
 }
