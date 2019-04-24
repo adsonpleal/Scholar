@@ -4,10 +4,14 @@ import 'package:flutter/material.dart';
 
 class NotificationItem extends StatelessWidget {
   final EventNotification notification;
+  final Function onIgnore;
+  final Function onAccept;
 
   const NotificationItem({
     Key key,
     @required this.notification,
+    this.onIgnore,
+    this.onAccept,
   }) : super(key: key);
 
   @override
@@ -30,11 +34,11 @@ class NotificationItem extends StatelessWidget {
                 children: <Widget>[
                   FlatButton(
                     child: Text(Strings.acceptNotification),
-                    onPressed: () {/* ... */},
+                    onPressed: () => onIgnore(notification),
                   ),
                   FlatButton(
                     child: Text(Strings.rejectNotification),
-                    onPressed: () {/* ... */},
+                    onPressed: () => onAccept(notification),
                   ),
                 ],
               ),

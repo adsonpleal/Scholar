@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
+import 'modules/agenda/agenda_module.dart';
 import 'modules/home/home_module.dart';
 import 'modules/notifications/notifications_module.dart';
 import 'modules/ufsc/connect_ufsc_module.dart';
@@ -50,7 +51,6 @@ void main() {
 void setupLocales() {
   Intl.defaultLocale = 'pt_BR';
   initializeDateFormatting();
-  // initializeMessages();
 }
 
 void setupModules() {
@@ -64,5 +64,6 @@ void setupModules() {
     ConnectUfscModule(),
     HomeModule(),
     NotificationModule(),
+    AgendaModule(),
   ].forEach((module) => module.setup());
 }

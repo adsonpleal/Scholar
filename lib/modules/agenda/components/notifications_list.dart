@@ -6,10 +6,14 @@ import 'notification_item.dart';
 
 class NotificationsList extends StatelessWidget {
   final List<EventNotification> notifications;
+  final Function onIgnore;
+  final Function onAccept;
 
   const NotificationsList({
     Key key,
     @required this.notifications,
+    @required this.onIgnore,
+    @required this.onAccept,
   }) : super(key: key);
 
   @override
@@ -40,6 +44,8 @@ class NotificationsList extends StatelessWidget {
               itemBuilder: (BuildContext context, int index) =>
                   NotificationItem(
                     notification: notifications[index],
+                    onIgnore: onIgnore,
+                    onAccept: onAccept,
                   ),
               itemCount: notifications.length,
             ),

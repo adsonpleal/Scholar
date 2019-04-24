@@ -1,112 +1,22 @@
-import 'package:app_tcc/models/event.dart';
-import 'package:app_tcc/models/event_notification.dart';
 import 'package:app_tcc/resources/strings.dart';
+import 'package:app_tcc/utils/inject.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'agenda_bloc.dart';
 import 'components/add_event_dial.dart';
 import 'components/notifications_list.dart';
 import 'components/sliver_event_list.dart';
 
-
-// TODO: ADD REAL DATA FROM SERVER
-class AgendaPage extends StatelessWidget {
+class AgendaPage extends StatefulWidget {
   static instantiate() => AgendaPage();
 
-  final events = [
-    Event(
-      createdAt: DateTime.now(),
-      eventCode: "11111",
-      type: EventType.homework,
-      date: DateTime.now().add(Duration(days: 1)),
-      endTime: DateTime.now().add(Duration(days: 1)).add(Duration(hours: 1)),
-    ),
-    Event(
-      createdAt: DateTime.now(),
-      eventCode: "222222",
-      type: EventType.test,
-      date: DateTime.now().add(Duration(days: 1)),
-      endTime: DateTime.now().add(Duration(days: 1)).add(Duration(hours: 1)),
-    ),
-    Event(
-      createdAt: DateTime.now(),
-      eventCode: "33333",
-      type: EventType.homework,
-      date: DateTime.now().add(Duration(days: 1)),
-      endTime: DateTime.now().add(Duration(days: 1)).add(Duration(hours: 1)),
-    ),
-    Event(
-      createdAt: DateTime.now(),
-      eventCode: "44444 ",
-      type: EventType.homework,
-      date: DateTime.now().add(Duration(days: 2)),
-      endTime: DateTime.now().add(Duration(days: 2)).add(Duration(hours: 1)),
-    ),
-    Event(
-      createdAt: DateTime.now(),
-      eventCode: "11111",
-      type: EventType.test,
-      date: DateTime.now().add(Duration(days: 2)),
-      endTime: DateTime.now().add(Duration(days: 2)).add(Duration(hours: 1)),
-    ),
-    Event(
-      createdAt: DateTime.now(),
-      eventCode: "222222",
-      type: EventType.homework,
-      date: DateTime.now().add(Duration(days: 3)),
-      endTime: DateTime.now().add(Duration(days: 3)).add(Duration(hours: 1)),
-    ),
-    Event(
-      createdAt: DateTime.now(),
-      eventCode: "33333",
-      type: EventType.homework,
-      date: DateTime.now().add(Duration(days: 3)),
-      endTime: DateTime.now().add(Duration(days: 3)).add(Duration(hours: 1)),
-    ),
-    Event(
-      createdAt: DateTime.now(),
-      eventCode: "44444 ",
-      type: EventType.homework,
-      date: DateTime.now().add(Duration(days: 4)),
-      endTime: DateTime.now().add(Duration(days: 4)).add(Duration(hours: 1)),
-    ),
-    Event(
-      createdAt: DateTime.now(),
-      eventCode: "11111",
-      type: EventType.homework,
-      date: DateTime.now().add(Duration(days: 5)),
-      endTime: DateTime.now().add(Duration(days: 5)).add(Duration(hours: 1)),
-    ),
-    Event(
-      createdAt: DateTime.now(),
-      eventCode: "222222",
-      type: EventType.homework,
-      date: DateTime.now().add(Duration(days: 6)),
-      endTime: DateTime.now().add(Duration(days: 6)).add(Duration(hours: 1)),
-    ),
-    Event(
-      createdAt: DateTime.now(),
-      eventCode: "33333",
-      type: EventType.homework,
-      date: DateTime.now().add(Duration(days: 7)),
-      endTime: DateTime.now().add(Duration(days: 7)).add(Duration(hours: 1)),
-    ),
-    Event(
-      createdAt: DateTime.now(),
-      eventCode: "44444",
-      type: EventType.homework,
-      date: DateTime.now().add(Duration(days: 7)),
-      endTime: DateTime.now().add(Duration(days: 7)).add(Duration(hours: 1)),
-    ),
-  ];
+  @override
+  _AgendaPageState createState() => _AgendaPageState();
+}
 
-  List<EventNotification> get notifications => events
-      .map(
-        (e) => EventNotification(
-              createdAt: DateTime.now(),
-              event: e,
-            ),
-      )
-      .toList();
+class _AgendaPageState extends State<AgendaPage> {
+  final AgendaBloc _agendaBloc = inject();
 
   @override
   Widget build(BuildContext context) {
@@ -114,13 +24,26 @@ class AgendaPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(Strings.agenda),
       ),
-      body: Column(
-        children: <Widget>[
-          NotificationsList(notifications: notifications),
-          SliverEventsList(events: events),
-        ],
+      body: BlocBuilder(
+        bloc: _agendaBloc,
+        builder: (context, AgendaState state) => Column(
+              children: <Widget>[
+                NotificationsList(
+                  notifications: state.notifications ?? [],
+                  onAccept: _agendaBloc.onAcceptNotification,
+                  onIgnore: _agendaBloc.onIgnoreNotification,
+                ),
+                SliverEventsList(events: state.events ?? []),
+              ],
+            ),
       ),
       floatingActionButton: AddEventDial(),
     );
+  }
+
+  @override
+  void dispose() {
+    _agendaBloc.dispose();
+    super.dispose();
   }
 }
