@@ -31,7 +31,7 @@ class SubjectTime extends Equatable {
   Map<String, dynamic> toJson() => _$SubjectTimeToJson(this);
 
   Time get timeBeforeTenMinutes {
-    var hour = int.parse(startTime.substring(0, 1));
+    var hour = int.parse(startTime.substring(0, 2));
     var minutes = int.parse(startTime.substring(2)) - 10;
     if (minutes < 0) {
       hour -= 1;

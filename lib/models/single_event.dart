@@ -12,6 +12,8 @@ class SingleEvent<T> {
     return false;
   }
 
+  int get hashCode => _value.hashCode;
+
   get value {
     if (_didGet) {
       return null;

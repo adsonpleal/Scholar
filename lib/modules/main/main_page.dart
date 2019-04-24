@@ -3,6 +3,7 @@ import 'package:app_tcc/modules/home/home_page.dart';
 import 'package:app_tcc/modules/profile/profile_page.dart';
 import 'package:app_tcc/resources/strings.dart';
 import 'package:app_tcc/utils/inject.dart';
+import 'package:app_tcc/utils/routes.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 
@@ -18,22 +19,25 @@ class Tab {
       BottomNavigationBarItem(icon: Icon(icon), title: Text(title));
 }
 
-const tabs = [
+final tabs = [
   Tab(
-      page: HomePage.instantiate,
-      title: Strings.home,
-      route: "home",
-      icon: Icons.home),
+    page: HomePage.instantiate,
+    title: Strings.home,
+    route: Routes.home,
+    icon: Icons.home,
+  ),
   Tab(
-      page: AgendaPage.instantiate,
-      title: Strings.agenda,
-      route: "agenda",
-      icon: Icons.date_range),
+    page: AgendaPage.instantiate,
+    title: Strings.agenda,
+    route: Routes.agenda,
+    icon: Icons.date_range,
+  ),
   Tab(
-      page: ProfilePage.instantiate,
-      title: Strings.profile,
-      route: "profile",
-      icon: Icons.person),
+    page: ProfilePage.instantiate,
+    title: Strings.profile,
+    route: Routes.profile,
+    icon: Icons.person,
+  ),
 ];
 
 class MainPage extends StatefulWidget {
@@ -64,7 +68,6 @@ class _MainPageState extends State<MainPage>
     );
   }
 
-  // TODO: improve this mess
   _currentPage() => Stack(
         children: tabs.map((tab) {
           final isSelected = tabs.indexOf(tab) == _selectedIndex;
@@ -76,7 +79,7 @@ class _MainPageState extends State<MainPage>
             ),
           );
         }).toList(),
-      ); 
+      );
 
   void _onItemTapped(int index) {
     if (_selectedIndex != index) {
@@ -105,7 +108,7 @@ class _MainPageState extends State<MainPage>
 
   void _sendCurrentTabToAnalytics() {
     _observer.analytics.setCurrentScreen(
-      screenName: 'mainPage/${tabs[_selectedIndex].route}',
+      screenName: 'mainPage${tabs[_selectedIndex].route}',
     );
   }
 }

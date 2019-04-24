@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:app_tcc/models/subject.dart';
+import 'package:app_tcc/modules/notifications/notifications_service.dart';
 import 'package:app_tcc/modules/user_data/user_data_repository.dart';
 import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/subject_query.dart';
@@ -14,6 +15,7 @@ class _ConnectUfscEvent {}
 
 class ConnectUfscBloc extends Bloc<_ConnectUfscEvent, ConnectUfscState> {
   final UserDataRepository _userData = inject();
+  final NotificationsService _notifications = inject();
 
   ConnectUfscBloc() {
     dispatch(_ConnectUfscEvent());
@@ -31,6 +33,13 @@ class ConnectUfscBloc extends Bloc<_ConnectUfscEvent, ConnectUfscState> {
     webViewPlugin.cleanCookies();
     final subjects = Subject.fromJsonList(json.decode(result));
     _userData.saveSubjects(subjects);
+    _notifications.addNotifications(subjects);
     yield ConnectUfscState.connected;
+  }
+
+  @override
+  void dispose() {
+    _notifications.dispose();
+    super.dispose();
   }
 }

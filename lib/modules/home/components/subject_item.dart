@@ -1,4 +1,5 @@
 import 'package:app_tcc/models/subject.dart';
+import 'package:app_tcc/resources/strings.dart';
 import 'package:flutter/material.dart';
 
 class SubjectItem extends StatelessWidget {
@@ -25,28 +26,24 @@ class SubjectItem extends StatelessWidget {
             children: <Widget>[
               Text(
                 subject.name,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 22.0),
+                style: TextStyle(fontSize: 16.0),
               ),
               Row(
                 children: <Widget>[
                   Expanded(
                     child: Text(
-                      "Faltas ${subject.absenceCount}/${subject.maxAbsence}",
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 22.0),
+                      Strings.absences(subject.absenceCount, subject.maxAbsence),
+                      style: TextStyle(fontSize: 16.0),
                     ),
                   ),
                   IconButton(
                     icon: Icon(Icons.remove),
-                    tooltip: 'Remover uma falta',
+                    tooltip: Strings.removeAbsence,
                     onPressed: onRemove,
                   ),
                   IconButton(
                     icon: Icon(Icons.add),
-                    tooltip: 'Adicionar uma falta',
+                    tooltip: Strings.addAbsence,
                     onPressed: onAdd,
                   ),
                 ],

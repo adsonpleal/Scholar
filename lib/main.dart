@@ -13,6 +13,8 @@ import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/routes.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import 'modules/home/home_module.dart';
 import 'modules/notifications/notifications_module.dart';
@@ -40,8 +42,15 @@ class App extends StatelessWidget {
 }
 
 void main() {
+  setupLocales();
   setupModules();
   runApp(App());
+}
+
+void setupLocales() {
+  Intl.defaultLocale = 'pt_BR';
+  initializeDateFormatting();
+  // initializeMessages();
 }
 
 void setupModules() {

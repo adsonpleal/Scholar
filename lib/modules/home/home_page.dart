@@ -14,6 +14,7 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
+//TODO: Refactor this class
 class _HomePageState extends State<HomePage> {
   final HomeBloc _homebloc = inject();
 
