@@ -85,8 +85,7 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
       settings.changeValue(allowNotifications: newNotificationsState),
     );
     if (newNotificationsState) {
-      final subjectsStream = await _userData.subjectsStream;
-      final subjects = await subjectsStream?.first;
+      final subjects = await _userData.subjects;
       if (subjects != null) _notifications.addNotifications(subjects);
     } else {
       _notifications.removeAllNotifications();

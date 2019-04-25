@@ -38,6 +38,11 @@ class UserDataRepository {
         .toList());
   }
 
+  Future<List<Subject>> get subjects async {
+    final stream = await subjectsStream;
+    return await stream.first;
+  }
+
   Future<void> saveSettings(Settings settings) async {
     final document = await userDocumment;
     await document.setData(

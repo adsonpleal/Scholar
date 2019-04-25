@@ -95,8 +95,7 @@ class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
   }
 
   Stream<LoginSignUpState> _logUser() async* {
-    final subjectsStream = await _userData.subjectsStream;
-    final subjects = await subjectsStream?.first;
+    final subjects = await _userData.subjects;
     if (subjects != null) _notifications.addNotifications(subjects);
     yield currentState.changeValue(route: SingleEvent(Routes.main));
   }
