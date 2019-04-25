@@ -9,13 +9,15 @@ const _absenceFactor = 4;
 
 @JsonSerializable(nullable: false)
 class Subject extends Equatable {
+  @JsonKey(ignore: true)
+  String documentID;
   final String code;
   final String name;
   final String classGroup;
   final int weeklyClassCount;
   @JsonKey(nullable: true, defaultValue: 0)
   final int absenceCount;
-  @JsonKey(toJson: _timesToJson)
+  @JsonKey(toJson: _timesToJson, fromJson: _timesFromJson)
   final List<SubjectTime> times;
 
   Subject({
@@ -25,6 +27,7 @@ class Subject extends Equatable {
     this.times,
     this.weeklyClassCount,
     this.absenceCount,
+    this.documentID,
   }) : super([
           code,
           name,
@@ -32,11 +35,12 @@ class Subject extends Equatable {
           times,
           weeklyClassCount,
           absenceCount,
+          documentID,
         ]);
 
   factory Subject.fromJson(Map<String, dynamic> json) =>
       _$SubjectFromJson(json);
-  
+
   Map<String, dynamic> toJson() => _$SubjectToJson(this);
 
   static fromJsonList(List<dynamic> jsonList) =>
@@ -44,6 +48,12 @@ class Subject extends Equatable {
 
   static List<Map<String, dynamic>> _timesToJson(List<SubjectTime> times) =>
       times.map((t) => t.toJson()).toList();
+
+  static List<SubjectTime> _timesFromJson(List<dynamic> jsonList) {
+    return jsonList
+        .map((json) => SubjectTime.fromJson(Map<String, dynamic>.from(json)))
+        .toList();
+  }
 
   int get maxAbsence => (_weekCount * weeklyClassCount) ~/ _absenceFactor;
 
@@ -64,5 +74,6 @@ class Subject extends Equatable {
         weeklyClassCount: weeklyClassCount ?? this.weeklyClassCount,
         absenceCount: absenceCount ?? this.absenceCount,
         times: times ?? this.times,
+        documentID: this.documentID,
       );
 }

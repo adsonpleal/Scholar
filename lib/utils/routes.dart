@@ -5,7 +5,7 @@ class Routes {
   static const main = "/main";
   static const home = "/home";
   static const profile = "/profile";
-  static const agenda = "/home";
+  static const agenda = "/agenda";
   static const connectUfsc = "/connectUfsc";
   static const root = "/";
 

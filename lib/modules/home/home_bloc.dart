@@ -68,13 +68,11 @@ class HomeBloc extends Bloc<_HomeEvent, HomeState> {
   }
 
   Stream<HomeState> _changeAbsenceValue(Subject subject, int value) async* {
-    final subjects = List<Subject>.from(currentState.subjects);
     final newSubject = subject.changeValues(
       absenceCount: subject.absenceCount + value,
     );
     if (newSubject.isValid) {
-      _userData.saveSubjects(subjects
-        ..[subjects.indexWhere((s) => s.code == subject.code)] = newSubject);
+      _userData.saveSubject(newSubject);        
     }
   }
 

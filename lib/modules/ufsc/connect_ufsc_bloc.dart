@@ -32,7 +32,7 @@ class ConnectUfscBloc extends Bloc<_ConnectUfscEvent, ConnectUfscState> {
     final result = await webViewPlugin.evalJavascript(subjectQuery);
     webViewPlugin.cleanCookies();
     final subjects = Subject.fromJsonList(json.decode(result));
-    _userData.saveSubjects(subjects);
+    _userData.replaceSujects(subjects);
     _notifications.addNotifications(subjects);
     yield ConnectUfscState.connected;
   }

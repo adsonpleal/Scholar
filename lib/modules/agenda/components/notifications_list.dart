@@ -23,31 +23,36 @@ class NotificationsList extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(
-              top: 8,
-              left: 8,
-            ),
-            child: Text(
-              Strings.notifications,
-              style: TextStyle(
-                fontSize: 18,
+          Container(
+            width: double.infinity,
+            child: Padding(
+              padding: const EdgeInsets.only(
+                top: 8,
+                left: 8,
+              ),
+              child: Text(
+                Strings.notifications,
+                style: TextStyle(
+                  fontSize: 18,
+                ),
               ),
             ),
           ),
-          Container(
-            height: 140,
-            child: ListView.builder(
-              padding: EdgeInsets.all(8),
-              shrinkWrap: true,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (BuildContext context, int index) =>
-                  NotificationItem(
-                    notification: notifications[index],
-                    onIgnore: onIgnore,
-                    onAccept: onAccept,
-                  ),
-              itemCount: notifications.length,
+          Center(
+            child: Container(
+              height: 140,
+              child: ListView.builder(
+                padding: EdgeInsets.all(8),
+                shrinkWrap: true,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (BuildContext context, int index) =>
+                    NotificationItem(
+                      notification: notifications[index],
+                      onIgnore: onIgnore,
+                      onAccept: onAccept,
+                    ),
+                itemCount: notifications.length,
+              ),
             ),
           ),
         ],
