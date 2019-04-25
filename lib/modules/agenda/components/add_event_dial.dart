@@ -1,4 +1,6 @@
+import 'package:app_tcc/models/event.dart';
 import 'package:app_tcc/resources/strings.dart';
+import 'package:app_tcc/utils/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
@@ -23,14 +25,14 @@ class AddEventDial extends StatelessWidget {
           backgroundColor: Colors.red,
           label: Strings.test,
           labelStyle: TextStyle(fontSize: 18.0),
-          onTap: () {},
+          onTap: Routes.toNewEvent(context, EventType.test),
         ),
         SpeedDialChild(
           child: Icon(Icons.assignment),
           backgroundColor: Colors.green,
           label: Strings.homework,
           labelStyle: TextStyle(fontSize: 18.0),
-          onTap: () {},
+          onTap: Routes.toNewEvent(context, EventType.homework),
         ),
       ],
     );

@@ -18,6 +18,7 @@ import 'package:intl/date_symbol_data_local.dart';
 
 import 'modules/agenda/agenda_module.dart';
 import 'modules/home/home_module.dart';
+import 'modules/new_event/new_event_page.dart';
 import 'modules/notifications/notifications_module.dart';
 import 'modules/ufsc/connect_ufsc_module.dart';
 import 'modules/ufsc/connect_ufsc_page.dart';
@@ -36,6 +37,7 @@ class App extends StatelessWidget {
         Routes.login: (c) => LoginSignUpPage(),
         Routes.main: (c) => MainPage(),
         Routes.connectUfsc: (c) => ConnectUfscPage(),
+        Routes.newEvent: (c) => NewEventPage(),
       },
       theme: ThemeData(
         primarySwatch: Colors.blue,

@@ -130,47 +130,82 @@ class Strings {
         'Próxima aula em 10 minutos',
         name: "classNotification",
       );
-  static get removeAbsence => Intl.message(
+  static String get removeAbsence => Intl.message(
         'Remover uma falta',
         name: "removeAbsence",
       );
-  static get addAbsence => Intl.message(
+  static String get addAbsence => Intl.message(
         'Adicionar uma falta',
         name: "addAbsence",
       );
-  static get test => Intl.message(
+  static String get test => Intl.message(
         'Prova',
         name: "test",
       );
-  static get homework => Intl.message(
+  static String get homework => Intl.message(
         'Trabalho',
         name: "homework",
       );
-  static get addEvent => Intl.message(
+  static String get addEvent => Intl.message(
         'Adicionar evento',
         name: "addEvent",
       );
 
-  static get acceptNotification => Intl.message(
+  static String get acceptNotification => Intl.message(
         'ADICIONAR',
         name: "acceptNotification",
       );
-  static get rejectNotification => Intl.message(
+  static String get rejectNotification => Intl.message(
         'IGNORAR',
         name: "rejectNotification",
       );
-  static get informations => Intl.message(
+  static String get informations => Intl.message(
         'Informações',
         name: "informations",
       );
-  static get infoAlertContent => Intl.message(
+  static String get infoAlertContent => Intl.message(
         "Controle de faltas:\n - Cada falta é um período, caso você tenha duas aulas no mesmo dia adicione duas faltas.",
         name: "infoAlertContent",
       );
-
-  static get absenceControl => Intl.message(
+  static String get absenceControl => Intl.message(
         'Controle de faltas',
         name: "absenceControl",
+      );
+  static String get newTest => Intl.message(
+        'Nova Prova',
+        name: "newTest",
+      );
+  static String get newHomework => Intl.message(
+        'Novo Trabalho',
+        name: "newHomework",
+      );
+  static String get eventDescriptionHint => Intl.message(
+        'Digite a descrição do evento',
+        name: "eventDescriptionHint",
+      );
+  static String get description => Intl.message(
+        'Descrição',
+        name: "description",
+      );
+  static String get subject => Intl.message(
+        'Matéria',
+        name: "subject",
+      );
+  static String get date => Intl.message(
+        'Data',
+        name: "date",
+      );
+  static String get send => Intl.message(
+        "Enviar",
+        name: "send",
+      );
+  static String get descriptionCantBeEmpty => Intl.message(
+        "Descrição não pode ser vazia",
+        name: "descriptionCantBeEmpty",
+      );
+  static String get dateCantBeEmpty => Intl.message(
+        "Data não pode ser vazia",
+        name: "dateCantBeEmpty",
       );
   static String absences(int absenceCount, int maxAbsence) => Intl.message(
         "Faltas $absenceCount/$maxAbsence",
@@ -188,14 +223,20 @@ class Strings {
         name: "newEvent",
         args: [eventType],
       );
-  static String eventStartEnd(Event event) => Intl.message(
-        "${DateFormat.Hm().format(event.date)} - ${DateFormat.Hm().format(event.endTime)}",
+  static String eventStart(Event event) => Intl.message(
+        "${DateFormat.Hm().format(event.date)}",
         name: "eventStartEnd",
         args: [event],
       );
   static String notificationSubtitle(Event event) => Intl.message(
-        "${event.eventCode} ${DateFormat.MMMd().format(event.date)} ${eventStartEnd(event)}",
+        "${event.subjectCode} ${DateFormat.MMMd().format(event.date)} ${eventStart(event)}",
         name: "notificationSubtitle",
         args: [event],
+      );
+
+  static String fullDateAndTime(DateTime date) => Intl.message(
+        DateFormat('dd/MM/yyy HH:mm').format(date),
+        name: "fullDateAndTime",
+        args: [date],
       );
 }

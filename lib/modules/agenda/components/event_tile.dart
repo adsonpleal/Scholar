@@ -19,11 +19,11 @@ class EventTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                Strings.eventTitle(event.eventCode, event.type),
+                Strings.eventTitle(event.subjectCode, event.type),
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               Text(
-                Strings.eventStartEnd(event),
+                Strings.eventStart(event),
               ),
             ],
           ),
