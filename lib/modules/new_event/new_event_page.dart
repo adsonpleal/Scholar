@@ -2,6 +2,7 @@ import 'package:app_tcc/models/event.dart';
 import 'package:app_tcc/models/subject.dart';
 import 'package:app_tcc/resources/strings.dart';
 import 'package:app_tcc/utils/routes.dart';
+import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 
 class NewEventPage extends StatefulWidget {
@@ -11,26 +12,39 @@ class NewEventPage extends StatefulWidget {
 
 // TODO: fetch real data for subjects
 final List<Subject> _subjects = [
-  Subject(
-    name: "test1",
-    code: "11111",
-  ),
-  Subject(
-    name: "test2",
-    code: "22222",
-  ),
-  Subject(
-    name: "test3",
-    code: "33333",
-  ),
-  Subject(
-    name: "test4",
-    code: "4444",
-  ),
+  Subject((b) => b
+    ..name = "test1"
+    ..code = "11111"
+    ..classGroup = ""
+    ..weeklyClassCount = 1
+    ..absenceCount = 1
+    ..times = ListBuilder()),
+  Subject((b) => b
+    ..name = "test2"
+    ..code = "22222"
+    ..classGroup = ""
+    ..weeklyClassCount = 0
+    ..absenceCount = 0
+    ..times = ListBuilder()),
+  Subject((b) => b
+    ..name = "test3"
+    ..code = "33333"
+    ..classGroup = ""
+    ..weeklyClassCount = 1
+    ..absenceCount = 2
+    ..times = ListBuilder()),
+  Subject((b) => b
+    ..name = "test4"
+    ..code = "4444"
+    ..classGroup = ""
+    ..weeklyClassCount = 2
+    ..absenceCount = 1
+    ..times = ListBuilder()),
 ];
 
 class _NewEventPageState extends State<NewEventPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   // TODO: fetch real data for subjects
   Subject _subject = _subjects[0];
   String _description = '';
@@ -84,12 +98,11 @@ class _NewEventPageState extends State<NewEventPage> {
     final formState = _formKey.currentState;
     if (formState.validate()) {
       formState.save();
-      final event = Event(
-        date: _date,
-        subjectCode: _subject.code,
-        type: _eventType,
-        description: _description,
-      );
+      final event = Event((b) => b
+        ..date = _date
+        ..subjectCode = _subject.code
+        ..type = _eventType
+        ..description = _description);
       // TODO: save event
       print(event);
       Routes.pop(context);
@@ -116,8 +129,7 @@ class _NewEventPageState extends State<NewEventPage> {
                 children: <Widget>[
                   TextFormField(
                     onSaved: _onDescriptionChanged,
-                    validator:
-                        _validateNotEmpty(Strings.descriptionCantBeEmpty),
+                    validator: _validateNotEmpty(Strings.descriptionCantBeEmpty),
                     decoration: InputDecoration(
                       icon: Icon(Icons.short_text),
                       hintText: Strings.eventDescriptionHint,

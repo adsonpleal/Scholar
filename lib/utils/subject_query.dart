@@ -2,6 +2,7 @@ const subjectQuery = """
 Array.from(Array.from(document.querySelectorAll('th')).filter(el => el.innerText == "Resultados")[0].closest('table').querySelectorAll('tr.rich-table-row')).map(function(el) {
     var tdList = el.querySelectorAll('td');
     return {
+        absenceCount: 0,
         code: tdList[1].innerText,
         name: tdList[3].innerText,
         classGroup: tdList[2].innerText,
@@ -20,5 +21,4 @@ Array.from(Array.from(document.querySelectorAll('th')).filter(el => el.innerText
 })
 """;
 
-const subjectUrl =
-    "https://cagr.sistemas.ufsc.br/modules/aluno/espelhoMatricula/";
+const subjectUrl = "https://cagr.sistemas.ufsc.br/modules/aluno/espelhoMatricula/";

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 class EventTile extends StatelessWidget {
   final Event event;
+
   const EventTile({
     Key key,
     @required this.event,

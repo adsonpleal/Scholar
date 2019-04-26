@@ -1,5 +1,6 @@
 import 'package:app_tcc/modules/auth/auth_repository.dart';
 import 'package:app_tcc/modules/login/login_signup_bloc.dart';
+import 'package:app_tcc/modules/login/login_signup_state.dart';
 import 'package:app_tcc/modules/notifications/notifications_service.dart';
 import 'package:app_tcc/modules/user_data/user_data_repository.dart';
 import 'package:app_tcc/resources/strings.dart';
@@ -11,6 +12,7 @@ import '../utils/mocks.dart';
 
 class CustomException implements Exception {
   final String code;
+
   CustomException(this.code);
 }
 
@@ -50,8 +52,8 @@ void main() {
   group('toggleForm', () {
     test('emits [login, signup] after one toggle', () {
       final expectedResponse = [
-        LoginSignUpState(formMode: FormMode.login),
-        LoginSignUpState(formMode: FormMode.signUp)
+        LoginSignUpState((b) => b..formMode = FormMode.login),
+        LoginSignUpState((b) => b..formMode = FormMode.signUp)
       ];
       expectLater(
         loginSignUpBloc.state,
@@ -62,9 +64,9 @@ void main() {
 
     test('emits [login, signup, login] after two toggles', () {
       final expectedResponse = [
-        LoginSignUpState(formMode: FormMode.login),
-        LoginSignUpState(formMode: FormMode.signUp),
-        LoginSignUpState(formMode: FormMode.login)
+        LoginSignUpState((b) => b..formMode = FormMode.login),
+        LoginSignUpState((b) => b..formMode = FormMode.signUp),
+        LoginSignUpState((b) => b..formMode = FormMode.login)
       ];
       expectLater(
         loginSignUpBloc.state,
@@ -90,16 +92,15 @@ void main() {
     });
     test('password validator return error if invalid', () {
       final passsword = "";
-      expect(Strings.passwordCantBeEmpty,
-          loginSignUpBloc.validatePassword(passsword));
+      expect(Strings.passwordCantBeEmpty, loginSignUpBloc.validatePassword(passsword));
     });
   });
 
   group('toggleResetPassword', () {
     test('emits [login, resetPassword] after one toggle', () {
       final expectedResponse = [
-        LoginSignUpState(formMode: FormMode.login),
-        LoginSignUpState(formMode: FormMode.resetPassword)
+        LoginSignUpState((b) => b..formMode = FormMode.login),
+        LoginSignUpState((b) => b..formMode = FormMode.resetPassword)
       ];
       expectLater(
         loginSignUpBloc.state,
@@ -110,9 +111,9 @@ void main() {
 
     test('emits [login, resetPassword, login] after two toggles', () {
       final expectedResponse = [
-        LoginSignUpState(formMode: FormMode.login),
-        LoginSignUpState(formMode: FormMode.resetPassword),
-        LoginSignUpState(formMode: FormMode.login)
+        LoginSignUpState((b) => b..formMode = FormMode.login),
+        LoginSignUpState((b) => b..formMode = FormMode.resetPassword),
+        LoginSignUpState((b) => b..formMode = FormMode.login)
       ];
       expectLater(
         loginSignUpBloc.state,
@@ -124,12 +125,13 @@ void main() {
   });
 
   group('submit', () {
-    test('emits [login, signup, loaging] after submiting from signup',
-        () async {
+    test('emits [login, signup, loaging] after submiting from signup', () async {
       final expectedResponse = [
         LoginSignUpState.initial(),
-        LoginSignUpState(formMode: FormMode.signUp),
-        LoginSignUpState(formMode: FormMode.signUp, loading: true)
+        LoginSignUpState((b) => b..formMode = FormMode.signUp),
+        LoginSignUpState((b) => b
+          ..formMode = FormMode.signUp
+          ..loading = true)
       ];
       expectLater(
         loginSignUpBloc.state,
@@ -147,10 +149,9 @@ void main() {
     test('emits [login, loaging] after submiting from login', () async {
       final expectedResponse = [
         LoginSignUpState.initial(),
-        LoginSignUpState(loading: true)
+        LoginSignUpState((b) => b..loading = true)
       ];
-      when(authRepository.signIn(any, any))
-          .thenAnswer((_) => Future.value("test"));
+      when(authRepository.signIn(any, any)).thenAnswer((_) => Future.value("test"));
       expectLater(
         loginSignUpBloc.state,
         emitsInOrder(expectedResponse),
@@ -159,13 +160,13 @@ void main() {
       await untilCalled(authRepository.signIn(any, any));
     });
 
-    test(
-        'emits [login, resetPassword, loaging] after submiting from resetPassword',
-        () async {
+    test('emits [login, resetPassword, loaging] after submiting from resetPassword', () async {
       final expectedResponse = [
         LoginSignUpState.initial(),
-        LoginSignUpState(formMode: FormMode.resetPassword),
-        LoginSignUpState(formMode: FormMode.resetPassword, loading: true)
+        LoginSignUpState((b) => b..formMode = FormMode.resetPassword),
+        LoginSignUpState((b) => b
+          ..formMode = FormMode.resetPassword
+          ..loading = true)
       ];
       when(authRepository.resetPassword(any)).thenAnswer((_) => Future.value());
       expectLater(
@@ -180,8 +181,8 @@ void main() {
     test('emits [login, loaging, error] after submiting with error', () async {
       final expectedResponse = [
         LoginSignUpState.initial(),
-        LoginSignUpState(loading: true),
-        LoginSignUpState(errorMessage: Strings.unknownError)
+        LoginSignUpState((b) => b..loading = true),
+        LoginSignUpState((b) => b..errorMessage = Strings.unknownError)
       ];
       when(authRepository.signIn(any, any))
           .thenAnswer((_) => Future.error(CustomException("test")));

@@ -2,6 +2,7 @@ import 'package:app_tcc/modules/auth/auth_repository.dart';
 import 'package:app_tcc/modules/notifications/notifications_service.dart';
 import 'package:app_tcc/modules/profile/link_repository.dart';
 import 'package:app_tcc/modules/profile/profile_bloc.dart';
+import 'package:app_tcc/modules/profile/profile_state.dart';
 import 'package:app_tcc/modules/user_data/user_data_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -11,7 +12,7 @@ import '../utils/mocks.dart';
 
 void main() {
   final Container container = Container();
-  ProfileBloc profilepBloc;
+  ProfileBloc profileBloc;
   AuthRepository authRepository;
   UserDataRepository userDataRepository;
   LinkRepository linkRepository;
@@ -29,7 +30,7 @@ void main() {
     container.registerSingleton((c) => userDataRepository);
     container.registerSingleton((c) => firestore);
     container.registerSingleton((c) => linkRepository);
-    profilepBloc = ProfileBloc();
+    profileBloc = ProfileBloc();
   });
 
   tearDown(() {
@@ -37,16 +38,16 @@ void main() {
   });
 
   test('initial state is correct', () {
-    expect(profilepBloc.initialState, ProfileState.initial());
+    expect(profileBloc.initialState, ProfileState.initial());
   });
 
   test('dispose does not emit new states', () async {
     expectLater(
-      profilepBloc.state,
+      profileBloc.state,
       emitsInOrder([]),
     );
     await Future.delayed(Duration(microseconds: 500));
-    profilepBloc.dispose();
+    profileBloc.dispose();
   });
   test('logout emits [initial, loading, login]', () {
     final expectedResponse = [
@@ -54,9 +55,9 @@ void main() {
       ProfileState.login(),
     ];
     expectLater(
-      profilepBloc.state,
+      profileBloc.state,
       emitsInOrder(expectedResponse),
     );
-    profilepBloc.logOut();
+    profileBloc.logOut();
   });
 }

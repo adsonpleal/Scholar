@@ -1,19 +1,28 @@
-import 'package:equatable/equatable.dart';
-import 'package:json_annotation/json_annotation.dart';
+library settings;
+
+import 'package:built_value/built_value.dart';
+import 'package:built_value/serializer.dart';
+
+import 'serializers.dart';
 
 part 'settings.g.dart';
 
-@JsonSerializable(nullable: true)
-class Settings extends Equatable {
-  @JsonKey(defaultValue: true)
-  final bool allowNotifications;
+abstract class Settings implements Built<Settings, SettingsBuilder> {
+  bool get allowNotifications;
 
-  Settings({this.allowNotifications}) : super([allowNotifications]);
-  factory Settings.fromJson(Map<String, dynamic> json) =>
-      _$SettingsFromJson(json);
-  Map<String, dynamic> toJson() => _$SettingsToJson(this);
+  Settings._();
 
-  Settings changeValue({allowNotifications}) => Settings(
-        allowNotifications: allowNotifications ?? this.allowNotifications,
-      );
+  factory Settings([updates(SettingsBuilder b)]) => _$Settings((b) => b
+    ..allowNotifications = true
+    ..update(updates));
+
+  Map<String, dynamic> toJson() {
+    return serializers.serializeWith(Settings.serializer, this);
+  }
+
+  static Settings fromJson(Map<String, dynamic> json) {
+    return serializers.deserializeWith(Settings.serializer, json);
+  }
+
+  static Serializer<Settings> get serializer => _$settingsSerializer;
 }

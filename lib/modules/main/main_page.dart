@@ -45,8 +45,7 @@ class MainPage extends StatefulWidget {
   _MainPageState createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage>
-    with SingleTickerProviderStateMixin, RouteAware {
+class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin, RouteAware {
   final FirebaseAnalyticsObserver _observer = inject();
   int _selectedIndex = 0;
 

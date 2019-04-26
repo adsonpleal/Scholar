@@ -1,14 +1,14 @@
-import 'package:app_tcc/modules/login/login_signup_bloc.dart';
 import 'package:app_tcc/resources/strings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import '../login_signup_state.dart';
 
 class PrimaryButton extends StatelessWidget {
   final Function() onPressed;
   final FormMode formMode;
 
-  const PrimaryButton({Key key, this.onPressed, this.formMode})
-      : super(key: key);
+  const PrimaryButton({Key key, this.onPressed, this.formMode}) : super(key: key);
 
   get text {
     switch (formMode) {
@@ -28,11 +28,9 @@ class PrimaryButton extends StatelessWidget {
         height: 40.0,
         child: RaisedButton(
           elevation: 5.0,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
           color: Colors.blue,
-          child:
-              Text(text, style: TextStyle(fontSize: 20.0, color: Colors.white)),
+          child: Text(text, style: TextStyle(fontSize: 20.0, color: Colors.white)),
           onPressed: onPressed,
         ),
       ));

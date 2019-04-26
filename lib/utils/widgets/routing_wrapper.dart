@@ -7,8 +7,7 @@ class RoutingWrapper extends StatelessWidget {
   final String route;
   final RoutingAction action;
 
-  const RoutingWrapper(
-      {Key key, this.route, this.child, this.action = RoutingAction.replace})
+  const RoutingWrapper({Key key, this.route, this.child, this.action = RoutingAction.replace})
       : super(key: key);
 
   @override

@@ -1,36 +1,14 @@
 import 'dart:async';
 
 import 'package:app_tcc/models/settings.dart';
-import 'package:app_tcc/models/single_event.dart';
-import 'package:app_tcc/models/user.dart';
 import 'package:app_tcc/modules/auth/auth_repository.dart';
 import 'package:app_tcc/modules/notifications/notifications_service.dart';
 import 'package:app_tcc/modules/profile/link_repository.dart';
 import 'package:app_tcc/modules/user_data/user_data_repository.dart';
 import 'package:app_tcc/utils/inject.dart';
-import 'package:app_tcc/utils/routes.dart';
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
 
-class ProfileState extends Equatable {
-  final SingleEvent<String> route;
-  final User user;
-  final Settings settings;
-  final bool loading;
-
-  ProfileState({this.route, this.user, this.loading = false, this.settings})
-      : super([route, user, loading, settings]);
-  factory ProfileState.initial() => ProfileState();
-  factory ProfileState.login() =>
-      ProfileState(route: SingleEvent(Routes.login));
-
-  ProfileState changeValue({route, user, loading, settings}) => ProfileState(
-        route: route ?? this.route,
-        user: user ?? this.user,
-        settings: settings ?? this.settings,
-        loading: loading ?? this.loading,
-      );
-}
+import 'profile_state.dart';
 
 class _ProfileEvent {}
 
@@ -72,8 +50,7 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
     if (event is _ProfileLogOutEvent) yield* _logoutToState();
     if (event is _UFSCConnectedEvent) yield* _connectedToState(event);
     if (event is _SettingsChangedEvent) yield* _settingsChangedToState(event);
-    if (event is _ToggleNotificationsEvent)
-      yield* _toggleNotificationsToState();
+    if (event is _ToggleNotificationsEvent) yield* _toggleNotificationsToState();
   }
 
   Stream<ProfileState> _connectedToState(_UFSCConnectedEvent event) async* {}
@@ -82,7 +59,7 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
     final settings = currentState.settings;
     final newNotificationsState = !settings.allowNotifications;
     _userData.saveSettings(
-      settings.changeValue(allowNotifications: newNotificationsState),
+      settings.rebuild((b) => b..allowNotifications = newNotificationsState),
     );
     if (newNotificationsState) {
       final subjects = await _userData.subjects;
@@ -96,7 +73,7 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
     _SettingsChangedEvent event,
   ) async* {
     final user = await _userData.currentUser;
-    yield currentState.changeValue(settings: event.settings, user: user);
+    yield currentState.rebuild((b) => b..settings.replace(event.settings)..user.replace(user),);
   }
 
   Stream<ProfileState> _logoutToState() async* {
@@ -114,6 +91,7 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
   }
 
   logOut() => dispatch(_ProfileLogOutEvent());
+
   void toggleNotifications(bool value) => dispatch(_ToggleNotificationsEvent());
 
   _initUniLinks() async {

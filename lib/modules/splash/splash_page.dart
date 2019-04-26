@@ -21,8 +21,8 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) => BlocBuilder(
       bloc: _splashBloc,
-      builder: (context, state) => RoutingWrapper(
-          route: state.route?.value, child: Center(child: Text("Splash"))));
+      builder: (context, state) =>
+          RoutingWrapper(route: state.route?.value, child: Center(child: Text("Splash"))));
 
   @override
   void dispose() {

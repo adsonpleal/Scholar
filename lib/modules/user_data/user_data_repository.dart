@@ -32,9 +32,8 @@ class UserDataRepository {
   }
 
   Future<Stream<List<Subject>>> get subjectsStream async {
-    return (await _subjectsCollections).snapshots().map((snapshot) => snapshot
-        .documents
-        .map((d) => Subject.fromJson(d.data)..documentID = d.documentID)
+    return (await _subjectsCollections).snapshots().map((snapshot) => snapshot.documents
+        .map((d) => Subject.fromJson(d.data).rebuild((b) => b..documentID = d.documentID))
         .toList());
   }
 
@@ -52,21 +51,17 @@ class UserDataRepository {
   }
 
   Future<void> saveSubject(Subject subject) async {
-    (await _subjectsCollections)
-        .document(subject.documentID)
-        .setData(subject.toJson());
+    (await _subjectsCollections).document(subject.documentID).setData(subject.toJson());
   }
 
   Future<User> get currentUser async {
     final user = await _auth.currentUser;
-    return User(email: user.email);
+    return User((b) => b..email = user.email);
   }
 
-  Future<void> replaceSujects(List<Subject> subjects) async {
+  Future<void> replaceSubjects(List<Subject> subjects) async {
     final collection = await _subjectsCollections;
-    (await collection.getDocuments())
-        .documents
-        .forEach((d) async => await d.reference.delete());
+    (await collection.getDocuments()).documents.forEach((d) async => await d.reference.delete());
     subjects.forEach((s) async => await collection.add(s.toJson()));
   }
 }

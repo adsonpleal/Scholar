@@ -6,8 +6,7 @@ class EmailInput extends StatelessWidget {
   final Function(String) validator;
   final Function(String) onSaved;
 
-  const EmailInput({Key key, @required this.validator, @required this.onSaved})
-      : super(key: key);
+  const EmailInput({Key key, @required this.validator, @required this.onSaved}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Padding(

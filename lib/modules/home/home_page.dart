@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'components/subject_item.dart';
 import 'home_bloc.dart';
+import 'home_state.dart';
 
 class HomePage extends StatefulWidget {
   static instantiate() => HomePage();
@@ -46,8 +47,7 @@ class _HomePageState extends State<HomePage> {
                     children: state.subjects
                             ?.map((subject) => SubjectItem(
                                   onAdd: () => _homebloc.addAbsence(subject),
-                                  onRemove: () =>
-                                      _homebloc.removeAbsence(subject),
+                                  onRemove: () => _homebloc.removeAbsence(subject),
                                   subject: subject,
                                 ))
                             ?.toList() ??

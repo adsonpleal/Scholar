@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class AgendaHeader extends StatelessWidget {
   final String weekDay;
   final String formatedDate;
+
   const AgendaHeader({
     Key key,
     this.weekDay,

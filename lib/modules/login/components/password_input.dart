@@ -1,6 +1,7 @@
-import 'package:app_tcc/modules/login/login_signup_bloc.dart';
 import 'package:app_tcc/resources/strings.dart';
 import 'package:flutter/material.dart';
+
+import '../login_signup_state.dart';
 
 class PasswordInput extends StatelessWidget {
   final Function(String) validator;

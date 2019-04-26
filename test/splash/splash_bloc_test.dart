@@ -1,5 +1,6 @@
 import 'package:app_tcc/modules/auth/auth_repository.dart';
 import 'package:app_tcc/modules/splash/splash_bloc.dart';
+import 'package:app_tcc/modules/splash/splash_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kiwi/kiwi.dart';
 import 'package:mockito/mockito.dart';

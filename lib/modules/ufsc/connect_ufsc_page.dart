@@ -20,8 +20,7 @@ class _ConnectUfscPageState extends State<ConnectUfscPage> {
     return BlocBuilder(
         bloc: _bloc,
         builder: (context, ConnectUfscState state) => RoutingWrapper(
-            action:
-                state == ConnectUfscState.connected ? RoutingAction.pop : null,
+            action: state == ConnectUfscState.connected ? RoutingAction.pop : null,
             child: WebviewScaffold(url: subjectUrl)));
   }
 

@@ -13,8 +13,8 @@ import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/routes.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 
 import 'modules/agenda/agenda_module.dart';
 import 'modules/home/home_module.dart';
@@ -28,20 +28,21 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MaterialApp(
-      title: Strings.appName,
-      navigatorObservers: [
-        observer,
-      ],
-      routes: {
-        Routes.root: (c) => SplashPage(),
-        Routes.login: (c) => LoginSignUpPage(),
-        Routes.main: (c) => MainPage(),
-        Routes.connectUfsc: (c) => ConnectUfscPage(),
-        Routes.newEvent: (c) => NewEventPage(),
-      },
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ));
+        title: Strings.appName,
+        navigatorObservers: [
+          observer,
+        ],
+        routes: {
+          Routes.root: (c) => SplashPage(),
+          Routes.login: (c) => LoginSignUpPage(),
+          Routes.main: (c) => MainPage(),
+          Routes.connectUfsc: (c) => ConnectUfscPage(),
+          Routes.newEvent: (c) => NewEventPage(),
+        },
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+      );
 }
 
 void main() {

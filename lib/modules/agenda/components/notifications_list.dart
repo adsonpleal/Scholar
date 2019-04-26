@@ -1,11 +1,12 @@
 import 'package:app_tcc/models/event_notification.dart';
 import 'package:app_tcc/resources/strings.dart';
+import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 
 import 'notification_item.dart';
 
 class NotificationsList extends StatelessWidget {
-  final List<EventNotification> notifications;
+  final BuiltList<EventNotification> notifications;
   final Function onIgnore;
   final Function onAccept;
 
@@ -45,8 +46,7 @@ class NotificationsList extends StatelessWidget {
                 padding: EdgeInsets.all(8),
                 shrinkWrap: true,
                 scrollDirection: Axis.horizontal,
-                itemBuilder: (BuildContext context, int index) =>
-                    NotificationItem(
+                itemBuilder: (BuildContext context, int index) => NotificationItem(
                       notification: notifications[index],
                       onIgnore: onIgnore,
                       onAccept: onAccept,

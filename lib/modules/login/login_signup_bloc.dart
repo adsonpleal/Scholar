@@ -6,40 +6,12 @@ import 'package:app_tcc/resources/strings.dart';
 import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/routes.dart';
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
 
-enum FormMode { login, signUp, resetPassword }
-
-class LoginSignUpState extends Equatable {
-  final bool loading;
-  final FormMode formMode;
-  final String errorMessage;
-  final SingleEvent<String> route;
-  final SingleEvent<bool> showResetPasswordDialog;
-
-  LoginSignUpState(
-      {this.loading = false,
-      this.formMode = FormMode.login,
-      this.showResetPasswordDialog,
-      this.route,
-      this.errorMessage = ""})
-      : super([loading, formMode, errorMessage, route]);
-
-  factory LoginSignUpState.initial() => LoginSignUpState();
-
-  LoginSignUpState changeValue(
-          {loading, formMode, errorMessage, showResetPasswordDialog, route}) =>
-      LoginSignUpState(
-          loading: loading ?? this.loading,
-          formMode: formMode ?? this.formMode,
-          route: route ?? this.route,
-          showResetPasswordDialog:
-              showResetPasswordDialog ?? this.showResetPasswordDialog,
-          errorMessage: errorMessage ?? this.errorMessage);
-}
+import 'login_signup_state.dart';
 
 enum _LoginSignUpEvent { submit, toggleForm, toggleResetPassword }
 
+//TODO: FIX LOGIN ISSUE
 class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
   String _email;
   String _password;
@@ -66,7 +38,9 @@ class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
   }
 
   Stream<LoginSignUpState> _mapSubmitToState() async* {
-    yield currentState.changeValue(loading: true, errorMessage: "");
+    yield currentState.rebuild((b) => b
+      ..loading = true
+      ..errorMessage = null);
     try {
       switch (currentState.formMode) {
         case FormMode.signUp:
@@ -80,43 +54,41 @@ class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
           break;
         case FormMode.resetPassword:
           await _auth.resetPassword(_email);
-          yield currentState.changeValue(
-            loading: false,
-            showResetPasswordDialog: SingleEvent(true),
+          yield currentState.rebuild(
+            (b) => b
+              ..loading = false
+              ..showResetPasswordDialog = SingleEvent(true),
           );
           break;
       }
     } catch (e) {
-      yield currentState.changeValue(
-        loading: false,
-        errorMessage: _errorCodeToMessage(e.code),
-      );
+      yield currentState.rebuild((b) => b
+        ..loading = false
+        ..errorMessage = _errorCodeToMessage(e.code));
     }
   }
 
   Stream<LoginSignUpState> _logUser() async* {
     final subjects = await _userData.subjects;
     if (subjects != null) _notifications.addNotifications(subjects);
-    yield currentState.changeValue(route: SingleEvent(Routes.main));
+    yield currentState.rebuild((b) => b..route = SingleEvent(Routes.main));
   }
 
   Stream<LoginSignUpState> _mapToggleToState() async* {
     final isLogin = currentState.formMode == FormMode.login;
     final formMode = isLogin ? FormMode.signUp : FormMode.login;
-    yield currentState.changeValue(formMode: formMode);
+    yield currentState.rebuild((b) => b..formMode = formMode);
   }
 
   Stream<LoginSignUpState> _mapToggleResetToState() async* {
     final isReset = currentState.formMode == FormMode.resetPassword;
     final formMode = isReset ? FormMode.login : FormMode.resetPassword;
-    yield currentState.changeValue(formMode: formMode);
+    yield currentState.rebuild((b) => b..formMode = formMode);
   }
 
-  String validateEmail(String value) =>
-      value.isEmpty ? Strings.emailCantBeEmpty : null;
+  String validateEmail(String value) => value.isEmpty ? Strings.emailCantBeEmpty : null;
 
-  String validatePassword(String value) =>
-      value.isEmpty ? Strings.passwordCantBeEmpty : null;
+  String validatePassword(String value) => value.isEmpty ? Strings.passwordCantBeEmpty : null;
 
   onEmailSaved(String value) => _email = value;
 
@@ -125,6 +97,7 @@ class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
   submit() => dispatch(_LoginSignUpEvent.submit);
 
   toggleFormMode() => dispatch(_LoginSignUpEvent.toggleForm);
+
   toggleResetPassword() => dispatch(_LoginSignUpEvent.toggleResetPassword);
 
   String _errorCodeToMessage(String code) {

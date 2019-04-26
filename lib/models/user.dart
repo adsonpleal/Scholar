@@ -1,7 +1,13 @@
-import 'package:equatable/equatable.dart';
+library user;
 
-class User extends Equatable {
-  final String email;
+import 'package:built_value/built_value.dart';
 
-  User({this.email}) : super([email]);
+part 'user.g.dart';
+
+abstract class User implements Built<User, UserBuilder> {
+  String get email;
+
+  User._();
+
+  factory User([updates(UserBuilder b)]) = _$User;
 }

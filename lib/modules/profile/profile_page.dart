@@ -1,4 +1,5 @@
 import 'package:app_tcc/modules/profile/profile_bloc.dart';
+import 'package:app_tcc/modules/profile/profile_state.dart';
 import 'package:app_tcc/resources/strings.dart';
 import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/routes.dart';

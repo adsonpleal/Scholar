@@ -6,8 +6,8 @@ import 'package:kiwi/kiwi.dart';
 class AnalyticsInjector {
   void configure() {
     final Container container = Container();
-    container.registerSingleton(
-        (c) => FirebaseAnalyticsObserver(analytics: c<FirebaseAnalytics>()));
+    container
+        .registerSingleton((c) => FirebaseAnalyticsObserver(analytics: c<FirebaseAnalytics>()));
     container.registerSingleton((c) => FirebaseAnalytics());
   }
 }

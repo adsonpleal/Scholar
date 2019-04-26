@@ -7,6 +7,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 class NotificationsService {
   final _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   final _payloadStreamController = StreamController<String>();
+
   Stream<String> get payloadStream => _payloadStreamController.stream;
 
   NotificationsService() {

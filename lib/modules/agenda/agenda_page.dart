@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'agenda_bloc.dart';
+import 'agenda_state.dart';
 import 'components/add_event_dial.dart';
 import 'components/notifications_list.dart';
 import 'components/sliver_event_list.dart';
@@ -29,11 +30,11 @@ class _AgendaPageState extends State<AgendaPage> {
         builder: (context, AgendaState state) => Column(
               children: <Widget>[
                 NotificationsList(
-                  notifications: state.notifications ?? [],
+                  notifications: state.notifications,
                   onAccept: _agendaBloc.onAcceptNotification,
                   onIgnore: _agendaBloc.onIgnoreNotification,
                 ),
-                SliverEventsList(events: state.events ?? []),
+                SliverEventsList(events: state.events),
               ],
             ),
       ),

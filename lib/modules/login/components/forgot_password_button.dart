@@ -1,14 +1,14 @@
-import 'package:app_tcc/modules/login/login_signup_bloc.dart';
 import 'package:app_tcc/resources/strings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import '../login_signup_state.dart';
 
 class ForgotPasswordButton extends StatelessWidget {
   final FormMode formMode;
   final Function() onPressed;
 
-  const ForgotPasswordButton({Key key, this.formMode, this.onPressed})
-      : super(key: key);
+  const ForgotPasswordButton({Key key, this.formMode, this.onPressed}) : super(key: key);
 
   get text {
     if (formMode == FormMode.resetPassword) {
@@ -19,8 +19,7 @@ class ForgotPasswordButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => FlatButton(
-        child: Text(text,
-            style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300)),
+        child: Text(text, style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300)),
         onPressed: onPressed,
       );
 }

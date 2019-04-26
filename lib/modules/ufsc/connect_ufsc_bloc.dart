@@ -27,12 +27,12 @@ class ConnectUfscBloc extends Bloc<_ConnectUfscEvent, ConnectUfscState> {
   @override
   Stream<ConnectUfscState> mapEventToState(_ConnectUfscEvent event) async* {
     final webViewPlugin = FlutterWebviewPlugin();
-    await webViewPlugin.onStateChanged.firstWhere((state) =>
-        state.type == WebViewState.finishLoad && state.url == subjectUrl);
+    await webViewPlugin.onStateChanged
+        .firstWhere((state) => state.type == WebViewState.finishLoad && state.url == subjectUrl);
     final result = await webViewPlugin.evalJavascript(subjectQuery);
     webViewPlugin.cleanCookies();
     final subjects = Subject.fromJsonList(json.decode(result));
-    _userData.replaceSujects(subjects);
+    _userData.replaceSubjects(subjects);
     _notifications.addNotifications(subjects);
     yield ConnectUfscState.connected;
   }
