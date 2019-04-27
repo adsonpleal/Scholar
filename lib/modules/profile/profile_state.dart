@@ -3,7 +3,7 @@ library profile_state;
 import 'package:app_tcc/models/settings.dart';
 import 'package:app_tcc/models/single_event.dart';
 import 'package:app_tcc/models/user.dart';
-import 'package:app_tcc/utils/routes.dart';
+import 'package:app_tcc/utils/routes.dart' as Routes;
 import 'package:built_value/built_value.dart';
 
 part 'profile_state.g.dart';
@@ -22,7 +22,7 @@ abstract class ProfileState implements Built<ProfileState, ProfileStateBuilder> 
 
   ProfileState._();
 
-  factory ProfileState([updates(ProfileStateBuilder b)]) => _$ProfileState((b) => b
+  factory ProfileState([Function(ProfileStateBuilder b) updates]) => _$ProfileState((b) => b
     ..loading = false
     ..update(updates));
 

@@ -1,4 +1,4 @@
-import 'package:app_tcc/resources/strings.dart';
+import 'package:app_tcc/resources/strings.dart' as Strings;
 import 'package:flutter/material.dart';
 
 class InfoAlert extends StatelessWidget {

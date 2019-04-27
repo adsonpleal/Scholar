@@ -78,7 +78,7 @@ abstract class SubjectTime implements Built<SubjectTime, SubjectTimeBuilder> {
 
   Day get dayOfTheWeek => Day(int.parse(weekDay));
 
-  factory SubjectTime([updates(SubjectTimeBuilder b)]) = _$SubjectTime;
+  factory SubjectTime([Function(SubjectTimeBuilder b) updates]) = _$SubjectTime;
 
   Map<String, dynamic> toJson() {
     return serializers.serializeWith(SubjectTime.serializer, this);

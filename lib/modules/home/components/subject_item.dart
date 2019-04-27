@@ -1,11 +1,11 @@
 import 'package:app_tcc/models/subject.dart';
-import 'package:app_tcc/resources/strings.dart';
+import 'package:app_tcc/resources/strings.dart' as Strings;
 import 'package:flutter/material.dart';
 
 class SubjectItem extends StatelessWidget {
   final Subject subject;
-  final Function onAdd;
-  final Function onRemove;
+  final void Function() onAdd;
+  final void Function() onRemove;
 
   const SubjectItem({
     Key key,

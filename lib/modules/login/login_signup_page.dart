@@ -1,6 +1,6 @@
 import 'package:app_tcc/modules/login/components/forgot_password_button.dart';
 import 'package:app_tcc/modules/login/login_signup_bloc.dart';
-import 'package:app_tcc/resources/strings.dart';
+import 'package:app_tcc/resources/strings.dart' as Strings;
 import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/widgets/info_alert.dart';
 import 'package:app_tcc/utils/widgets/loading_wrapper.dart';
@@ -49,7 +49,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
                           child: ListView(
                             shrinkWrap: true,
                             children: <Widget>[
-                              Logo(),
+                              const Logo(),
                               EmailInput(
                                 validator: _loginSignUpBloc.validateEmail,
                                 onSaved: _loginSignUpBloc.onEmailSaved,

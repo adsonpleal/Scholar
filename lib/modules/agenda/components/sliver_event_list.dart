@@ -33,7 +33,7 @@ class SliverEventsList extends StatelessWidget {
           overlapsContent: true,
           header: AgendaHeader(
             weekDay: weekDay,
-            formatedDate: formatedDate,
+            formattedDate: formatedDate,
           ),
           sliver: EventList(events: events),
         );

@@ -14,7 +14,7 @@ abstract class AgendaState implements Built<AgendaState, AgendaStateBuilder> {
 
   AgendaState._();
 
-  factory AgendaState([updates(AgendaStateBuilder b)]) => _$AgendaState((b) => b
+  factory AgendaState([Function(AgendaStateBuilder b) updates]) => _$AgendaState((b) => b
     ..events.replace([])
     ..notifications.replace([])
     ..update(updates));

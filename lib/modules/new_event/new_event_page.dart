@@ -1,7 +1,7 @@
 import 'package:app_tcc/models/event.dart';
 import 'package:app_tcc/models/subject.dart';
-import 'package:app_tcc/resources/strings.dart';
-import 'package:app_tcc/utils/routes.dart';
+import 'package:app_tcc/resources/strings.dart' as Strings;
+import 'package:app_tcc/utils/routes.dart' as Routes;
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 

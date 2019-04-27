@@ -1,5 +1,5 @@
 import 'package:app_tcc/models/event_notification.dart';
-import 'package:app_tcc/resources/strings.dart';
+import 'package:app_tcc/resources/strings.dart' as Strings;
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 
@@ -7,8 +7,8 @@ import 'notification_item.dart';
 
 class NotificationsList extends StatelessWidget {
   final BuiltList<EventNotification> notifications;
-  final Function onIgnore;
-  final Function onAccept;
+  final void Function(EventNotification) onIgnore;
+  final void Function(EventNotification) onAccept;
 
   const NotificationsList({
     Key key,

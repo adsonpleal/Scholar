@@ -25,7 +25,7 @@ abstract class EventNotification implements Built<EventNotification, EventNotifi
 
   EventNotification._();
 
-  factory EventNotification([updates(EventNotificationBuilder b)]) = _$EventNotification;
+  factory EventNotification([Function(EventNotificationBuilder b) updates]) = _$EventNotification;
 
   Map<String, dynamic> toJson() {
     return serializers.serializeWith(EventNotification.serializer, this);

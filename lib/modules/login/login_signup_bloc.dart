@@ -2,9 +2,9 @@ import 'package:app_tcc/models/single_event.dart';
 import 'package:app_tcc/modules/auth/auth_repository.dart';
 import 'package:app_tcc/modules/notifications/notifications_service.dart';
 import 'package:app_tcc/modules/user_data/user_data_repository.dart';
-import 'package:app_tcc/resources/strings.dart';
+import 'package:app_tcc/resources/strings.dart' as Strings;
 import 'package:app_tcc/utils/inject.dart';
-import 'package:app_tcc/utils/routes.dart';
+import 'package:app_tcc/utils/routes.dart' as Routes;
 import 'package:bloc/bloc.dart';
 
 import 'login_signup_state.dart';

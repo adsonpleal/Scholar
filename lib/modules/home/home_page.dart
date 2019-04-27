@@ -1,4 +1,4 @@
-import 'package:app_tcc/resources/strings.dart';
+import 'package:app_tcc/resources/strings.dart' as Strings;
 import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/widgets/info_alert.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +9,7 @@ import 'home_bloc.dart';
 import 'home_state.dart';
 
 class HomePage extends StatefulWidget {
-  static instantiate() => HomePage();
+  static Widget instantiate() => HomePage();
 
   @override
   _HomePageState createState() => _HomePageState();

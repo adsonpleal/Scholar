@@ -1,7 +1,7 @@
 library splash_state;
 
 import 'package:app_tcc/models/single_event.dart';
-import 'package:app_tcc/utils/routes.dart';
+import 'package:app_tcc/utils/routes.dart' as Routes;
 import 'package:built_value/built_value.dart';
 
 part 'splash_state.g.dart';
@@ -12,7 +12,7 @@ abstract class SplashState implements Built<SplashState, SplashStateBuilder> {
 
   SplashState._();
 
-  factory SplashState([updates(SplashStateBuilder b)]) = _$SplashState;
+  factory SplashState([Function(SplashStateBuilder b) updates]) = _$SplashState;
 
   factory SplashState.initial() => SplashState();
 

@@ -1,15 +1,15 @@
 import 'package:app_tcc/modules/agenda/agenda_page.dart';
 import 'package:app_tcc/modules/home/home_page.dart';
 import 'package:app_tcc/modules/profile/profile_page.dart';
-import 'package:app_tcc/resources/strings.dart';
+import 'package:app_tcc/resources/strings.dart' as Strings;
 import 'package:app_tcc/utils/inject.dart';
-import 'package:app_tcc/utils/routes.dart';
+import 'package:app_tcc/utils/routes.dart' as Routes;
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 
 class Tab {
   final String title;
-  final Function page;
+  final Widget Function() page;
   final String route;
   final IconData icon;
 

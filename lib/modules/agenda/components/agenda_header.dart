@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 class AgendaHeader extends StatelessWidget {
   final String weekDay;
-  final String formatedDate;
+  final String formattedDate;
 
   const AgendaHeader({
     Key key,
     this.weekDay,
-    this.formatedDate,
+    this.formattedDate,
   }) : super(key: key);
 
   @override
@@ -29,7 +29,7 @@ class AgendaHeader extends StatelessWidget {
                   weekDay,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                Text(formatedDate),
+                Text(formattedDate),
               ],
             ),
           ),

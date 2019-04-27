@@ -12,7 +12,7 @@ abstract class Settings implements Built<Settings, SettingsBuilder> {
 
   Settings._();
 
-  factory Settings([updates(SettingsBuilder b)]) => _$Settings((b) => b
+  factory Settings([Function(SettingsBuilder b) updates]) => _$Settings((b) => b
     ..allowNotifications = true
     ..update(updates));
 

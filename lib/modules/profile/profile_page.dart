@@ -1,15 +1,15 @@
 import 'package:app_tcc/modules/profile/profile_bloc.dart';
 import 'package:app_tcc/modules/profile/profile_state.dart';
-import 'package:app_tcc/resources/strings.dart';
+import 'package:app_tcc/resources/strings.dart' as Strings;
 import 'package:app_tcc/utils/inject.dart';
-import 'package:app_tcc/utils/routes.dart';
+import 'package:app_tcc/utils/routes.dart' as Routes;
 import 'package:app_tcc/utils/widgets/loading_wrapper.dart';
 import 'package:app_tcc/utils/widgets/routing_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfilePage extends StatefulWidget {
-  static instantiate() => ProfilePage();
+  static Widget instantiate() => ProfilePage();
 
   @override
   _ProfilePageState createState() => _ProfilePageState();

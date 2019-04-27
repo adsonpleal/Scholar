@@ -1,11 +1,11 @@
 import 'package:app_tcc/models/event_notification.dart';
-import 'package:app_tcc/resources/strings.dart';
+import 'package:app_tcc/resources/strings.dart' as Strings;
 import 'package:flutter/material.dart';
 
 class NotificationItem extends StatelessWidget {
   final EventNotification notification;
-  final Function onIgnore;
-  final Function onAccept;
+  final void Function(EventNotification) onIgnore;
+  final void Function(EventNotification) onAccept;
 
   const NotificationItem({
     Key key,

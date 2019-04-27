@@ -1,10 +1,11 @@
-import 'package:app_tcc/resources/strings.dart';
+import 'package:app_tcc/resources/strings.dart' as Strings;
+import 'package:app_tcc/utils/action.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class EmailInput extends StatelessWidget {
-  final Function(String) validator;
-  final Function(String) onSaved;
+  final String Function(String) validator;
+  final Action<String> onSaved;
 
   const EmailInput({Key key, @required this.validator, @required this.onSaved}) : super(key: key);
 

@@ -3,7 +3,7 @@ import 'package:app_tcc/modules/login/login_signup_bloc.dart';
 import 'package:app_tcc/modules/login/login_signup_state.dart';
 import 'package:app_tcc/modules/notifications/notifications_service.dart';
 import 'package:app_tcc/modules/user_data/user_data_repository.dart';
-import 'package:app_tcc/resources/strings.dart';
+import 'package:app_tcc/resources/strings.dart' as Strings;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kiwi/kiwi.dart';
 import 'package:mockito/mockito.dart';

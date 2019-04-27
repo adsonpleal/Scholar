@@ -35,7 +35,7 @@ abstract class Subject implements Built<Subject, SubjectBuilder> {
 
   Subject._();
 
-  factory Subject([updates(SubjectBuilder b)]) = _$Subject;
+  factory Subject([Function(SubjectBuilder b) updates]) = _$Subject;
 
   Map<String, dynamic> toJson() {
     return serializers.serializeWith(Subject.serializer, this);

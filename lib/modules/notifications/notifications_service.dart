@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:app_tcc/models/subject.dart';
-import 'package:app_tcc/resources/strings.dart';
+import 'package:app_tcc/resources/strings.dart' as Strings;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationsService {

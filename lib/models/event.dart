@@ -19,7 +19,7 @@ abstract class Event implements Built<Event, EventBuilder> {
 
   Event._();
 
-  factory Event([updates(EventBuilder b)]) = _$Event;
+  factory Event([Function(EventBuilder b) updates]) = _$Event;
 
   Map<String, dynamic> toJson() {
     return serializers.serializeWith(Event.serializer, this);

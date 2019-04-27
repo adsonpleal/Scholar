@@ -27,7 +27,7 @@ abstract class LoginSignUpState implements Built<LoginSignUpState, LoginSignUpSt
 
   LoginSignUpState._();
 
-  factory LoginSignUpState([updates(LoginSignUpStateBuilder b)]) => _$LoginSignUpState((b) => b
+  factory LoginSignUpState([Function(LoginSignUpStateBuilder b) updates]) => _$LoginSignUpState((b) => b
     ..formMode = FormMode.login
     ..loading = false
     ..update(updates));

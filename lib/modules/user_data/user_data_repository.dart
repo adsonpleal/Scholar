@@ -9,22 +9,21 @@ class UserDataRepository {
   final AuthRepository _auth = inject();
   final Firestore _store = inject();
 
-  Future<DocumentReference> get userDocumment async {
+  Future<DocumentReference> get userDocument async {
     final user = await _auth.currentUser;
     return _store.collection('users').document(user.uid);
   }
 
-  Future<DocumentReference> getDocumment(String collection) async {
-    final user = await _auth.currentUser;
-    return _store.collection(collection).document(user.uid);
+  Future<CollectionReference> collection(String name) async {
+    return (await userDocument).collection(name);
   }
 
-  Future<CollectionReference> get _subjectsCollections async {
-    return (await userDocumment).collection('subjects');
-  }
+  get _subjectsCollections => collection('subjects');
+
+  get _eventsCollections => collection('events');
 
   Future<Stream<Settings>> get settingsStream async {
-    final document = await userDocumment;
+    final document = await userDocument;
     return document.snapshots().map((s) {
       final data = Map<String, dynamic>.from(s.data['settings'] ?? {});
       return Settings.fromJson(data);
@@ -43,7 +42,7 @@ class UserDataRepository {
   }
 
   Future<void> saveSettings(Settings settings) async {
-    final document = await userDocumment;
+    final document = await userDocument;
     await document.setData(
       {"settings": settings.toJson()},
       merge: true,

@@ -1,11 +1,11 @@
-import 'package:app_tcc/resources/strings.dart';
+import 'package:app_tcc/resources/strings.dart' as Strings;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../login_signup_state.dart';
 
 class PrimaryButton extends StatelessWidget {
-  final Function() onPressed;
+  final void Function() onPressed;
   final FormMode formMode;
 
   const PrimaryButton({Key key, this.onPressed, this.formMode}) : super(key: key);
