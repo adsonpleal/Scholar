@@ -8,6 +8,8 @@ import 'package:bloc/bloc.dart';
 
 import 'home_state.dart';
 
+// TODO: refactor event class to extend BlocEvent
+
 class _HomeEvent {}
 
 class _SubjectChangedEvent extends _HomeEvent {

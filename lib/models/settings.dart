@@ -12,9 +12,7 @@ abstract class Settings implements Built<Settings, SettingsBuilder> {
 
   Settings._();
 
-  factory Settings([Function(SettingsBuilder b) updates]) => _$Settings((b) => b
-    ..allowNotifications = true
-    ..update(updates));
+  factory Settings([Function(SettingsBuilder b) updates]) = _$Settings;
 
   Map<String, dynamic> toJson() {
     return serializers.serializeWith(Settings.serializer, this);

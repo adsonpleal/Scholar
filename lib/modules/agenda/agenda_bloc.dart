@@ -2,36 +2,22 @@ import 'dart:async';
 
 import 'package:app_tcc/models/event.dart';
 import 'package:app_tcc/models/event_notification.dart';
+import 'package:app_tcc/modules/base/bloc_event.dart';
 import 'package:app_tcc/modules/user_data/user_data_repository.dart';
 import 'package:app_tcc/utils/inject.dart';
 import 'package:bloc/bloc.dart';
 
 import 'agenda_state.dart';
 
-class _AgendaEvent {}
-
-class _AcceptNotificationEvent extends _AgendaEvent {
-  final EventNotification notification;
-
-  _AcceptNotificationEvent(this.notification);
+enum _AgendaEventType {
+  acceptNotification,
+  rejectNotification,
+  eventsChanged,
+  notificationsChanged,
 }
 
-class _EventsChangedEvent extends _AgendaEvent {
-  final List<Event> events;
-
-  _EventsChangedEvent(this.events);
-}
-
-class _NotificationsChangedEvent extends _AgendaEvent {
-  final List<EventNotification> notifications;
-
-  _NotificationsChangedEvent(this.notifications);
-}
-
-class _RejectNotificationEvent extends _AgendaEvent {
-  final EventNotification notification;
-
-  _RejectNotificationEvent(this.notification);
+class _AgendaEvent extends BlocEvent<_AgendaEventType> {
+  _AgendaEvent({type, payload}) : super(type, payload);
 }
 
 class AgendaBloc extends Bloc<_AgendaEvent, AgendaState> {
@@ -47,39 +33,63 @@ class AgendaBloc extends Bloc<_AgendaEvent, AgendaState> {
   AgendaState get initialState => AgendaState.initial();
 
   @override
-  Stream<AgendaState> mapEventToState(_AgendaEvent e) async* {
-    if (e is _EventsChangedEvent) yield* _eventsChangedToState(e.events);
-    if (e is _NotificationsChangedEvent) yield* _notificationsChangedToState(e.notifications);
-    if (e is _AcceptNotificationEvent) yield* _acceptNotificationToState(e.notification);
-    if (e is _RejectNotificationEvent) yield* _rejectNotificationToState(e.notification);
+  Stream<AgendaState> mapEventToState(_AgendaEvent event) async* {
+    switch (event.type) {
+      case _AgendaEventType.acceptNotification:
+        yield* _acceptNotificationToState(event.payload);
+        break;
+      case _AgendaEventType.rejectNotification:
+        yield* _rejectNotificationToState(event.payload);
+        break;
+      case _AgendaEventType.eventsChanged:
+        yield* _eventsChangedToState(event.payload);
+        break;
+      case _AgendaEventType.notificationsChanged:
+        yield* _notificationsChangedToState(event.payload);
+        break;
+    }
   }
 
   Stream<AgendaState> _acceptNotificationToState(
     EventNotification notification,
   ) async* {
-    yield currentState.rebuild((b) => b
-      ..notifications.remove(notification)
-      ..events.add(notification.event));
+    yield currentState.startLoading();
+    await _userData.removeNotification(notification);
+    await _userData.createEvent(
+      notification.event.rebuild((b) => b..fromNotification = true),
+    );
+    yield currentState.stopLoading();
   }
 
-  Stream<AgendaState> _rejectNotificationToState(EventNotification notification) async* {
-    yield currentState.rebuild((b) => b..notifications.remove(notification));
+  Stream<AgendaState> _rejectNotificationToState(
+    EventNotification notification,
+  ) async* {
+    yield currentState.startLoading();
+    await _userData.removeNotification(notification);
+    yield currentState.stopLoading();
   }
 
   Stream<AgendaState> _eventsChangedToState(List<Event> events) async* {
     yield currentState.rebuild((b) => b..events.replace(events));
   }
 
-  Stream<AgendaState> _notificationsChangedToState(List<EventNotification> notifications) async* {
+  Stream<AgendaState> _notificationsChangedToState(
+      List<EventNotification> notifications) async* {
     yield currentState.rebuild((b) => b..notifications.replace(notifications));
   }
 
   void onAcceptNotification(EventNotification notification) {
-    dispatch(_AcceptNotificationEvent(notification));
+    dispatch(_AgendaEvent(
+      type: _AgendaEventType.acceptNotification,
+      payload: notification,
+    ));
   }
 
   void onIgnoreNotification(EventNotification notification) {
-    dispatch(_RejectNotificationEvent(notification));
+    dispatch(_AgendaEvent(
+      type: _AgendaEventType.rejectNotification,
+      payload: notification,
+    ));
   }
 
   @override
@@ -92,9 +102,17 @@ class AgendaBloc extends Bloc<_AgendaEvent, AgendaState> {
   Future<void> _startStreams() async {
     final eventsStream = await _userData.eventsStream;
     final notificationsStream = await _userData.notificationsStream;
-    _eventsSubscription = eventsStream.listen((e) => dispatch(_EventsChangedEvent(e)));
-    _notificationsSubscription = notificationsStream.listen((e) => dispatch(
-          _NotificationsChangedEvent(e),
-        ));
+    _eventsSubscription = eventsStream.listen((events) {
+      dispatch(_AgendaEvent(
+        type: _AgendaEventType.eventsChanged,
+        payload: events,
+      ));
+    });
+    _notificationsSubscription = notificationsStream.listen((notifications) {
+      dispatch(_AgendaEvent(
+        type: _AgendaEventType.notificationsChanged,
+        payload: notifications,
+      ));
+    });
   }
 }

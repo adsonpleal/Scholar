@@ -11,7 +11,6 @@ import 'login_signup_state.dart';
 
 enum _LoginSignUpEvent { submit, toggleForm, toggleResetPassword }
 
-//TODO: FIX LOGIN ISSUE
 class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
   String _email;
   String _password;
@@ -46,11 +45,11 @@ class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
         case FormMode.signUp:
           await _auth.signUp(_email, _password);
           _auth.sendEmailVerification();
-          _logUser();
+          yield* _logUser();
           break;
         case FormMode.login:
           await _auth.signIn(_email, _password);
-          _logUser();
+          yield* _logUser();
           break;
         case FormMode.resetPassword:
           await _auth.resetPassword(_email);

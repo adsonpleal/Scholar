@@ -11,6 +11,8 @@ import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
 enum ConnectUfscState { initial, connected }
 
+// TODO: refactor event class to extend BlocEvent
+
 class _ConnectUfscEvent {}
 
 class ConnectUfscBloc extends Bloc<_ConnectUfscEvent, ConnectUfscState> {

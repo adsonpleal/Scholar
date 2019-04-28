@@ -73,7 +73,7 @@ class _NewEventPageState extends State<NewEventPage> {
       formState.save();
       final event = Event((b) => b
         ..date = _date
-        ..subjectCode = _subject.code
+        ..subject.replace(_subject)
         ..type = _eventType
         ..description = _description);
       _newEventBloc.createEvent(event);

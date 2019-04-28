@@ -1,5 +1,6 @@
 library event;
 
+import 'package:app_tcc/models/subject.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
@@ -9,18 +10,17 @@ import 'serializers.dart';
 part 'event.g.dart';
 
 abstract class Event implements Built<Event, EventBuilder> {
-
   DateTime get date;
-
-  String get subjectCode;
-
+  Subject get subject;
   String get description;
-
   EventType get type;
+  bool get fromNotification;
 
   Event._();
 
-  factory Event([Function(EventBuilder b) updates]) = _$Event;
+  factory Event([Function(EventBuilder b) updates]) => _$Event((b) => b
+    ..fromNotification = false
+    ..update(updates));
 
   Map<String, dynamic> toJson() {
     return serializers.serializeWith(Event.serializer, this);

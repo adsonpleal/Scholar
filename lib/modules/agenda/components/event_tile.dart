@@ -20,7 +20,7 @@ class EventTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                Strings.eventTitle(event.subjectCode, event.type),
+                Strings.eventTitle(event.subject.code, event.type),
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               Text(

@@ -10,6 +10,8 @@ import 'package:bloc/bloc.dart';
 
 import 'profile_state.dart';
 
+// TODO: refactor event class to extend BlocEvent
+
 class _ProfileEvent {}
 
 class _ProfileLogOutEvent extends _ProfileEvent {}

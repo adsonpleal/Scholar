@@ -281,7 +281,7 @@ String eventStart(Event event) => Intl.message(
     );
 
 String notificationSubtitle(Event event) => Intl.message(
-      "${event.subjectCode} ${DateFormat.MMMd().format(event.date)} ${eventStart(event)}",
+      "${event.subject.code} ${DateFormat.MMMd().format(event.date)} ${eventStart(event)}",
       name: "notificationSubtitle",
       args: [event],
     );
