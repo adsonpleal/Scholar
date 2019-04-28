@@ -9,6 +9,7 @@ import 'serializers.dart';
 part 'event.g.dart';
 
 abstract class Event implements Built<Event, EventBuilder> {
+
   DateTime get date;
 
   String get subjectCode;

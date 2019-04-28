@@ -1,52 +1,25 @@
 import 'package:app_tcc/models/event.dart';
 import 'package:app_tcc/models/subject.dart';
 import 'package:app_tcc/resources/strings.dart' as Strings;
-import 'package:app_tcc/utils/routes.dart' as Routes;
-import 'package:built_collection/built_collection.dart';
+import 'package:app_tcc/utils/inject.dart';
+import 'package:app_tcc/utils/widgets/loading_wrapper.dart';
+import 'package:app_tcc/utils/widgets/routing_wrapper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'new_event_bloc.dart';
+import 'new_event_state.dart';
 
 class NewEventPage extends StatefulWidget {
   @override
   _NewEventPageState createState() => _NewEventPageState();
 }
 
-// TODO: fetch real data for subjects
-final List<Subject> _subjects = [
-  Subject((b) => b
-    ..name = "test1"
-    ..code = "11111"
-    ..classGroup = ""
-    ..weeklyClassCount = 1
-    ..absenceCount = 1
-    ..times = ListBuilder()),
-  Subject((b) => b
-    ..name = "test2"
-    ..code = "22222"
-    ..classGroup = ""
-    ..weeklyClassCount = 0
-    ..absenceCount = 0
-    ..times = ListBuilder()),
-  Subject((b) => b
-    ..name = "test3"
-    ..code = "33333"
-    ..classGroup = ""
-    ..weeklyClassCount = 1
-    ..absenceCount = 2
-    ..times = ListBuilder()),
-  Subject((b) => b
-    ..name = "test4"
-    ..code = "4444"
-    ..classGroup = ""
-    ..weeklyClassCount = 2
-    ..absenceCount = 1
-    ..times = ListBuilder()),
-];
-
 class _NewEventPageState extends State<NewEventPage> {
+  final NewEventBloc _newEventBloc = inject();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  // TODO: fetch real data for subjects
-  Subject _subject = _subjects[0];
+  Subject _subject;
   String _description = '';
   DateTime _date;
   EventType _eventType;
@@ -57,7 +30,7 @@ class _NewEventPageState extends State<NewEventPage> {
     DateTime picked = await showDatePicker(
       context: context,
       initialDate: now,
-      firstDate: DateTime(now.year),
+      firstDate: now,
       lastDate: DateTime(now.year + 1),
     );
     if (picked != null) {
@@ -103,9 +76,7 @@ class _NewEventPageState extends State<NewEventPage> {
         ..subjectCode = _subject.code
         ..type = _eventType
         ..description = _description);
-      // TODO: save event
-      print(event);
-      Routes.pop(context);
+      _newEventBloc.createEvent(event);
     }
   }
 
@@ -121,79 +92,100 @@ class _NewEventPageState extends State<NewEventPage> {
       body: SafeArea(
           top: false,
           bottom: false,
-          child: Form(
-              key: _formKey,
-              onChanged: () => _formKey.currentState.validate(),
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                children: <Widget>[
-                  TextFormField(
-                    onSaved: _onDescriptionChanged,
-                    validator: _validateNotEmpty(Strings.descriptionCantBeEmpty),
-                    decoration: InputDecoration(
-                      icon: Icon(Icons.short_text),
-                      hintText: Strings.eventDescriptionHint,
-                      labelText: Strings.description,
-                    ),
-                  ),
-                  FormField(
-                    builder: (FormFieldState state) {
-                      return InputDecorator(
-                        decoration: InputDecoration(
-                          icon: const Icon(Icons.class_),
-                          labelText: Strings.subject,
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton(
-                            value: _subject,
-                            isDense: true,
-                            onChanged: _onSubjectChanged,
-                            items: _subjects
-                                .map((Subject subject) => DropdownMenuItem(
-                                      value: subject,
-                                      child: Text(subject.name),
-                                    ))
-                                .toList(),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  InkWell(
-                    onTap: _selectDate,
-                    child: IgnorePointer(
-                      child: TextFormField(
-                        validator: _validateNotEmpty(Strings.dateCantBeEmpty),
-                        controller: dateTextController,
-                        decoration: InputDecoration(
-                          icon: Icon(Icons.calendar_today),
-                          labelText: Strings.date,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 45),
-                    child: SizedBox(
-                      height: 40.0,
-                      child: RaisedButton(
-                          elevation: 5.0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                          ),
-                          color: Colors.blue,
-                          child: Text(
-                            Strings.send,
-                            style: TextStyle(
-                              fontSize: 20.0,
-                              color: Colors.white,
+          child: BlocBuilder(
+            bloc: _newEventBloc,
+            builder: (context, NewEventState newEventState) {
+              _subject ??= newEventState.subjects?.first;
+              return LoadingWrapper(
+                isLoading: newEventState.loading,
+                child: RoutingWrapper(
+                  pop: newEventState.created,
+                  child: Visibility(
+                    visible: newEventState.subjects != null,
+                    child: Form(
+                        key: _formKey,
+                        onChanged: () => _formKey.currentState.validate(),
+                        child: ListView(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          children: <Widget>[
+                            TextFormField(
+                              onSaved: _onDescriptionChanged,
+                              validator: _validateNotEmpty(Strings.descriptionCantBeEmpty),
+                              decoration: InputDecoration(
+                                icon: Icon(Icons.short_text),
+                                hintText: Strings.eventDescriptionHint,
+                                labelText: Strings.description,
+                              ),
                             ),
-                          ),
-                          onPressed: _submit),
-                    ),
+                            FormField(
+                              builder: (FormFieldState state) {
+                                return InputDecorator(
+                                  decoration: InputDecoration(
+                                    icon: const Icon(Icons.class_),
+                                    labelText: Strings.subject,
+                                  ),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton(
+                                      value: _subject,
+                                      isExpanded: true,
+                                      onChanged: _onSubjectChanged,
+                                      items: newEventState.subjects
+                                          .map((Subject subject) => DropdownMenuItem(
+                                                value: subject,
+                                                child: Text(subject.name),
+                                              ))
+                                          .toList(),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            InkWell(
+                              onTap: _selectDate,
+                              child: IgnorePointer(
+                                child: TextFormField(
+                                  validator: _validateNotEmpty(Strings.dateCantBeEmpty),
+                                  controller: dateTextController,
+                                  decoration: InputDecoration(
+                                    icon: Icon(Icons.calendar_today),
+                                    labelText: Strings.date,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(top: 45),
+                              child: SizedBox(
+                                height: 40.0,
+                                child: RaisedButton(
+                                    elevation: 5.0,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30.0),
+                                    ),
+                                    color: Colors.blue,
+                                    child: Text(
+                                      Strings.send,
+                                      style: TextStyle(
+                                        fontSize: 20.0,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    onPressed: _submit),
+                              ),
+                            ),
+                          ],
+                        )),
                   ),
-                ],
-              ))),
+                ),
+              );
+            },
+          )),
     );
+  }
+
+  @override
+  void dispose() {
+    _newEventBloc.dispose();
+    super.dispose();
   }
 }

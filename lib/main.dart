@@ -18,6 +18,7 @@ import 'package:intl/intl.dart';
 
 import 'modules/agenda/agenda_module.dart';
 import 'modules/home/home_module.dart';
+import 'modules/new_event/new_event_module.dart';
 import 'modules/new_event/new_event_page.dart';
 import 'modules/notifications/notifications_module.dart';
 import 'modules/ufsc/connect_ufsc_module.dart';
@@ -62,11 +63,12 @@ void setupModules() {
     AnalyticsModule(),
     UserDataModule(),
     SplashModule(),
-    LoginSignUModule(),
+    LoginSignUpModule(),
     ProfileModule(),
     ConnectUfscModule(),
     HomeModule(),
     NotificationModule(),
     AgendaModule(),
+    NewEventModule(),
   ].forEach((module) => module.setup());
 }

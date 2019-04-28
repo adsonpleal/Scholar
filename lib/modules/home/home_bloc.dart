@@ -32,7 +32,7 @@ class _RemoveAbsenceEvent extends _HomeEvent {
 
 class HomeBloc extends Bloc<_HomeEvent, HomeState> {
   final UserDataRepository _userData = inject();
-  StreamSubscription _subjectsSub;
+  StreamSubscription<List<Subject>> _subjectsSubscription;
 
   HomeBloc() {
     _initSubjectsStream();
@@ -63,7 +63,7 @@ class HomeBloc extends Bloc<_HomeEvent, HomeState> {
 
   void _initSubjectsStream() async {
     final subjectsStream = await _userData.subjectsStream;
-    _subjectsSub = await subjectsStream?.forEach((s) => dispatch(_SubjectChangedEvent(s)));
+    _subjectsSubscription = subjectsStream?.listen((s) => dispatch(_SubjectChangedEvent(s)));
   }
 
   void addAbsence(Subject subject) => dispatch(_AddAbsenceEvent(subject));
@@ -74,7 +74,7 @@ class HomeBloc extends Bloc<_HomeEvent, HomeState> {
 
   @override
   void dispose() {
-    _subjectsSub?.cancel();
+    _subjectsSubscription?.cancel();
     super.dispose();
   }
 }

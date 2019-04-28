@@ -4,15 +4,15 @@ import 'package:kiwi/kiwi.dart';
 
 part 'login_signup_module.g.dart';
 
-abstract class LoginSignUInjector {
+abstract class LoginSignUpInjector {
   @Register.factory(LoginSignUpBloc)
   void configure();
 }
 
-class LoginSignUModule extends Module {
+class LoginSignUpModule extends Module {
   @override
   void setup() {
-    var injector = _$LoginSignUInjector();
+    var injector = _$LoginSignUpInjector();
     injector.configure();
   }
 }

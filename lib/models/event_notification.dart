@@ -14,12 +14,16 @@ library event_notification;
 
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
+
 import 'event.dart';
 import 'serializers.dart';
 
 part 'event_notification.g.dart';
 
 abstract class EventNotification implements Built<EventNotification, EventNotificationBuilder> {
+  @BuiltValueField(serialize: false)
+  @nullable
+  String get documentID;
 
   Event get event;
 
@@ -36,5 +40,4 @@ abstract class EventNotification implements Built<EventNotification, EventNotifi
   }
 
   static Serializer<EventNotification> get serializer => _$eventNotificationSerializer;
-
 }

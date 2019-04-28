@@ -34,11 +34,11 @@ class NotificationItem extends StatelessWidget {
                 children: <Widget>[
                   FlatButton(
                     child: Text(Strings.rejectNotification),
-                    onPressed: () => onAccept(notification),
+                    onPressed: () => onIgnore(notification),
                   ),
                   FlatButton(
                     child: Text(Strings.acceptNotification),
-                    onPressed: () => onIgnore(notification),
+                    onPressed: () => onAccept(notification),
                   ),
                 ],
               ),

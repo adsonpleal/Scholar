@@ -1,3 +1,5 @@
+import 'package:app_tcc/models/event.dart';
+import 'package:app_tcc/models/event_notification.dart';
 import 'package:app_tcc/models/settings.dart';
 import 'package:app_tcc/models/subject.dart';
 import 'package:app_tcc/models/user.dart';
@@ -18,9 +20,11 @@ class UserDataRepository {
     return (await userDocument).collection(name);
   }
 
-  get _subjectsCollections => collection('subjects');
+  Future<CollectionReference> get _subjectsCollection => collection('subjects');
 
-  get _eventsCollections => collection('events');
+  Future<CollectionReference> get _eventsCollection => collection('events');
+
+  Future<CollectionReference> get _notificationsCollection => collection('notifications');
 
   Future<Stream<Settings>> get settingsStream async {
     final document = await userDocument;
@@ -30,28 +34,38 @@ class UserDataRepository {
     });
   }
 
+  Future<Stream<List<Event>>> get eventsStream async {
+    return (await _eventsCollection)
+        .snapshots()
+        .map((snapshot) => snapshot.documents.map((d) => Event.fromJson(d.data)).toList());
+  }
+
+  Future<Stream<List<EventNotification>>> get notificationsStream async {
+    return (await _notificationsCollection).snapshots().map((snapshot) => snapshot.documents
+        .map((d) => EventNotification.fromJson(d.data).rebuild((b) => b..documentID = d.documentID))
+        .toList());
+  }
+
   Future<Stream<List<Subject>>> get subjectsStream async {
-    return (await _subjectsCollections).snapshots().map((snapshot) => snapshot.documents
+    return (await _subjectsCollection).snapshots().map((snapshot) => snapshot.documents
         .map((d) => Subject.fromJson(d.data).rebuild((b) => b..documentID = d.documentID))
         .toList());
   }
 
-  Future<List<Subject>> get subjects async {
-    final stream = await subjectsStream;
-    return await stream.first;
-  }
+  Future<List<Subject>> get subjects async => (await subjectsStream).first;
 
   Future<void> saveSettings(Settings settings) async {
-    final document = await userDocument;
-    await document.setData(
+    (await userDocument).setData(
       {"settings": settings.toJson()},
       merge: true,
     );
   }
 
   Future<void> saveSubject(Subject subject) async {
-    (await _subjectsCollections).document(subject.documentID).setData(subject.toJson());
+    (await _subjectsCollection).document(subject.documentID).setData(subject.toJson());
   }
+
+  Future<void> createEvent(Event event) async => (await _eventsCollection).add(event.toJson());
 
   Future<User> get currentUser async {
     final user = await _auth.currentUser;
@@ -59,7 +73,7 @@ class UserDataRepository {
   }
 
   Future<void> replaceSubjects(List<Subject> subjects) async {
-    final collection = await _subjectsCollections;
+    final collection = await _subjectsCollection;
     (await collection.getDocuments()).documents.forEach((d) async => await d.reference.delete());
     subjects.forEach((s) async => await collection.add(s.toJson()));
   }

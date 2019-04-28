@@ -34,8 +34,8 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
   final UserDataRepository _userData = inject();
   final LinkRepository _link = inject();
   final NotificationsService _notifications = inject();
-  StreamSubscription<Uri> _linksSub;
-  StreamSubscription<Settings> _settingsSub;
+  StreamSubscription<Uri> _linksSubscription;
+  StreamSubscription<Settings> _settingsSubscription;
 
   ProfileBloc() {
     _initUniLinks();
@@ -73,7 +73,9 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
     _SettingsChangedEvent event,
   ) async* {
     final user = await _userData.currentUser;
-    yield currentState.rebuild((b) => b..settings.replace(event.settings)..user.replace(user),);
+    yield currentState.rebuild(
+      (b) => b..settings.replace(event.settings)..user.replace(user),
+    );
   }
 
   Stream<ProfileState> _logoutToState() async* {
@@ -84,8 +86,8 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
 
   @override
   dispose() {
-    _linksSub?.cancel();
-    _settingsSub?.cancel();
+    _linksSubscription?.cancel();
+    _settingsSubscription?.cancel();
     _notifications.dispose();
     super.dispose();
   }
@@ -95,17 +97,17 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
   void toggleNotifications(bool value) => dispatch(_ToggleNotificationsEvent());
 
   _initUniLinks() async {
-    _linksSub = await _link.uriLinksStream.map((Uri uri) {
+    _linksSubscription = _link.uriLinksStream.listen((Uri uri) {
       final params = uri.queryParameters;
       final code = params['code'];
       final state = params['state'];
-      return _UFSCConnectedEvent(code, state);
-    })?.forEach(dispatch);
+      dispatch(_UFSCConnectedEvent(code, state));
+    });
   }
 
   _trackUserData() async {
     final settingsStream = await _userData.settingsStream;
-    _settingsSub = await settingsStream?.forEach((settings) => dispatch(
+    _settingsSubscription = settingsStream?.listen((settings) => dispatch(
           _SettingsChangedEvent(settings),
         ));
   }
