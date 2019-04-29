@@ -1,7 +1,5 @@
 import 'package:app_tcc/models/single_event.dart';
 import 'package:app_tcc/modules/auth/auth_repository.dart';
-import 'package:app_tcc/modules/notifications/notifications_service.dart';
-import 'package:app_tcc/modules/user_data/user_data_repository.dart';
 import 'package:app_tcc/resources/strings.dart' as Strings;
 import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/routes.dart' as Routes;
@@ -16,8 +14,6 @@ class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
   String _password;
 
   final AuthRepository _auth = inject();
-  final NotificationsService _notifications = inject();
-  final UserDataRepository _userData = inject();
 
   @override
   LoginSignUpState get initialState => LoginSignUpState.initial();
@@ -68,8 +64,6 @@ class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
   }
 
   Stream<LoginSignUpState> _logUser() async* {
-    final subjects = await _userData.subjects;
-    if (subjects != null) _notifications.addNotifications(subjects);
     yield currentState.rebuild((b) => b..route = SingleEvent(Routes.main));
   }
 
@@ -85,9 +79,11 @@ class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
     yield currentState.rebuild((b) => b..formMode = formMode);
   }
 
-  String validateEmail(String value) => value.isEmpty ? Strings.emailCantBeEmpty : null;
+  String validateEmail(String value) =>
+      value.isEmpty ? Strings.emailCantBeEmpty : null;
 
-  String validatePassword(String value) => value.isEmpty ? Strings.passwordCantBeEmpty : null;
+  String validatePassword(String value) =>
+      value.isEmpty ? Strings.passwordCantBeEmpty : null;
 
   onEmailSaved(String value) => _email = value;
 
@@ -116,11 +112,5 @@ class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
       default:
         return Strings.unknownError;
     }
-  }
-
-  @override
-  void dispose() {
-    _notifications.dispose();
-    super.dispose();
   }
 }

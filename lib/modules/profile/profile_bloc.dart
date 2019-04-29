@@ -40,6 +40,7 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
   StreamSubscription<Settings> _settingsSubscription;
 
   ProfileBloc() {
+    _setupNotifications();
     _initUniLinks();
     _trackUserData();
   }
@@ -52,7 +53,8 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
     if (event is _ProfileLogOutEvent) yield* _logoutToState();
     if (event is _UFSCConnectedEvent) yield* _connectedToState(event);
     if (event is _SettingsChangedEvent) yield* _settingsChangedToState(event);
-    if (event is _ToggleNotificationsEvent) yield* _toggleNotificationsToState();
+    if (event is _ToggleNotificationsEvent)
+      yield* _toggleNotificationsToState();
   }
 
   Stream<ProfileState> _connectedToState(_UFSCConnectedEvent event) async* {}
@@ -63,12 +65,7 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
     _userData.saveSettings(
       settings.rebuild((b) => b..allowNotifications = newNotificationsState),
     );
-    if (newNotificationsState) {
-      final subjects = await _userData.subjects;
-      if (subjects != null) _notifications.addNotifications(subjects);
-    } else {
-      _notifications.removeAllNotifications();
-    }
+    _setupNotifications();
   }
 
   Stream<ProfileState> _settingsChangedToState(
@@ -81,9 +78,9 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
   }
 
   Stream<ProfileState> _logoutToState() async* {
-    await _auth.signOut();
-    _notifications.removeAllNotifications();
+    await _removeNotifications();
     yield ProfileState.login();
+    _auth.signOut();
   }
 
   @override
@@ -98,7 +95,7 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
 
   void toggleNotifications(bool value) => dispatch(_ToggleNotificationsEvent());
 
-  _initUniLinks() async {
+  Future<void> _initUniLinks() async {
     _linksSubscription = _link.uriLinksStream.listen((Uri uri) {
       final params = uri.queryParameters;
       final code = params['code'];
@@ -107,7 +104,24 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
     });
   }
 
-  _trackUserData() async {
+  Future<void> _setupNotifications() async {
+    final allowNotifications = (await _userData.settings).allowNotifications;
+    if (allowNotifications) {
+      final subjects = await _userData.subjects;
+      final notificationsToken = await _notifications.token;
+      if (subjects != null) _notifications.addNotifications(subjects);
+      _userData.updateNotificationsToken(notificationsToken);
+    } else {
+      await _removeNotifications();
+    }
+  }
+
+  Future<void> _removeNotifications() async {
+    await _userData.updateNotificationsToken(null);
+    _notifications.removeAllNotifications();
+  }
+
+  Future<void> _trackUserData() async {
     final settingsStream = await _userData.settingsStream;
     _settingsSubscription = settingsStream?.listen((settings) => dispatch(
           _SettingsChangedEvent(settings),

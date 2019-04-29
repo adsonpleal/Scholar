@@ -8,8 +8,17 @@ class PasswordInput extends StatelessWidget {
   final String Function(String) validator;
   final Action<String> onSaved;
   final FormMode formMode;
+  final void Function() onFieldSubmitted;
+  final FocusNode focusNode;
 
-  const PasswordInput({Key key, this.validator, this.onSaved, this.formMode}) : super(key: key);
+  const PasswordInput({
+    Key key,
+    this.validator,
+    this.onSaved,
+    this.formMode,
+    this.onFieldSubmitted,
+    this.focusNode,
+  }) : super(key: key);
 
   @override
   build(BuildContext context) => Visibility(
@@ -17,6 +26,8 @@ class PasswordInput extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
         child: TextFormField(
+          focusNode: focusNode,
+          // textInputAction: TextInputAction.,
           maxLines: 1,
           obscureText: true,
           autofocus: false,
@@ -28,6 +39,7 @@ class PasswordInput extends StatelessWidget {
               )),
           validator: validator,
           onSaved: onSaved,
+          onFieldSubmitted: (_) => onFieldSubmitted(),
         ),
       ));
 }

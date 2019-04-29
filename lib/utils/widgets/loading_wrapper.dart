@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
 
 class LoadingWrapper extends StatelessWidget {
-  LoadingWrapper({@required this.isLoading, @required this.child});
-
   final bool isLoading;
+  final bool ignoreActions;
   final Widget child;
+
+  LoadingWrapper({
+    @required this.isLoading,
+    @required this.child,
+    this.ignoreActions = true,
+  });
 
   @override
   Widget build(BuildContext context) => Stack(
         children: <Widget>[
-          child,
+          IgnorePointer(
+            ignoring: ignoreActions && isLoading,
+            child: child,
+          ),
           _showCircularProgress(),
         ],
       );

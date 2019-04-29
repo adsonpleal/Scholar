@@ -1,8 +1,10 @@
 import 'package:app_tcc/models/event.dart';
+import 'package:app_tcc/models/single_event.dart';
 import 'package:app_tcc/modules/base/bloc_event.dart';
 import 'package:app_tcc/modules/user_data/user_data_repository.dart';
 import 'package:app_tcc/utils/inject.dart';
 import 'package:bloc/bloc.dart';
+import 'package:rxdart/rxdart.dart';
 
 import 'new_event_state.dart';
 
@@ -39,6 +41,12 @@ class NewEventBloc extends Bloc<_NewEventEvent, NewEventState> {
     }
   }
 
+  @override
+  Stream<_NewEventEvent> transform(Stream<_NewEventEvent> events) {
+    final eventsObservable = events as Observable<_NewEventEvent>;
+    return eventsObservable.debounce(Duration(milliseconds: 200));
+  }
+
   Stream<NewEventState> _startEventToState() async* {
     final subjects = await _userData.subjects;
     yield currentState.rebuild((b) => b..subjects = subjects);
@@ -48,7 +56,7 @@ class NewEventBloc extends Bloc<_NewEventEvent, NewEventState> {
     yield currentState.rebuild((b) => b..loading = true);
     await _userData.createEvent(event);
     yield currentState.rebuild((b) => b
-      ..created = true
+      ..created = SingleEvent(true)
       ..loading = false);
   }
 

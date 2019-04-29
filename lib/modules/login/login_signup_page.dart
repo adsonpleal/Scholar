@@ -1,5 +1,6 @@
 import 'package:app_tcc/modules/login/components/forgot_password_button.dart';
 import 'package:app_tcc/modules/login/login_signup_bloc.dart';
+import 'package:app_tcc/modules/login/login_signup_state.dart';
 import 'package:app_tcc/resources/strings.dart' as Strings;
 import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/widgets/info_alert.dart';
@@ -18,8 +19,10 @@ class LoginSignUpPage extends StatefulWidget {
 class _LoginSignUpPageState extends State<LoginSignUpPage> {
   final LoginSignUpBloc _loginSignUpBloc = inject();
   final _formKey = GlobalKey<FormState>();
+  final FocusNode _emailFocus = FocusNode();
+  final FocusNode _passwordFocus = FocusNode();
 
-  _validateAndSave() {
+  void _validateAndSave() {
     final form = _formKey.currentState;
     if (form.validate()) {
       form.save();
@@ -27,10 +30,19 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
     }
   }
 
+  void _onEmailSubmited(FormMode formMode) {
+    if (formMode == FormMode.resetPassword) {
+      _validateAndSave();
+    } else {
+      _emailFocus.unfocus();
+      FocusScope.of(context).requestFocus(_passwordFocus);
+    }
+  }
+
   @override
   Widget build(BuildContext context) => BlocBuilder(
       bloc: _loginSignUpBloc,
-      builder: (context, state) => RoutingWrapper(
+      builder: (context, LoginSignUpState state) => RoutingWrapper(
           route: state.route?.value,
           child: InfoAlert(
               title: Strings.emailSent,
@@ -45,19 +57,27 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
                     child: Container(
                         padding: EdgeInsets.all(16.0),
                         child: Form(
+                          onChanged: () => _formKey.currentState.validate(),
                           key: _formKey,
                           child: ListView(
                             shrinkWrap: true,
                             children: <Widget>[
                               const Logo(),
                               EmailInput(
+                                focusNode: _emailFocus,
+                                formMode: state.formMode,
                                 validator: _loginSignUpBloc.validateEmail,
                                 onSaved: _loginSignUpBloc.onEmailSaved,
+                                onFieldSubmitted: () =>
+                                    _onEmailSubmited(state.formMode),
                               ),
                               PasswordInput(
-                                  formMode: state.formMode,
-                                  validator: _loginSignUpBloc.validatePassword,
-                                  onSaved: _loginSignUpBloc.onPasswordSaved),
+                                focusNode: _passwordFocus,
+                                formMode: state.formMode,
+                                validator: _loginSignUpBloc.validatePassword,
+                                onSaved: _loginSignUpBloc.onPasswordSaved,
+                                onFieldSubmitted: _validateAndSave,
+                              ),
                               PrimaryButton(
                                 formMode: state.formMode,
                                 onPressed: _validateAndSave,

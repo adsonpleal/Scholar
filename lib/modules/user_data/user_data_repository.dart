@@ -36,6 +36,8 @@ class UserDataRepository {
     });
   }
 
+  Future<Settings> get settings async => (await settingsStream).first;
+
   Future<Stream<List<Event>>> get eventsStream async {
     return (await _eventsCollection)
         .where("date", isGreaterThan: DateTime.now())
@@ -82,7 +84,7 @@ class UserDataRepository {
 
   Future<User> get currentUser async {
     final user = await _auth.currentUser;
-    return User((b) => b..email = user.email);
+    return User((b) => b..email = user?.email ?? "");
   }
 
   Future<void> replaceSubjects(List<Subject> subjects) async {
@@ -96,5 +98,12 @@ class UserDataRepository {
   Future<void> removeNotification(EventNotification notification) async {
     final collection = await _notificationsCollection;
     collection.document(notification.documentID).delete();
+  }
+
+  Future<void> updateNotificationsToken(String token) async {
+    (await userDocument).setData(
+      {"notificationsToken": token},
+      merge: true,
+    );
   }
 }

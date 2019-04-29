@@ -1,3 +1,4 @@
+import 'package:app_tcc/models/single_event.dart';
 import 'package:app_tcc/models/subject.dart';
 import 'package:built_value/built_value.dart';
 
@@ -7,7 +8,7 @@ abstract class NewEventState implements Built<NewEventState, NewEventStateBuilde
   @nullable
   List<Subject> get subjects;
 
-  bool get created;
+  SingleEvent<bool> get created;
 
   bool get loading;
 
@@ -16,6 +17,6 @@ abstract class NewEventState implements Built<NewEventState, NewEventStateBuilde
   factory NewEventState([Function(NewEventStateBuilder b) updates]) = _$NewEventState;
 
   factory NewEventState.initial() => NewEventState((b) => b
-    ..created = false
+    ..created = SingleEvent(false)
     ..loading = false);
 }

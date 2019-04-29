@@ -33,6 +33,10 @@ subprojects {
               && !details.requested.name.contains('multidex') ) {
            details.useVersion "1.0.0"
         }
+        if (details.requested.group == 'androidx.localbroadcastmanager'
+              && !details.requested.name.contains('multidex') ) {
+           details.useVersion "1.0.0"
+        }
         if (details.requested.group == 'androidx.versionedparcelable'
               && !details.requested.name.contains('multidex') ) {
            details.useVersion "1.0.0"

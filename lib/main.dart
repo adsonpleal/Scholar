@@ -13,7 +13,7 @@ import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/routes.dart' as Routes;
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/date_symbol_data_local.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart';
 
 import 'modules/agenda/agenda_module.dart';
@@ -26,6 +26,9 @@ import 'modules/ufsc/connect_ufsc_page.dart';
 
 class App extends StatelessWidget {
   final FirebaseAnalyticsObserver observer = inject();
+  final List<Locale> supportedLocales;
+
+  App(this.supportedLocales);
 
   @override
   Widget build(BuildContext context) => MaterialApp(
@@ -43,18 +46,27 @@ class App extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
+        supportedLocales: supportedLocales,
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+        ],
       );
 }
 
 void main() {
-  setupLocales();
+  final supportedLocales = setupLocales();
   setupModules();
-  runApp(App());
+  runApp(App(
+    supportedLocales,
+  ));
 }
 
-void setupLocales() {
-  Intl.defaultLocale = 'pt_BR';
-  initializeDateFormatting();
+List<Locale> setupLocales() {
+  Intl.defaultLocale = 'pt';
+  return [
+    const Locale('pt'),
+  ];
 }
 
 void setupModules() {

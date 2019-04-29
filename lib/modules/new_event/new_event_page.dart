@@ -2,6 +2,7 @@ import 'package:app_tcc/models/event.dart';
 import 'package:app_tcc/models/subject.dart';
 import 'package:app_tcc/resources/strings.dart' as Strings;
 import 'package:app_tcc/utils/inject.dart';
+import 'package:app_tcc/utils/keyboard.dart';
 import 'package:app_tcc/utils/widgets/loading_wrapper.dart';
 import 'package:app_tcc/utils/widgets/routing_wrapper.dart';
 import 'package:flutter/material.dart';
@@ -25,32 +26,35 @@ class _NewEventPageState extends State<NewEventPage> {
   EventType _eventType;
   final dateTextController = TextEditingController();
 
-  Future _selectDate() async {
-    final now = DateTime.now();
-    DateTime picked = await showDatePicker(
-      context: context,
-      initialDate: now,
-      firstDate: now,
-      lastDate: DateTime(now.year + 1),
-    );
-    if (picked != null) {
-      TimeOfDay time = await showTimePicker(
-          context: context,
-          initialTime: TimeOfDay(
-            hour: 7,
-            minute: 30,
-          ));
-      if (time != null) {
-        _date = picked.add(Duration(
-          hours: time.hour,
-          minutes: time.minute,
-        ));
-        setState(() {
-          dateTextController.text = Strings.fullDateAndTime(_date);
-        });
-      }
-    }
-  }
+  Future<void> _selectDate() async => dismissKeyboard(
+        context,
+        onDismissed: () async {
+          final now = DateTime.now();
+          DateTime picked = await showDatePicker(
+            context: context,
+            initialDate: now,
+            firstDate: now,
+            lastDate: DateTime(now.year + 1),
+          );
+          if (picked != null) {
+            TimeOfDay time = await showTimePicker(
+                context: context,
+                initialTime: TimeOfDay(
+                  hour: 7,
+                  minute: 30,
+                ));
+            if (time != null) {
+              _date = picked.add(Duration(
+                hours: time.hour,
+                minutes: time.minute,
+              ));
+              setState(() {
+                dateTextController.text = Strings.fullDateAndTime(_date);
+              });
+            }
+          }
+        },
+      );
 
   void _onSubjectChanged(Subject subject) {
     setState(() {
@@ -99,7 +103,7 @@ class _NewEventPageState extends State<NewEventPage> {
               return LoadingWrapper(
                 isLoading: newEventState.loading,
                 child: RoutingWrapper(
-                  pop: newEventState.created,
+                  pop: newEventState.created.value,
                   child: Visibility(
                     visible: newEventState.subjects != null,
                     child: Form(
@@ -110,7 +114,8 @@ class _NewEventPageState extends State<NewEventPage> {
                           children: <Widget>[
                             TextFormField(
                               onSaved: _onDescriptionChanged,
-                              validator: _validateNotEmpty(Strings.descriptionCantBeEmpty),
+                              validator: _validateNotEmpty(
+                                  Strings.descriptionCantBeEmpty),
                               decoration: InputDecoration(
                                 icon: Icon(Icons.short_text),
                                 hintText: Strings.eventDescriptionHint,
@@ -130,7 +135,8 @@ class _NewEventPageState extends State<NewEventPage> {
                                       isExpanded: true,
                                       onChanged: _onSubjectChanged,
                                       items: newEventState.subjects
-                                          .map((Subject subject) => DropdownMenuItem(
+                                          .map((Subject subject) =>
+                                              DropdownMenuItem(
                                                 value: subject,
                                                 child: Text(subject.name),
                                               ))
@@ -144,7 +150,8 @@ class _NewEventPageState extends State<NewEventPage> {
                               onTap: _selectDate,
                               child: IgnorePointer(
                                 child: TextFormField(
-                                  validator: _validateNotEmpty(Strings.dateCantBeEmpty),
+                                  validator: _validateNotEmpty(
+                                      Strings.dateCantBeEmpty),
                                   controller: dateTextController,
                                   decoration: InputDecoration(
                                     icon: Icon(Icons.calendar_today),

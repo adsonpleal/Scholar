@@ -5,8 +5,10 @@ import 'package:app_tcc/resources/strings.dart' as Strings;
 import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/routes.dart' as Routes;
 import 'package:firebase_analytics/observer.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
+// TODO: refactor this file to use blocs
 class Tab {
   final String title;
   final Widget Function() page;
@@ -45,9 +47,20 @@ class MainPage extends StatefulWidget {
   _MainPageState createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin, RouteAware {
+class _MainPageState extends State<MainPage>
+    with SingleTickerProviderStateMixin, RouteAware {
   final FirebaseAnalyticsObserver _observer = inject();
+  final _firebaseMessaging = FirebaseMessaging();
   int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    _firebaseMessaging.configure(
+      onResume: _processNotificationClick,
+      onLaunch: _processNotificationClick,
+    );
+    super.initState();
+  }
 
   @override
   void didChangeDependencies() {
@@ -65,6 +78,15 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
         onTap: _onItemTapped,
       ),
     );
+  }
+
+  Future<void> _processNotificationClick(Map<String, dynamic> message) async {
+    final data = message['data'] ?? {};
+    final destination = data['destination'];
+    final index = tabs.indexWhere((tab) => tab.route == destination);
+    if (index != -1) {
+      _onItemTapped(index);
+    }
   }
 
   _currentPage() => Stack(
