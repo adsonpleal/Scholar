@@ -1,14 +1,18 @@
 import 'package:app_tcc/models/event.dart';
 import 'package:app_tcc/models/event_notification.dart';
+import 'package:app_tcc/models/restaurant.dart';
 import 'package:app_tcc/models/settings.dart';
 import 'package:app_tcc/models/subject.dart';
 import 'package:app_tcc/models/user.dart';
 import 'package:app_tcc/modules/auth/auth_repository.dart';
+import 'package:app_tcc/modules/restaurants/restaurants_repository.dart';
 import 'package:app_tcc/utils/inject.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rxdart/transformers.dart';
 
 class UserDataRepository {
   final AuthRepository _auth = inject();
+  final RestaurantsRepository _restaurantsRepository = inject();
   final Firestore _store = inject();
 
   Future<DocumentReference> get userDocument async {
@@ -27,19 +31,19 @@ class UserDataRepository {
   Future<CollectionReference> get _notificationsCollection =>
       collection('notifications');
 
-  Future<Stream<Settings>> get settingsStream async {
+  Stream<Settings> get settingsStream async* {
     final document = await userDocument;
-    return document.snapshots().map((s) {
+    yield* document.snapshots().map((s) {
       final data = s.data ?? {};
       final json = data['settings'] ?? {'allowNotifications': true};
       return Settings.fromJson(Map<String, dynamic>.from(json));
     });
   }
 
-  Future<Settings> get settings async => (await settingsStream).first;
+  Future<Settings> get settings => settingsStream.first;
 
-  Future<Stream<List<Event>>> get eventsStream async {
-    return (await _eventsCollection)
+  Stream<List<Event>> get eventsStream async* {
+    yield* (await _eventsCollection)
         .where("date", isGreaterThan: DateTime.now())
         .orderBy("date")
         .snapshots()
@@ -47,23 +51,38 @@ class UserDataRepository {
             snapshot.documents.map((d) => Event.fromJson(d.data)).toList());
   }
 
-  Future<Stream<List<EventNotification>>> get notificationsStream async {
-    return (await _notificationsCollection).snapshots().map((snapshot) =>
+  Stream<List<EventNotification>> get notificationsStream async* {
+    yield* (await _notificationsCollection).snapshots().map((snapshot) =>
         snapshot.documents
             .map((d) => EventNotification.fromJson(d.data)
                 .rebuild((b) => b..documentID = d.documentID))
             .toList());
   }
 
-  Future<Stream<List<Subject>>> get subjectsStream async {
-    return (await _subjectsCollection).snapshots().map((snapshot) => snapshot
+  Stream<List<Subject>> get subjectsStream async* {
+    yield* (await _subjectsCollection).snapshots().map((snapshot) => snapshot
         .documents
         .map((d) => Subject.fromJson(d.data)
             .rebuild((b) => b..documentID = d.documentID))
         .toList());
   }
 
-  Future<List<Subject>> get subjects async => (await subjectsStream).first;
+  Future<List<Subject>> get subjects => subjectsStream.first;
+
+  Stream<Restaurant> get restaurantStream => settingsStream
+      .transform(
+        FlatMapStreamTransformer(
+          (settings) => _restaurantsRepository.restaurant(
+                settings.restaurantId,
+              ),
+        ),
+      )
+      .map((restaurant) => restaurant.rebuild((b) {
+            final limitDate = DateTime.now().subtract(Duration(days: 1));
+            return b
+              ..menu.sort((a, b) => a.date.compareTo(b.date))
+              ..menu.removeWhere((m) => m.date.isBefore(limitDate));
+          }));
 
   Future<void> saveSettings(Settings settings) async {
     (await userDocument).setData(

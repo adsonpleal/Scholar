@@ -196,9 +196,9 @@ String get rejectNotification => Intl.message(
       name: "rejectNotification",
     );
 
-String get informations => Intl.message(
+String get information => Intl.message(
       'Informações',
-      name: "informations",
+      name: "information",
     );
 
 String get infoAlertContent => Intl.message(
@@ -209,6 +209,11 @@ String get infoAlertContent => Intl.message(
 String get absenceControl => Intl.message(
       'Controle de faltas',
       name: "absenceControl",
+    );
+
+String get menu => Intl.message(
+      'Cardápio RU',
+      name: "menu",
     );
 
 String get newTest => Intl.message(

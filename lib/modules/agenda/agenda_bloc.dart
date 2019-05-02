@@ -99,20 +99,18 @@ class AgendaBloc extends Bloc<_AgendaEvent, AgendaState> {
     super.dispose();
   }
 
-  Future<void> _startStreams() async {
-    final eventsStream = await _userData.eventsStream;
-    final notificationsStream = await _userData.notificationsStream;
-    _eventsSubscription = eventsStream.listen((events) {
-      dispatch(_AgendaEvent(
-        type: _AgendaEventType.eventsChanged,
-        payload: events,
-      ));
-    });
-    _notificationsSubscription = notificationsStream.listen((notifications) {
-      dispatch(_AgendaEvent(
-        type: _AgendaEventType.notificationsChanged,
-        payload: notifications,
-      ));
-    });
+  void _startStreams() {
+    _eventsSubscription = _userData.eventsStream.listen(
+      (events) => dispatch(_AgendaEvent(
+            type: _AgendaEventType.eventsChanged,
+            payload: events,
+          )),
+    );
+    _notificationsSubscription = _userData.notificationsStream.listen(
+      (notifications) => dispatch(_AgendaEvent(
+            type: _AgendaEventType.notificationsChanged,
+            payload: notifications,
+          )),
+    );
   }
 }

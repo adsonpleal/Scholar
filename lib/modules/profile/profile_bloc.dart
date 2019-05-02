@@ -1,63 +1,57 @@
 import 'dart:async';
 
+import 'package:app_tcc/models/restaurant.dart';
 import 'package:app_tcc/models/settings.dart';
 import 'package:app_tcc/modules/auth/auth_repository.dart';
+import 'package:app_tcc/modules/base/base_bloc.dart';
 import 'package:app_tcc/modules/notifications/notifications_service.dart';
-import 'package:app_tcc/modules/profile/link_repository.dart';
+import 'package:app_tcc/modules/restaurants/restaurants_repository.dart';
 import 'package:app_tcc/modules/user_data/user_data_repository.dart';
 import 'package:app_tcc/utils/inject.dart';
-import 'package:bloc/bloc.dart';
 
 import 'profile_state.dart';
 
-// TODO: refactor event class to extend BlocEvent
-
-class _ProfileEvent {}
-
-class _ProfileLogOutEvent extends _ProfileEvent {}
-
-class _SettingsChangedEvent extends _ProfileEvent {
-  final Settings settings;
-
-  _SettingsChangedEvent(this.settings);
+enum _ProfileEvent {
+  logOut,
+  settingsChanged,
+  restaurantsChanged,
+  toggleNotifications,
 }
 
-class _ToggleNotificationsEvent extends _ProfileEvent {}
-
-class _UFSCConnectedEvent extends _ProfileEvent {
-  final String code;
-  final String state;
-
-  _UFSCConnectedEvent(this.code, this.state);
-}
-
-class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
+class ProfileBloc extends BaseBloc<_ProfileEvent, ProfileState> {
   final AuthRepository _auth = inject();
   final UserDataRepository _userData = inject();
-  final LinkRepository _link = inject();
   final NotificationsService _notifications = inject();
-  StreamSubscription<Uri> _linksSubscription;
+  final RestaurantsRepository _restaurantsRepository = inject();
   StreamSubscription<Settings> _settingsSubscription;
+  StreamSubscription<List<Restaurant>> _restaurantsSubscription;
 
   ProfileBloc() {
     _setupNotifications();
-    _initUniLinks();
     _trackUserData();
+    _trackRestaurants();
   }
 
   @override
   ProfileState get initialState => ProfileState.initial();
 
   @override
-  Stream<ProfileState> mapEventToState(_ProfileEvent event) async* {
-    if (event is _ProfileLogOutEvent) yield* _logoutToState();
-    if (event is _UFSCConnectedEvent) yield* _connectedToState(event);
-    if (event is _SettingsChangedEvent) yield* _settingsChangedToState(event);
-    if (event is _ToggleNotificationsEvent)
-      yield* _toggleNotificationsToState();
+  Stream<ProfileState> mapToState(_ProfileEvent event, payload) async* {
+    switch (event) {
+      case _ProfileEvent.logOut:
+        yield* _logoutToState();
+        break;
+      case _ProfileEvent.settingsChanged:
+        yield* _settingsChangedToState(payload);
+        break;
+      case _ProfileEvent.toggleNotifications:
+        yield* _toggleNotificationsToState();
+        break;
+      case _ProfileEvent.restaurantsChanged:
+        yield* _restaurantsChangedToState(payload);
+        break;
+    }
   }
-
-  Stream<ProfileState> _connectedToState(_UFSCConnectedEvent event) async* {}
 
   Stream<ProfileState> _toggleNotificationsToState() async* {
     final settings = currentState.settings;
@@ -68,13 +62,17 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
     _setupNotifications();
   }
 
-  Stream<ProfileState> _settingsChangedToState(
-    _SettingsChangedEvent event,
-  ) async* {
+  Stream<ProfileState> _settingsChangedToState(Settings settings) async* {
     final user = await _userData.currentUser;
     yield currentState.rebuild(
-      (b) => b..settings.replace(event.settings)..user.replace(user),
+      (b) => b..settings.replace(settings)..user.replace(user),
     );
+  }
+
+  Stream<ProfileState> _restaurantsChangedToState(
+    List<Restaurant> restaurants,
+  ) async* {
+    yield currentState.rebuild((b) => b..restaurants = restaurants);
   }
 
   Stream<ProfileState> _logoutToState() async* {
@@ -85,23 +83,16 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
 
   @override
   dispose() {
-    _linksSubscription?.cancel();
+    _restaurantsSubscription?.cancel();
     _settingsSubscription?.cancel();
     _notifications.dispose();
     super.dispose();
   }
 
-  logOut() => dispatch(_ProfileLogOutEvent());
+  void logOut() => dispatchEvent(type: _ProfileEvent.logOut);
 
-  void toggleNotifications(bool value) => dispatch(_ToggleNotificationsEvent());
-
-  Future<void> _initUniLinks() async {
-    _linksSubscription = _link.uriLinksStream.listen((Uri uri) {
-      final params = uri.queryParameters;
-      final code = params['code'];
-      final state = params['state'];
-      dispatch(_UFSCConnectedEvent(code, state));
-    });
+  void toggleNotifications(bool value) {
+    dispatchEvent(type: _ProfileEvent.toggleNotifications);
   }
 
   Future<void> _setupNotifications() async {
@@ -121,10 +112,27 @@ class ProfileBloc extends Bloc<_ProfileEvent, ProfileState> {
     _notifications.removeAllNotifications();
   }
 
-  Future<void> _trackUserData() async {
-    final settingsStream = await _userData.settingsStream;
-    _settingsSubscription = settingsStream?.listen((settings) => dispatch(
-          _SettingsChangedEvent(settings),
-        ));
+  void _trackUserData() {
+    _settingsSubscription = _userData.settingsStream?.listen(
+      (settings) => dispatchEvent(
+            type: _ProfileEvent.settingsChanged,
+            payload: settings,
+          ),
+    );
+  }
+
+  void _trackRestaurants() {
+    _restaurantsSubscription = _restaurantsRepository.restaurantsStream?.listen(
+      (restaurants) => dispatchEvent(
+            type: _ProfileEvent.restaurantsChanged,
+            payload: restaurants,
+          ),
+    );
+  }
+
+  void onRestaurantChanged(Restaurant value) {
+    _userData.saveSettings(
+      currentState.settings.rebuild((b) => b..restaurantId = value.documentID),
+    );
   }
 }

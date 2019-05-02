@@ -11,8 +11,6 @@ import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
 enum ConnectUfscState { initial, connected }
 
-// TODO: refactor event class to extend BlocEvent
-
 class _ConnectUfscEvent {}
 
 class ConnectUfscBloc extends Bloc<_ConnectUfscEvent, ConnectUfscState> {
@@ -29,13 +27,17 @@ class ConnectUfscBloc extends Bloc<_ConnectUfscEvent, ConnectUfscState> {
   @override
   Stream<ConnectUfscState> mapEventToState(_ConnectUfscEvent event) async* {
     final webViewPlugin = FlutterWebviewPlugin();
-    await webViewPlugin.onStateChanged
-        .firstWhere((state) => state.type == WebViewState.finishLoad && state.url == subjectUrl);
+    await webViewPlugin.onStateChanged.firstWhere((state) =>
+        state.type == WebViewState.finishLoad && state.url == subjectUrl);
     final result = await webViewPlugin.evalJavascript(subjectQuery);
     webViewPlugin.cleanCookies();
     final subjects = Subject.fromJsonList(json.decode(result));
     _userData.replaceSubjects(subjects);
-    _notifications.addNotifications(subjects);
+    final settings = await _userData.settings;
+    if (settings.allowNotifications) {
+      _notifications.addNotifications(subjects);
+    }
+    await _userData.saveSettings(settings.rebuild((b) => b..restaurantId = 'trindade'));
     yield ConnectUfscState.connected;
   }
 

@@ -1,3 +1,4 @@
+import 'package:app_tcc/models/restaurant.dart';
 import 'package:app_tcc/modules/profile/profile_bloc.dart';
 import 'package:app_tcc/modules/profile/profile_state.dart';
 import 'package:app_tcc/resources/strings.dart' as Strings;
@@ -51,6 +52,25 @@ class _ProfilePageState extends State<ProfilePage> {
                       leading: Icon(Icons.school),
                       title: Text(Strings.connectUfsc),
                       onTap: Routes.toConnectUfsc(context),
+                    ),
+                    Visibility(
+                      visible: state.hasRestaurant,
+                      child: ListTile(
+                        onTap: () {},
+                        leading: Icon(Icons.restaurant),
+                        title: DropdownButton<Restaurant>(
+                          underline: Container(),
+                          isExpanded: true,
+                          items: state.restaurants
+                              ?.map((value) => DropdownMenuItem(
+                                    value: value,
+                                    child: Text(value.name),
+                                  ))
+                              ?.toList(),
+                          value: state.selectedRestaurant,
+                          onChanged: _profileBloc.onRestaurantChanged,
+                        ),
+                      ),
                     ),
                     SwitchListTile(
                       title: Text(Strings.notifications),

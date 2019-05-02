@@ -21,6 +21,7 @@ import 'modules/home/home_module.dart';
 import 'modules/new_event/new_event_module.dart';
 import 'modules/new_event/new_event_page.dart';
 import 'modules/notifications/notifications_module.dart';
+import 'modules/restaurants/restaurants_module.dart';
 import 'modules/ufsc/connect_ufsc_module.dart';
 import 'modules/ufsc/connect_ufsc_page.dart';
 
@@ -82,5 +83,6 @@ void setupModules() {
     NotificationModule(),
     AgendaModule(),
     NewEventModule(),
+    RestaurantsModule(),
   ].forEach((module) => module.setup());
 }

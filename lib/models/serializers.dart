@@ -1,5 +1,6 @@
 library serializers;
 
+import 'package:app_tcc/models/restaurant.dart';
 import 'package:app_tcc/utils/serializers/timestamp_serializer_plugin.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
@@ -7,6 +8,7 @@ import 'package:built_value/standard_json_plugin.dart';
 
 import 'event.dart';
 import 'event_notification.dart';
+import 'menu_entry.dart';
 import 'settings.dart';
 import 'subject.dart';
 import 'subject_time.dart';
@@ -20,6 +22,8 @@ part 'serializers.g.dart';
   Event,
   EventNotification,
   EventType,
+  Restaurant,
+  MenuEntry,
 ])
 final Serializers serializers = (_$serializers.toBuilder()
       ..addPlugin(StandardJsonPlugin())

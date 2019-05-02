@@ -1,9 +1,13 @@
+import 'package:app_tcc/models/restaurant.dart';
+import 'package:app_tcc/models/subject.dart';
 import 'package:app_tcc/resources/strings.dart' as Strings;
 import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/widgets/info_alert.dart';
+import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'components/menu_item.dart';
 import 'components/subject_item.dart';
 import 'home_bloc.dart';
 import 'home_state.dart';
@@ -16,14 +20,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final HomeBloc _homebloc = inject();
+  final HomeBloc _homeBloc = inject();
 
   @override
   Widget build(BuildContext context) => BlocBuilder(
-      bloc: _homebloc,
+      bloc: _homeBloc,
       builder: (context, HomeState state) => InfoAlert(
             shouldShow: state.showInfoAlert?.value,
-            title: Strings.informations,
+            title: Strings.information,
             content: Strings.infoAlertContent,
             child: Scaffold(
               appBar: AppBar(
@@ -34,27 +38,43 @@ class _HomePageState extends State<HomePage> {
                       Icons.help,
                       color: Colors.white,
                     ),
-                    tooltip: Strings.informations,
-                    onPressed: _homebloc.showInfoAlert,
+                    tooltip: Strings.information,
+                    onPressed: _homeBloc.showInfoAlert,
                   )
                 ],
               ),
               body: ListView(
                 children: <Widget>[
                   ExpansionTile(
-                    initiallyExpanded: true,
+                    initiallyExpanded: false,
                     title: Text(Strings.absenceControl),
-                    children: state.subjects
-                            ?.map((subject) => SubjectItem(
-                                  onAdd: () => _homebloc.addAbsence(subject),
-                                  onRemove: () => _homebloc.removeAbsence(subject),
-                                  subject: subject,
-                                ))
-                            ?.toList() ??
-                        [],
+                    children: _buildSubjects(state.subjects),
+                  ),
+                  ExpansionTile(
+                    initiallyExpanded: false,
+                    title: Text(Strings.menu),
+                    children: _buildMenu(state.restaurant),
                   )
                 ],
               ),
             ),
           ));
+
+  List<Widget> _buildMenu(Restaurant restaurant) {
+    if (restaurant == null) return [];
+    return restaurant.menu
+        .map((menuEntry) => MenuItem(menuEntry: menuEntry))
+        .toList();
+  }
+
+  List<Widget> _buildSubjects(BuiltList<Subject> subjects) {
+    if (subjects == null) return [];
+    return subjects
+        .map((subject) => SubjectItem(
+              onAdd: () => _homeBloc.addAbsence(subject),
+              onRemove: () => _homeBloc.removeAbsence(subject),
+              subject: subject,
+            ))
+        .toList();
+  }
 }
