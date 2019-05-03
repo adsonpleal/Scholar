@@ -81,7 +81,9 @@ class UserDataRepository {
             final limitDate = DateTime.now().subtract(Duration(days: 1));
             return b
               ..menu.sort((a, b) => a.date.compareTo(b.date))
-              ..menu.removeWhere((m) => m.date.isBefore(limitDate));
+              ..menu.removeWhere((m) => m.date.isBefore(limitDate))
+              ..menuDinner.sort((a, b) => a.date.compareTo(b.date))
+              ..menuDinner.removeWhere((m) => m.date.isBefore(limitDate));
           }));
 
   Future<void> saveSettings(Settings settings) async {

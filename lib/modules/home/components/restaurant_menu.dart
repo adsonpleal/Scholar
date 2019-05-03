@@ -1,57 +1,84 @@
-import 'package:app_tcc/models/restaurant.dart';
+import 'package:app_tcc/modules/home/home_state.dart';
+import 'package:app_tcc/resources/strings.dart' as Strings;
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-
-import 'menu_item.dart';
+import 'package:intl/intl.dart';
 
 class RestaurantMenu extends StatelessWidget {
-  final Restaurant restaurant;
-  final _pageController = PageController();
+  final HomeState state;
+  final void Function() onNext;
+  final void Function() onPrevious;
+  final void Function() toggleDinner;
 
-  RestaurantMenu({Key key, this.restaurant}) : super(key: key);
+  RestaurantMenu({
+    Key key,
+    this.state,
+    this.onNext,
+    this.onPrevious,
+    this.toggleDinner,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final restaurant = state.restaurant;
     if (restaurant == null) return Container();
-    final hasDinner = restaurant.menuDinner != null;
-    final height = MediaQuery.of(context).size.height - 190;
-    return Column(
+    return ExpansionTile(
+      initiallyExpanded: false,
+      title: Text(Strings.menu),
       children: <Widget>[
+        _buildPageHeader(),
         Visibility(
-          visible: hasDinner,
-          child: Text('Toggle dinner'),
-        ),
-        SizedBox(
-          height: height,
-          child: PageView(
-            controller: _pageController,
-            scrollDirection: Axis.horizontal,
-            children: restaurant.menu.map((menuEntry) {
-              final index = restaurant.menu.indexOf(menuEntry);
-              return MenuItem(
-                showNext: index != restaurant.menu.length - 1,
-                showPrevious: index != 0,
-                menuEntry: menuEntry,
-                onNext: _showNextPage,
-                onPrevious: _showPreviousPage,
-              );
-            }).toList(),
+          visible: state.hasDinner,
+          child: CheckboxListTile(
+            title: Text(Strings.showDinner),
+            value: state.showDinner,
+            onChanged: (_) => toggleDinner(),
           ),
         ),
-      ],
+      ]..addAll(state.menuEntry.plates.map((plate) => ListTile(
+            leading: const Icon(Icons.restaurant_menu),
+            title: Text(plate),
+          ))),
     );
   }
 
-  void _showNextPage() {
-    _pageController.nextPage(
-      curve: Curves.easeOut,
-      duration: const Duration(milliseconds: 300),
-    );
-  }
-
-  void _showPreviousPage() {
-    _pageController.previousPage(
-      curve: Curves.easeOut,
-      duration: const Duration(milliseconds: 300),
+  Widget _buildPageHeader() {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          IgnorePointer(
+            ignoring: !state.showPrevious,
+            child: new Opacity(
+              opacity: state.showPrevious ? 1 : 0,
+              child: IconButton(
+                icon: Icon(Icons.arrow_back),
+                onPressed: onPrevious,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Column(
+              children: <Widget>[
+                Text(
+                    DateFormat.EEEE().format(state.menuEntry.date).toUpperCase()),
+                Text(DateFormat.yMd().format(state.menuEntry.date).toUpperCase()),
+              ],
+            ),
+          ),
+          IgnorePointer(
+            ignoring: !state.showNext,
+            child: new Opacity(
+              opacity: state.showNext ? 1 : 0,
+              child: IconButton(
+                icon: Icon(Icons.arrow_forward),
+                onPressed: onNext,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

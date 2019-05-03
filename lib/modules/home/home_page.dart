@@ -1,4 +1,3 @@
-import 'package:app_tcc/models/restaurant.dart';
 import 'package:app_tcc/models/subject.dart';
 import 'package:app_tcc/modules/home/components/restaurant_menu.dart';
 import 'package:app_tcc/resources/strings.dart' as Strings;
@@ -8,7 +7,6 @@ import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'components/menu_item.dart';
 import 'components/subject_item.dart';
 import 'home_bloc.dart';
 import 'home_state.dart';
@@ -22,7 +20,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final HomeBloc _homeBloc = inject();
-  final _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) => BlocBuilder(
@@ -46,39 +43,22 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
               body: ListView(
-                controller: _scrollController,
                 children: <Widget>[
                   ExpansionTile(
                     initiallyExpanded: false,
                     title: Text(Strings.absenceControl),
                     children: _buildSubjects(state.subjects),
                   ),
-                  ExpansionTile(
-                    initiallyExpanded: false,
-                    onExpansionChanged: _onRestaurantExpansionChanged,
-                    title: Text(Strings.menu),
-                    children: [
-                      RestaurantMenu(
-                        restaurant: state.restaurant,
-                      ),
-                    ],
-                  )
+                  RestaurantMenu(
+                    onNext: _homeBloc.showNextMenuEntry,
+                    onPrevious: _homeBloc.showPreviousMenuEntry,
+                    toggleDinner: _homeBloc.toggleDinner,
+                    state: state,
+                  ),
                 ],
               ),
             ),
           ));
-
-  Future<void> _onRestaurantExpansionChanged(expanded) async {
-    if (expanded) {
-      await Future.delayed(Duration(milliseconds: 300));
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        curve: Curves.easeOut,
-        duration: const Duration(milliseconds: 300),
-      );
-      // _scrollController.
-    }
-  }
 
   List<Widget> _buildSubjects(BuiltList<Subject> subjects) {
     if (subjects == null) return [];

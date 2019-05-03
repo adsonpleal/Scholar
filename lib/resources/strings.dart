@@ -185,6 +185,11 @@ String get addEvent => Intl.message(
       'Adicionar evento',
       name: "addEvent",
     );
+    
+String get showDinner => Intl.message(
+      'Mostrar Jantar',
+      name: "showDinner",
+    );
 
 String get acceptNotification => Intl.message(
       'ADICIONAR',

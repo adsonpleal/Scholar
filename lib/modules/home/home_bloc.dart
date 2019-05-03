@@ -15,6 +15,9 @@ enum _HomeEvent {
   showInfo,
   addAbsence,
   removeAbsence,
+  showPreviousMenuEntry,
+  showNextMenuEntry,
+  toggleDinner,
 }
 
 class HomeBloc extends BaseBloc<_HomeEvent, HomeState> {
@@ -45,7 +48,19 @@ class HomeBloc extends BaseBloc<_HomeEvent, HomeState> {
         yield* _changeAbsenceValue(payload, -1);
         break;
       case _HomeEvent.restaurantChanged:
-        yield currentState.rebuild((b) => b..restaurant.replace(payload));
+        yield currentState.rebuild((b) => b
+          ..restaurant.replace(payload)
+          ..selectedEntryIndex = 0
+          ..showDinner = false);
+        break;
+      case _HomeEvent.showNextMenuEntry:
+        yield currentState.rebuild((b) => b..selectedEntryIndex += 1);
+        break;
+      case _HomeEvent.showPreviousMenuEntry:
+        yield currentState.rebuild((b) => b..selectedEntryIndex -= 1);
+        break;
+      case _HomeEvent.toggleDinner:
+        yield currentState.rebuild((b) => b..showDinner = !b.showDinner);
         break;
     }
   }
@@ -64,29 +79,41 @@ class HomeBloc extends BaseBloc<_HomeEvent, HomeState> {
 
   void _initSubjectsStream() {
     _subjectsSubscription = _userData.subjectsStream?.listen(
-      (s) => dispatchEvent(type: _HomeEvent.subjectChanged, payload: s),
+      (s) => dispatchEvent(_HomeEvent.subjectChanged, payload: s),
     );
     _restaurantSubscription = _userData.restaurantStream?.listen(
-      (r) => dispatchEvent(type: _HomeEvent.restaurantChanged, payload: r),
+      (r) => dispatchEvent(_HomeEvent.restaurantChanged, payload: r),
     );
   }
 
   void addAbsence(Subject subject) => dispatchEvent(
-        type: _HomeEvent.addAbsence,
+        _HomeEvent.addAbsence,
         payload: subject,
       );
 
   void removeAbsence(Subject subject) => dispatchEvent(
-        type: _HomeEvent.removeAbsence,
+        _HomeEvent.removeAbsence,
         payload: subject,
       );
 
-  void showInfoAlert() => dispatchEvent(type: _HomeEvent.showInfo);
+  void showInfoAlert() => dispatchEvent(_HomeEvent.showInfo);
 
   @override
   void dispose() {
     _subjectsSubscription?.cancel();
     _restaurantSubscription?.cancel();
     super.dispose();
+  }
+
+  void showNextMenuEntry() {
+    dispatchEvent(_HomeEvent.showNextMenuEntry);
+  }
+
+  void showPreviousMenuEntry() {
+    dispatchEvent(_HomeEvent.showPreviousMenuEntry);
+  }
+
+  void toggleDinner() {
+    dispatchEvent(_HomeEvent.toggleDinner);
   }
 }

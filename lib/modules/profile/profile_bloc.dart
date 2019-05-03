@@ -89,10 +89,10 @@ class ProfileBloc extends BaseBloc<_ProfileEvent, ProfileState> {
     super.dispose();
   }
 
-  void logOut() => dispatchEvent(type: _ProfileEvent.logOut);
+  void logOut() => dispatchEvent(_ProfileEvent.logOut);
 
   void toggleNotifications(bool value) {
-    dispatchEvent(type: _ProfileEvent.toggleNotifications);
+    dispatchEvent(_ProfileEvent.toggleNotifications);
   }
 
   Future<void> _setupNotifications() async {
@@ -115,7 +115,7 @@ class ProfileBloc extends BaseBloc<_ProfileEvent, ProfileState> {
   void _trackUserData() {
     _settingsSubscription = _userData.settingsStream?.listen(
       (settings) => dispatchEvent(
-            type: _ProfileEvent.settingsChanged,
+            _ProfileEvent.settingsChanged,
             payload: settings,
           ),
     );
@@ -124,7 +124,7 @@ class ProfileBloc extends BaseBloc<_ProfileEvent, ProfileState> {
   void _trackRestaurants() {
     _restaurantsSubscription = _restaurantsRepository.restaurantsStream?.listen(
       (restaurants) => dispatchEvent(
-            type: _ProfileEvent.restaurantsChanged,
+            _ProfileEvent.restaurantsChanged,
             payload: restaurants,
           ),
     );

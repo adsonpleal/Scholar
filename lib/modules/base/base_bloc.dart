@@ -10,7 +10,7 @@ abstract class BaseBloc<E, S> extends Bloc<BlocEvent<E>, S> {
 
   Stream<S> mapToState(E event, dynamic payload);
 
-  dispatchEvent({E type, dynamic payload}) {
+  dispatchEvent(E type, {dynamic payload}) {
     dispatch(BlocEvent<E>(type, payload));
   }
 }
