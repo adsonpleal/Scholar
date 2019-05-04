@@ -21,7 +21,8 @@ abstract class HomeState implements Built<HomeState, HomeStateBuilder> {
 
   HomeState._();
 
-  bool get hasDinner => restaurant.menuDinner != null;
+  bool get hasDinner => restaurant.menuDinner.isNotEmpty;
+  bool get hasPlates => restaurant != null && restaurant.menu.isNotEmpty;
 
   MenuEntry get menuEntry {
     final selectedMenu = showDinner ? restaurant.menuDinner : restaurant.menu;

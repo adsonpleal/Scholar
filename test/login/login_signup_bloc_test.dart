@@ -59,7 +59,7 @@ void main() {
         loginSignUpBloc.state,
         emitsInOrder(expectedResponse),
       );
-      loginSignUpBloc.toggleFormMode();
+      loginSignUpBloc.dispatchToggleEvent();
     });
 
     test('emits [login, signup, login] after two toggles', () {
@@ -72,8 +72,8 @@ void main() {
         loginSignUpBloc.state,
         emitsInOrder(expectedResponse),
       );
-      loginSignUpBloc.toggleFormMode();
-      loginSignUpBloc.toggleFormMode();
+      loginSignUpBloc.dispatchToggleEvent();
+      loginSignUpBloc.dispatchToggleEvent();
     });
   });
 
@@ -87,12 +87,12 @@ void main() {
       expect(Strings.emailCantBeEmpty, loginSignUpBloc.validateEmail(email));
     });
     test('password validator return null if valid', () {
-      final passsword = "passsword";
-      expect(null, loginSignUpBloc.validatePassword(passsword));
+      final password = "password";
+      expect(null, loginSignUpBloc.validatePassword(password));
     });
     test('password validator return error if invalid', () {
-      final passsword = "";
-      expect(Strings.passwordCantBeEmpty, loginSignUpBloc.validatePassword(passsword));
+      final password = "";
+      expect(Strings.passwordCantBeEmpty, loginSignUpBloc.validatePassword(password));
     });
   });
 
@@ -106,7 +106,7 @@ void main() {
         loginSignUpBloc.state,
         emitsInOrder(expectedResponse),
       );
-      loginSignUpBloc.toggleResetPassword();
+      loginSignUpBloc.dispatchToggleResetEvent();
     });
 
     test('emits [login, resetPassword, login] after two toggles', () {
@@ -119,13 +119,13 @@ void main() {
         loginSignUpBloc.state,
         emitsInOrder(expectedResponse),
       );
-      loginSignUpBloc.toggleResetPassword();
-      loginSignUpBloc.toggleResetPassword();
+      loginSignUpBloc.dispatchToggleResetEvent();
+      loginSignUpBloc.dispatchToggleResetEvent();
     });
   });
 
   group('submit', () {
-    test('emits [login, signup, loaging] after submiting from signup', () async {
+    test('emits [login, signup, loading] after submitting from signup', () async {
       final expectedResponse = [
         LoginSignUpState.initial(),
         LoginSignUpState((b) => b..formMode = FormMode.signUp),
@@ -139,14 +139,14 @@ void main() {
       );
       final email = "valid@email.com";
       final password = "password";
-      loginSignUpBloc.toggleFormMode();
+      loginSignUpBloc.dispatchToggleEvent();
       loginSignUpBloc.onEmailSaved(email);
       loginSignUpBloc.onPasswordSaved(password);
-      loginSignUpBloc.submit();
+      loginSignUpBloc.dispatchSubmitEvent();
       await untilCalled(authRepository.signUp(email, password));
     });
 
-    test('emits [login, loaging] after submiting from login', () async {
+    test('emits [login, loading] after submitting from login', () async {
       final expectedResponse = [
         LoginSignUpState.initial(),
         LoginSignUpState((b) => b..loading = true)
@@ -156,11 +156,11 @@ void main() {
         loginSignUpBloc.state,
         emitsInOrder(expectedResponse),
       );
-      loginSignUpBloc.submit();
+      loginSignUpBloc.dispatchSubmitEvent();
       await untilCalled(authRepository.signIn(any, any));
     });
 
-    test('emits [login, resetPassword, loaging] after submiting from resetPassword', () async {
+    test('emits [login, resetPassword, loading] after submitting from resetPassword', () async {
       final expectedResponse = [
         LoginSignUpState.initial(),
         LoginSignUpState((b) => b..formMode = FormMode.resetPassword),
@@ -173,12 +173,12 @@ void main() {
         loginSignUpBloc.state,
         emitsInOrder(expectedResponse),
       );
-      loginSignUpBloc.toggleResetPassword();
-      loginSignUpBloc.submit();
+      loginSignUpBloc.dispatchToggleResetEvent();
+      loginSignUpBloc.dispatchSubmitEvent();
       await untilCalled(authRepository.resetPassword(any));
     });
 
-    test('emits [login, loaging, error] after submiting with error', () async {
+    test('emits [login, loading, error] after submitting with error', () async {
       final expectedResponse = [
         LoginSignUpState.initial(),
         LoginSignUpState((b) => b..loading = true),
@@ -190,7 +190,7 @@ void main() {
         loginSignUpBloc.state,
         emitsInOrder(expectedResponse),
       );
-      loginSignUpBloc.submit();
+      loginSignUpBloc.dispatchSubmitEvent();
     });
   });
 }

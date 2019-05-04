@@ -20,8 +20,7 @@ class RestaurantMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final restaurant = state.restaurant;
-    if (restaurant == null) return Container();
+    if (!state.hasPlates) return Container();
     return ExpansionTile(
       initiallyExpanded: false,
       title: Text(Strings.menu),

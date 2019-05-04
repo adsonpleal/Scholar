@@ -3,22 +3,19 @@ import 'dart:async';
 import 'package:app_tcc/models/restaurant.dart';
 import 'package:app_tcc/models/settings.dart';
 import 'package:app_tcc/modules/auth/auth_repository.dart';
-import 'package:app_tcc/modules/base/base_bloc.dart';
 import 'package:app_tcc/modules/notifications/notifications_service.dart';
 import 'package:app_tcc/modules/restaurants/restaurants_repository.dart';
 import 'package:app_tcc/modules/user_data/user_data_repository.dart';
 import 'package:app_tcc/utils/inject.dart';
+import 'package:bloc/bloc.dart';
+import 'package:bloc_builder/annotations.dart';
 
 import 'profile_state.dart';
 
-enum _ProfileEvent {
-  logOut,
-  settingsChanged,
-  restaurantsChanged,
-  toggleNotifications,
-}
+part 'profile_bloc.g.dart';
 
-class ProfileBloc extends BaseBloc<_ProfileEvent, ProfileState> {
+@BuildBloc(ProfileState)
+class ProfileBloc extends _$Bloc {
   final AuthRepository _auth = inject();
   final UserDataRepository _userData = inject();
   final NotificationsService _notifications = inject();
@@ -35,25 +32,7 @@ class ProfileBloc extends BaseBloc<_ProfileEvent, ProfileState> {
   @override
   ProfileState get initialState => ProfileState.initial();
 
-  @override
-  Stream<ProfileState> mapToState(_ProfileEvent event, payload) async* {
-    switch (event) {
-      case _ProfileEvent.logOut:
-        yield* _logoutToState();
-        break;
-      case _ProfileEvent.settingsChanged:
-        yield* _settingsChangedToState(payload);
-        break;
-      case _ProfileEvent.toggleNotifications:
-        yield* _toggleNotificationsToState();
-        break;
-      case _ProfileEvent.restaurantsChanged:
-        yield* _restaurantsChangedToState(payload);
-        break;
-    }
-  }
-
-  Stream<ProfileState> _toggleNotificationsToState() async* {
+  Stream<ProfileState> _mapToggleNotificationsToState() async* {
     final settings = currentState.settings;
     final newNotificationsState = !settings.allowNotifications;
     _userData.saveSettings(
@@ -62,20 +41,20 @@ class ProfileBloc extends BaseBloc<_ProfileEvent, ProfileState> {
     _setupNotifications();
   }
 
-  Stream<ProfileState> _settingsChangedToState(Settings settings) async* {
+  Stream<ProfileState> _mapSettingsChangedToState(Settings settings) async* {
     final user = await _userData.currentUser;
     yield currentState.rebuild(
       (b) => b..settings.replace(settings)..user.replace(user),
     );
   }
 
-  Stream<ProfileState> _restaurantsChangedToState(
+  Stream<ProfileState> _mapRestaurantsChangedToState(
     List<Restaurant> restaurants,
   ) async* {
     yield currentState.rebuild((b) => b..restaurants = restaurants);
   }
 
-  Stream<ProfileState> _logoutToState() async* {
+  Stream<ProfileState> _mapLogoutToState() async* {
     await _removeNotifications();
     yield ProfileState.login();
     _auth.signOut();
@@ -87,12 +66,6 @@ class ProfileBloc extends BaseBloc<_ProfileEvent, ProfileState> {
     _settingsSubscription?.cancel();
     _notifications.dispose();
     super.dispose();
-  }
-
-  void logOut() => dispatchEvent(_ProfileEvent.logOut);
-
-  void toggleNotifications(bool value) {
-    dispatchEvent(_ProfileEvent.toggleNotifications);
   }
 
   Future<void> _setupNotifications() async {
@@ -114,19 +87,13 @@ class ProfileBloc extends BaseBloc<_ProfileEvent, ProfileState> {
 
   void _trackUserData() {
     _settingsSubscription = _userData.settingsStream?.listen(
-      (settings) => dispatchEvent(
-            _ProfileEvent.settingsChanged,
-            payload: settings,
-          ),
+      dispatchSettingsChangedEvent,
     );
   }
 
   void _trackRestaurants() {
     _restaurantsSubscription = _restaurantsRepository.restaurantsStream?.listen(
-      (restaurants) => dispatchEvent(
-            _ProfileEvent.restaurantsChanged,
-            payload: restaurants,
-          ),
+      dispatchRestaurantsChangedEvent,
     );
   }
 

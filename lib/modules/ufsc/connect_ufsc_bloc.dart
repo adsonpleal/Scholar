@@ -8,24 +8,25 @@ import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/subject_query.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:bloc_builder/annotations.dart';
+
+part 'connect_ufsc_bloc.g.dart';
 
 enum ConnectUfscState { initial, connected }
 
-class _ConnectUfscEvent {}
-
-class ConnectUfscBloc extends Bloc<_ConnectUfscEvent, ConnectUfscState> {
+@BuildBloc(ConnectUfscState)
+class ConnectUfscBloc extends _$Bloc {
   final UserDataRepository _userData = inject();
   final NotificationsService _notifications = inject();
 
   ConnectUfscBloc() {
-    dispatch(_ConnectUfscEvent());
+    dispatchConnectEvent();
   }
 
   @override
   ConnectUfscState get initialState => ConnectUfscState.initial;
 
-  @override
-  Stream<ConnectUfscState> mapEventToState(_ConnectUfscEvent event) async* {
+  Stream<ConnectUfscState> _mapConnectToState() async* {
     final webViewPlugin = FlutterWebviewPlugin();
     await webViewPlugin.onStateChanged.firstWhere((state) =>
         state.type == WebViewState.finishLoad && state.url == subjectUrl);
@@ -37,7 +38,8 @@ class ConnectUfscBloc extends Bloc<_ConnectUfscEvent, ConnectUfscState> {
     if (settings.allowNotifications) {
       _notifications.addNotifications(subjects);
     }
-    await _userData.saveSettings(settings.rebuild((b) => b..restaurantId = 'trindade'));
+    await _userData
+        .saveSettings(settings.rebuild((b) => b..restaurantId = 'trindade'));
     yield ConnectUfscState.connected;
   }
 

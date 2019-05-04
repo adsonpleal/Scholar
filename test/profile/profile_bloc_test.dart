@@ -71,6 +71,6 @@ void main() {
       profileBloc.state,
       emitsInOrder(expectedResponse),
     );
-    profileBloc.logOut();
+    profileBloc.dispatchLogoutEvent();
   });
 }

@@ -39,7 +39,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ListTile(
                       leading: Icon(Icons.exit_to_app),
                       title: Text(Strings.exit),
-                      onTap: _profileBloc.logOut,
+                      onTap: _profileBloc.dispatchLogoutEvent,
                     ),
                     Divider(),
                     ListTile(
@@ -75,7 +75,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     SwitchListTile(
                       title: Text(Strings.notifications),
                       value: state.settings?.allowNotifications ?? false,
-                      onChanged: _profileBloc.toggleNotifications,
+                      onChanged: (_) =>
+                          _profileBloc.dispatchToggleNotificationsEvent(),
                     ),
                   ],
                 ),

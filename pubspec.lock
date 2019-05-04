@@ -36,6 +36,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.11.0"
+  bloc_builder:
+    dependency: "direct dev"
+    description:
+      path: "builders/bloc"
+      relative: true
+    source: path
+    version: "0.0.0"
   boolean_selector:
     dependency: transitive
     description:

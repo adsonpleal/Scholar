@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
                       color: Colors.white,
                     ),
                     tooltip: Strings.information,
-                    onPressed: _homeBloc.showInfoAlert,
+                    onPressed: _homeBloc.dispatchShowInfoEvent,
                   )
                 ],
               ),
@@ -50,9 +50,9 @@ class _HomePageState extends State<HomePage> {
                     children: _buildSubjects(state.subjects),
                   ),
                   RestaurantMenu(
-                    onNext: _homeBloc.showNextMenuEntry,
-                    onPrevious: _homeBloc.showPreviousMenuEntry,
-                    toggleDinner: _homeBloc.toggleDinner,
+                    onNext: _homeBloc.dispatchShowNextMenuEntryEvent,
+                    onPrevious: _homeBloc.dispatchShowPreviousMenuEntryEvent,
+                    toggleDinner: _homeBloc.dispatchToggleDinnerEvent,
                     state: state,
                   ),
                 ],
@@ -64,8 +64,8 @@ class _HomePageState extends State<HomePage> {
     if (subjects == null) return [];
     return subjects
         .map((subject) => SubjectItem(
-              onAdd: () => _homeBloc.addAbsence(subject),
-              onRemove: () => _homeBloc.removeAbsence(subject),
+              onAdd: () => _homeBloc.dispatchAddAbsenceEvent(subject),
+              onRemove: () => _homeBloc.dispatchRemoveAbsenceEvent(subject),
               subject: subject,
             ))
         .toList();

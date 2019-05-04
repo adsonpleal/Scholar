@@ -34,8 +34,8 @@ class _AgendaPageState extends State<AgendaPage> {
                 children: <Widget>[
                   NotificationsList(
                     notifications: state.notifications,
-                    onAccept: _agendaBloc.onAcceptNotification,
-                    onIgnore: _agendaBloc.onIgnoreNotification,
+                    onAccept: _agendaBloc.dispatchAcceptNotificationEvent,
+                    onIgnore: _agendaBloc.dispatchRejectNotificationEvent,
                   ),
                   SliverEventsList(events: state.events),
                 ],

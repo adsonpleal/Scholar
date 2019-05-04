@@ -26,11 +26,11 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
     final form = _formKey.currentState;
     if (form.validate()) {
       form.save();
-      _loginSignUpBloc.submit();
+      _loginSignUpBloc.dispatchSubmitEvent();
     }
   }
 
-  void _onEmailSubmited(FormMode formMode) {
+  void _onEmailSubmitted(FormMode formMode) {
     if (formMode == FormMode.resetPassword) {
       _validateAndSave();
     } else {
@@ -69,7 +69,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
                                 validator: _loginSignUpBloc.validateEmail,
                                 onSaved: _loginSignUpBloc.onEmailSaved,
                                 onFieldSubmitted: () =>
-                                    _onEmailSubmited(state.formMode),
+                                    _onEmailSubmitted(state.formMode),
                               ),
                               PasswordInput(
                                 focusNode: _passwordFocus,
@@ -84,11 +84,11 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
                               ),
                               SecondaryButton(
                                 formMode: state.formMode,
-                                onPressed: _loginSignUpBloc.toggleFormMode,
+                                onPressed: _loginSignUpBloc.dispatchToggleEvent,
                               ),
                               ForgotPasswordButton(
                                 formMode: state.formMode,
-                                onPressed: _loginSignUpBloc.toggleResetPassword,
+                                onPressed: _loginSignUpBloc.dispatchToggleResetEvent,
                               ),
                               ErrorMessage(
                                 errorMessage: state.errorMessage,

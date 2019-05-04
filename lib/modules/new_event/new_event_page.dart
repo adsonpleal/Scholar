@@ -80,7 +80,7 @@ class _NewEventPageState extends State<NewEventPage> {
         ..subject.replace(_subject)
         ..type = _eventType
         ..description = _description);
-      _newEventBloc.createEvent(event);
+      _newEventBloc.dispatchCreateEventEvent(event);
     }
   }
 

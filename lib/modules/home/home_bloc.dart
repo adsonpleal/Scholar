@@ -3,70 +3,63 @@ import 'dart:async';
 import 'package:app_tcc/models/restaurant.dart';
 import 'package:app_tcc/models/single_event.dart';
 import 'package:app_tcc/models/subject.dart';
-import 'package:app_tcc/modules/base/base_bloc.dart';
 import 'package:app_tcc/modules/user_data/user_data_repository.dart';
 import 'package:app_tcc/utils/inject.dart';
+import 'package:bloc/bloc.dart';
+import 'package:bloc_builder/annotations.dart';
 
 import 'home_state.dart';
 
-enum _HomeEvent {
-  restaurantChanged,
-  subjectChanged,
-  showInfo,
-  addAbsence,
-  removeAbsence,
-  showPreviousMenuEntry,
-  showNextMenuEntry,
-  toggleDinner,
-}
+part 'home_bloc.g.dart';
 
-class HomeBloc extends BaseBloc<_HomeEvent, HomeState> {
+@BuildBloc(HomeState)
+class HomeBloc extends _$Bloc {
   final UserDataRepository _userData = inject();
   StreamSubscription<List<Subject>> _subjectsSubscription;
   StreamSubscription<Restaurant> _restaurantSubscription;
 
   HomeBloc() {
-    _initSubjectsStream();
+    _initStreams();
   }
 
   @override
   HomeState get initialState => HomeState.initial();
 
-  @override
-  Stream<HomeState> mapToState(_HomeEvent event, payload) async* {
-    switch (event) {
-      case _HomeEvent.subjectChanged:
-        yield currentState.rebuild((b) => b..subjects.replace(payload));
-        break;
-      case _HomeEvent.showInfo:
-        yield* _showInfoToEvent();
-        break;
-      case _HomeEvent.addAbsence:
-        yield* _changeAbsenceValue(payload, 1);
-        break;
-      case _HomeEvent.removeAbsence:
-        yield* _changeAbsenceValue(payload, -1);
-        break;
-      case _HomeEvent.restaurantChanged:
-        yield currentState.rebuild((b) => b
-          ..restaurant.replace(payload)
-          ..selectedEntryIndex = 0
-          ..showDinner = false);
-        break;
-      case _HomeEvent.showNextMenuEntry:
-        yield currentState.rebuild((b) => b..selectedEntryIndex += 1);
-        break;
-      case _HomeEvent.showPreviousMenuEntry:
-        yield currentState.rebuild((b) => b..selectedEntryIndex -= 1);
-        break;
-      case _HomeEvent.toggleDinner:
-        yield currentState.rebuild((b) => b..showDinner = !b.showDinner);
-        break;
-    }
+  Stream<HomeState> _mapRestaurantChangedToState(
+    Restaurant restaurant,
+  ) async* {
+    yield currentState.rebuild((b) => b
+      ..restaurant.replace(restaurant)
+      ..selectedEntryIndex = 0
+      ..showDinner = false);
   }
 
-  Stream<HomeState> _showInfoToEvent() async* {
+  Stream<HomeState> _mapToggleDinnerToState() async* {
+    yield currentState.rebuild((b) => b..showDinner = !b.showDinner);
+  }
+
+  Stream<HomeState> _mapShowNextMenuEntryToState() async* {
+    yield currentState.rebuild((b) => b..selectedEntryIndex += 1);
+  }
+
+  Stream<HomeState> _mapShowPreviousMenuEntryToState() async* {
+    yield currentState.rebuild((b) => b..selectedEntryIndex -= 1);
+  }
+
+  Stream<HomeState> _mapSubjectsChangedToState(List<Subject> subjects) async* {
+    yield currentState.rebuild((b) => b..subjects.replace(subjects));
+  }
+
+  Stream<HomeState> _mapShowInfoToState() async* {
     yield currentState.rebuild((b) => b..showInfoAlert = SingleEvent(true));
+  }
+
+  Stream<HomeState> _mapAddAbsenceToState(Subject subject) async* {
+    yield* _changeAbsenceValue(subject, 1);
+  }
+
+  Stream<HomeState> _mapRemoveAbsenceToState(Subject subject) async* {
+    yield* _changeAbsenceValue(subject, -1);
   }
 
   Stream<HomeState> _changeAbsenceValue(Subject subject, int value) async* {
@@ -77,43 +70,19 @@ class HomeBloc extends BaseBloc<_HomeEvent, HomeState> {
     }
   }
 
-  void _initSubjectsStream() {
+  void _initStreams() {
     _subjectsSubscription = _userData.subjectsStream?.listen(
-      (s) => dispatchEvent(_HomeEvent.subjectChanged, payload: s),
+      dispatchSubjectsChangedEvent,
     );
     _restaurantSubscription = _userData.restaurantStream?.listen(
-      (r) => dispatchEvent(_HomeEvent.restaurantChanged, payload: r),
+      dispatchRestaurantChangedEvent,
     );
   }
-
-  void addAbsence(Subject subject) => dispatchEvent(
-        _HomeEvent.addAbsence,
-        payload: subject,
-      );
-
-  void removeAbsence(Subject subject) => dispatchEvent(
-        _HomeEvent.removeAbsence,
-        payload: subject,
-      );
-
-  void showInfoAlert() => dispatchEvent(_HomeEvent.showInfo);
 
   @override
   void dispose() {
     _subjectsSubscription?.cancel();
     _restaurantSubscription?.cancel();
     super.dispose();
-  }
-
-  void showNextMenuEntry() {
-    dispatchEvent(_HomeEvent.showNextMenuEntry);
-  }
-
-  void showPreviousMenuEntry() {
-    dispatchEvent(_HomeEvent.showPreviousMenuEntry);
-  }
-
-  void toggleDinner() {
-    dispatchEvent(_HomeEvent.toggleDinner);
   }
 }

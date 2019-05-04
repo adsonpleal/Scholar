@@ -4,12 +4,14 @@ import 'package:app_tcc/resources/strings.dart' as Strings;
 import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/routes.dart' as Routes;
 import 'package:bloc/bloc.dart';
+import 'package:bloc_builder/annotations.dart';
 
 import 'login_signup_state.dart';
 
-enum _LoginSignUpEvent { submit, toggleForm, toggleResetPassword }
+part 'login_signup_bloc.g.dart';
 
-class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
+@BuildBloc(LoginSignUpState)
+class LoginSignUpBloc extends _$Bloc {
   String _email;
   String _password;
 
@@ -17,20 +19,6 @@ class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
 
   @override
   LoginSignUpState get initialState => LoginSignUpState.initial();
-
-  @override
-  mapEventToState(_LoginSignUpEvent event) async* {
-    switch (event) {
-      case _LoginSignUpEvent.toggleResetPassword:
-        yield* _mapToggleResetToState();
-        break;
-      case _LoginSignUpEvent.submit:
-        yield* _mapSubmitToState();
-        break;
-      case _LoginSignUpEvent.toggleForm:
-        yield* _mapToggleToState();
-    }
-  }
 
   Stream<LoginSignUpState> _mapSubmitToState() async* {
     yield currentState.rebuild((b) => b
@@ -88,12 +76,6 @@ class LoginSignUpBloc extends Bloc<_LoginSignUpEvent, LoginSignUpState> {
   onEmailSaved(String value) => _email = value;
 
   onPasswordSaved(String value) => _password = value;
-
-  submit() => dispatch(_LoginSignUpEvent.submit);
-
-  toggleFormMode() => dispatch(_LoginSignUpEvent.toggleForm);
-
-  toggleResetPassword() => dispatch(_LoginSignUpEvent.toggleResetPassword);
 
   String _errorCodeToMessage(String code) {
     switch (code) {
