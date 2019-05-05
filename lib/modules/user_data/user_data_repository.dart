@@ -1,6 +1,8 @@
 import 'package:app_tcc/models/event.dart';
 import 'package:app_tcc/models/event_notification.dart';
 import 'package:app_tcc/models/restaurant.dart';
+import 'package:app_tcc/models/schedule.dart';
+import 'package:app_tcc/models/schedule_time.dart';
 import 'package:app_tcc/models/settings.dart';
 import 'package:app_tcc/models/subject.dart';
 import 'package:app_tcc/models/user.dart';
@@ -8,6 +10,7 @@ import 'package:app_tcc/modules/auth/auth_repository.dart';
 import 'package:app_tcc/modules/restaurants/restaurants_repository.dart';
 import 'package:app_tcc/utils/inject.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/transformers.dart';
 
 class UserDataRepository {
@@ -66,6 +69,22 @@ class UserDataRepository {
             .rebuild((b) => b..documentID = d.documentID))
         .toList());
   }
+
+  Stream<List<Schedule>> get schedulesStream => subjectsStream.map((subjects) {
+        final schedules = List<Schedule>.generate(7, (i) => Schedule(Day(i + 1)));
+        subjects.forEach((sj) {
+          sj.times.forEach((t) {
+            final schedule = schedules.firstWhere(
+              (s) => s.weekDay.value == t.dayOfTheWeek.value,
+            );
+            schedule.times.add(ScheduleTime(
+              time: t.time,
+              subject: sj,
+            ));
+          });
+        });
+        return schedules;
+      });
 
   Future<List<Subject>> get subjects => subjectsStream.first;
 

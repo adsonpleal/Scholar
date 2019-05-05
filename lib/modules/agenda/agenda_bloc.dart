@@ -48,7 +48,8 @@ class AgendaBloc extends _$Bloc {
   }
 
   Stream<AgendaState> _mapNotificationsChangedToState(
-      List<EventNotification> notifications) async* {
+    List<EventNotification> notifications,
+  ) async* {
     yield currentState.rebuild((b) => b..notifications.replace(notifications));
   }
 

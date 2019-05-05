@@ -1,13 +1,13 @@
-import 'package:app_tcc/models/subject.dart';
-import 'package:app_tcc/modules/home/components/restaurant_menu.dart';
 import 'package:app_tcc/resources/strings.dart' as Strings;
 import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/widgets/info_alert.dart';
-import 'package:built_collection/built_collection.dart';
+import 'package:app_tcc/utils/widgets/loading_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'components/subject_item.dart';
+import 'components/restaurant_menu.dart';
+import 'components/schedules.dart';
+import 'components/subjects.dart';
 import 'home_bloc.dart';
 import 'home_state.dart';
 
@@ -42,32 +42,27 @@ class _HomePageState extends State<HomePage> {
                   )
                 ],
               ),
-              body: ListView(
-                children: <Widget>[
-                  ExpansionTile(
-                    initiallyExpanded: false,
-                    title: Text(Strings.absenceControl),
-                    children: _buildSubjects(state.subjects),
-                  ),
-                  RestaurantMenu(
-                    onNext: _homeBloc.dispatchShowNextMenuEntryEvent,
-                    onPrevious: _homeBloc.dispatchShowPreviousMenuEntryEvent,
-                    toggleDinner: _homeBloc.dispatchToggleDinnerEvent,
-                    state: state,
-                  ),
-                ],
+              body: LoadingWrapper(
+                isLoading: state.isLoading,
+                child: ListView(
+                  children: <Widget>[
+                    Subjects(
+                      subjects: state.subjects,
+                      onAdd: _homeBloc.dispatchAddAbsenceEvent,
+                      onRemove: _homeBloc.dispatchRemoveAbsenceEvent,
+                    ),
+                    Schedules(
+                      schedule: state.selectedSchedule,
+                    ),
+                    RestaurantMenu(
+                      onNext: _homeBloc.dispatchShowNextMenuEntryEvent,
+                      onPrevious: _homeBloc.dispatchShowPreviousMenuEntryEvent,
+                      toggleDinner: _homeBloc.dispatchToggleDinnerEvent,
+                      state: state,
+                    ),
+                  ],
+                ),
               ),
             ),
           ));
-
-  List<Widget> _buildSubjects(BuiltList<Subject> subjects) {
-    if (subjects == null) return [];
-    return subjects
-        .map((subject) => SubjectItem(
-              onAdd: () => _homeBloc.dispatchAddAbsenceEvent(subject),
-              onRemove: () => _homeBloc.dispatchRemoveAbsenceEvent(subject),
-              subject: subject,
-            ))
-        .toList();
-  }
 }

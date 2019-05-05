@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:app_tcc/models/restaurant.dart';
+import 'package:app_tcc/models/schedule.dart';
 import 'package:app_tcc/models/single_event.dart';
 import 'package:app_tcc/models/subject.dart';
 import 'package:app_tcc/modules/user_data/user_data_repository.dart';
@@ -12,9 +13,11 @@ import 'home_state.dart';
 
 part 'home_bloc.g.dart';
 
+// TODO: refactor this bloc, it is too big!
 @BuildBloc(HomeState)
 class HomeBloc extends _$Bloc {
   final UserDataRepository _userData = inject();
+  StreamSubscription<List<Schedule>> _schedulesSubscription;
   StreamSubscription<List<Subject>> _subjectsSubscription;
   StreamSubscription<Restaurant> _restaurantSubscription;
 
@@ -50,6 +53,10 @@ class HomeBloc extends _$Bloc {
     yield currentState.rebuild((b) => b..subjects.replace(subjects));
   }
 
+  Stream<HomeState> _mapSchedulesChangedToState(List<Schedule> schedules) async* {
+    yield currentState.rebuild((b) => b..schedules.replace(schedules));
+  }
+
   Stream<HomeState> _mapShowInfoToState() async* {
     yield currentState.rebuild((b) => b..showInfoAlert = SingleEvent(true));
   }
@@ -77,12 +84,16 @@ class HomeBloc extends _$Bloc {
     _restaurantSubscription = _userData.restaurantStream?.listen(
       dispatchRestaurantChangedEvent,
     );
+     _schedulesSubscription = _userData.schedulesStream?.listen(
+      dispatchSchedulesChangedEvent,
+    );
   }
 
   @override
   void dispose() {
     _subjectsSubscription?.cancel();
     _restaurantSubscription?.cancel();
+    _schedulesSubscription?.cancel();
     super.dispose();
   }
 }
