@@ -5,11 +5,11 @@ import 'package:app_tcc/utils/widgets/loading_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'components/restaurant_menu.dart';
-import 'components/schedules.dart';
-import 'components/subjects.dart';
 import 'home_bloc.dart';
 import 'home_state.dart';
+import 'submodules/restaurant_menu/restaurant_menu.dart';
+import 'submodules/schedules.dart/schedules.dart';
+import 'submodules/subjects/subjects.dart';
 
 class HomePage extends StatefulWidget {
   static Widget instantiate() => HomePage();
@@ -46,20 +46,9 @@ class _HomePageState extends State<HomePage> {
                 isLoading: state.isLoading,
                 child: ListView(
                   children: <Widget>[
-                    Subjects(
-                      subjects: state.subjects,
-                      onAdd: _homeBloc.dispatchAddAbsenceEvent,
-                      onRemove: _homeBloc.dispatchRemoveAbsenceEvent,
-                    ),
-                    Schedules(
-                      schedule: state.selectedSchedule,
-                    ),
-                    RestaurantMenu(
-                      onNext: _homeBloc.dispatchShowNextMenuEntryEvent,
-                      onPrevious: _homeBloc.dispatchShowPreviousMenuEntryEvent,
-                      toggleDinner: _homeBloc.dispatchToggleDinnerEvent,
-                      state: state,
-                    ),
+                    Subjects(),
+                    Schedules(),
+                    RestaurantMenu(),
                   ],
                 ),
               ),

@@ -1,4 +1,5 @@
 import 'package:app_tcc/models/event.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 
 String get appName => Intl.message(
@@ -185,7 +186,7 @@ String get addEvent => Intl.message(
       'Adicionar evento',
       name: "addEvent",
     );
-    
+
 String get showDinner => Intl.message(
       'Mostrar Jantar',
       name: "showDinner",
@@ -226,9 +227,19 @@ String get newTest => Intl.message(
       name: "newTest",
     );
 
+String get noSchedule => Intl.message(
+      'Sem horários',
+      name: "noSchedule",
+    );
+
 String get newHomework => Intl.message(
       'Novo Trabalho',
       name: "newHomework",
+    );
+
+String get schedules => Intl.message(
+      'Horários',
+      name: "schedules",
     );
 
 String get eventDescriptionHint => Intl.message(
@@ -300,4 +311,24 @@ String fullDateAndTime(DateTime date) => Intl.message(
       DateFormat('dd/MM/yyy HH:mm').format(date),
       name: "fullDateAndTime",
       args: [date],
+    );
+
+String hourMinute(Time time) => Intl.message(
+      '${time.hour}:${time.minute}',
+      name: "hourMinute",
+      args: [time],
+    );
+
+String weekDay(Day day) => Intl.message(
+      [
+        'Segunda-feira',
+        'Terça-feira',
+        'Quarta-feira',
+        'Quinta-feira',
+        'Sexta-feira',
+        'Sábado',
+        'Domingo',
+      ][day.value - 1],
+      name: "weekDay",
+      args: [day],
     );
