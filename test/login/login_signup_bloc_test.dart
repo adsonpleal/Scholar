@@ -92,7 +92,8 @@ void main() {
     });
     test('password validator return error if invalid', () {
       final password = "";
-      expect(Strings.passwordCantBeEmpty, loginSignUpBloc.validatePassword(password));
+      expect(Strings.passwordCantBeEmpty,
+          loginSignUpBloc.validatePassword(password));
     });
   });
 
@@ -125,7 +126,8 @@ void main() {
   });
 
   group('submit', () {
-    test('emits [login, signup, loading] after submitting from signup', () async {
+    test('emits [login, signup, loading] after submitting from signup',
+        () async {
       final expectedResponse = [
         LoginSignUpState.initial(),
         LoginSignUpState((b) => b..formMode = FormMode.signUp),
@@ -151,7 +153,8 @@ void main() {
         LoginSignUpState.initial(),
         LoginSignUpState((b) => b..loading = true)
       ];
-      when(authRepository.signIn(any, any)).thenAnswer((_) => Future.value("test"));
+      when(authRepository.signIn(any, any))
+          .thenAnswer((_) => Future.value("test"));
       expectLater(
         loginSignUpBloc.state,
         emitsInOrder(expectedResponse),
@@ -160,7 +163,9 @@ void main() {
       await untilCalled(authRepository.signIn(any, any));
     });
 
-    test('emits [login, resetPassword, loading] after submitting from resetPassword', () async {
+    test(
+        'emits [login, resetPassword, loading] after submitting from resetPassword',
+        () async {
       final expectedResponse = [
         LoginSignUpState.initial(),
         LoginSignUpState((b) => b..formMode = FormMode.resetPassword),
@@ -177,20 +182,38 @@ void main() {
       loginSignUpBloc.dispatchSubmitEvent();
       await untilCalled(authRepository.resetPassword(any));
     });
+  });
 
-    test('emits [login, loading, error] after submitting with error', () async {
-      final expectedResponse = [
-        LoginSignUpState.initial(),
-        LoginSignUpState((b) => b..loading = true),
-        LoginSignUpState((b) => b..errorMessage = Strings.unknownError)
-      ];
-      when(authRepository.signIn(any, any))
-          .thenAnswer((_) => Future.error(CustomException("test")));
-      expectLater(
-        loginSignUpBloc.state,
-        emitsInOrder(expectedResponse),
+  group('error', () {
+    final errors = {
+      'ERROR_INVALID_EMAIL': Strings.errorInvalidEmail,
+      'ERROR_WRONG_PASSWORD': Strings.errorWrongPassword,
+      'ERROR_USER_NOT_FOUND': Strings.errorUserNotFound,
+      'ERROR_USER_DISABLED': Strings.errorUserDisabled,
+      'ERROR_TOO_MANY_REQUESTS': Strings.errorTooManyRequests,
+      'ERROR_OPERATION_NOT_ALLOWED': Strings.errorOperationNotAllowed,
+      'UNKNOWN': Strings.unknownError,
+    };
+
+    errors.forEach((key, error) {
+      test(
+        'emits [login, loading, error] after submitting with $error',
+        () async {
+          final expectedResponse = [
+            LoginSignUpState.initial(),
+            LoginSignUpState((b) => b..loading = true),
+            LoginSignUpState((b) => b..errorMessage = error)
+          ];
+
+          when(authRepository.signIn(any, any))
+              .thenAnswer((_) => Future.error(CustomException(key)));
+          expectLater(
+            loginSignUpBloc.state,
+            emitsInOrder(expectedResponse),
+          );
+          loginSignUpBloc.dispatchSubmitEvent();
+        },
       );
-      loginSignUpBloc.dispatchSubmitEvent();
     });
   });
 }
