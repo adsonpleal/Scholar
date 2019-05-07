@@ -1,4 +1,4 @@
-import 'package:app_tcc/modules/auth/auth_repository.dart';
+  import 'package:app_tcc/modules/auth/auth_repository.dart';
 import 'package:app_tcc/modules/login/login_signup_bloc.dart';
 import 'package:app_tcc/modules/login/login_signup_state.dart';
 import 'package:app_tcc/modules/notifications/notifications_service.dart';

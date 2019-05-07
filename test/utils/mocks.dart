@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app_tcc/modules/auth/auth_repository.dart';
 import 'package:app_tcc/modules/notifications/notifications_service.dart';
 import 'package:app_tcc/modules/profile/link_repository.dart';
@@ -11,9 +13,9 @@ class MockNotificationsService extends Mock implements NotificationsService {}
 
 class MockRestaurantsRepository extends Mock implements RestaurantsRepository {}
 
-class MockAuthRepository extends Mock implements AuthRepository {}
-
 class MockUser extends Mock implements FirebaseUser {}
+
+class MockAuthRepository extends Mock implements AuthRepository {}
 
 class MockUserDataRepository extends Mock implements UserDataRepository {}
 
