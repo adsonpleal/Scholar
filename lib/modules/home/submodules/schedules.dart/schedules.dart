@@ -29,20 +29,19 @@ class _SchedulesState extends State<Schedules> {
 
   List<Widget> children(SchedulesState state) {
     final times = state.selectedSchedule.times;
-    final items = <Widget>[
+    return <Widget>[
       _buildPageHeader(state),
-    ];
-    if (times.isEmpty) {
-      items.add(ListTile(
-        title: Text(Strings.noSchedule),
-      ));
-    } else {
-      items.addAll(times.map((t) => ListTile(
+      if (times.isEmpty)
+        ListTile(
+          title: Text(Strings.noSchedule),
+        )
+      else
+        for (final t in times)
+          ListTile(
             title: Text(Strings.hourMinute(t.time)),
             subtitle: Text(t.subject.name),
-          )));
-    }
-    return items;
+          ),
+    ];
   }
 
   Widget _buildPageHeader(SchedulesState state) {

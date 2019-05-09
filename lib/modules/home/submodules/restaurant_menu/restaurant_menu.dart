@@ -23,24 +23,23 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
         builder: (context, RestaurantMenuState state) {
           if (!state.isValid) return Container();
           return ExpansionTile(
-            initiallyExpanded: false,
-            title: Text(Strings.menu),
-            children: <Widget>[
-              _buildPageHeader(state),
-              Visibility(
-                visible: state.hasDinner,
-                child: CheckboxListTile(
-                  title: Text(Strings.showDinner),
-                  value: state.showDinner,
-                  onChanged: (_) =>
-                      _restaurantMenuBloc.dispatchToggleDinnerEvent(),
-                ),
-              ),
-            ]..addAll(state.menuEntry.plates.map((plate) => ListTile(
-                  leading: const Icon(Icons.restaurant_menu),
-                  title: Text(plate),
-                ))),
-          );
+              initiallyExpanded: false,
+              title: Text(Strings.menu),
+              children: <Widget>[
+                _buildPageHeader(state),
+                if (state.hasDinner)
+                  CheckboxListTile(
+                    title: Text(Strings.showDinner),
+                    value: state.showDinner,
+                    onChanged: (_) =>
+                        _restaurantMenuBloc.dispatchToggleDinnerEvent(),
+                  ),
+                for (final plate in state.menuEntry.plates)
+                  ListTile(
+                    leading: const Icon(Icons.restaurant_menu),
+                    title: Text(plate),
+                  )
+              ]);
         });
   }
 

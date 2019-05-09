@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:app_tcc/models/schedule.dart';
 import 'package:app_tcc/models/single_event.dart';
 import 'package:app_tcc/modules/user_data/user_data_repository.dart';
 import 'package:app_tcc/utils/inject.dart';
