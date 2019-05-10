@@ -4,14 +4,14 @@ import 'package:app_tcc/models/single_event.dart';
 import 'package:app_tcc/modules/user_data/user_data_repository.dart';
 import 'package:app_tcc/utils/inject.dart';
 import 'package:bloc/bloc.dart';
-import 'package:bloc_builder/annotations.dart';
+import 'package:bloc_code_generator/annotations.dart';
 import 'package:rxdart/streams.dart';
 
 import 'home_state.dart';
 
 part 'home_bloc.g.dart';
 
-@BuildBloc(HomeState)
+@GenerateBloc(HomeState)
 class HomeBloc extends _$Bloc {
   final UserDataRepository _userData = inject();
   StreamSubscription<bool> _loadingSubscription;

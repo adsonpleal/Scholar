@@ -4,13 +4,13 @@ import 'package:app_tcc/resources/strings.dart' as Strings;
 import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/routes.dart' as Routes;
 import 'package:bloc/bloc.dart';
-import 'package:bloc_builder/annotations.dart';
+import 'package:bloc_code_generator/annotations.dart';
 
 import 'login_signup_state.dart';
 
 part 'login_signup_bloc.g.dart';
 
-@BuildBloc(LoginSignUpState)
+@GenerateBloc(LoginSignUpState)
 class LoginSignUpBloc extends _$Bloc {
   String _email;
   String _password;

@@ -5,13 +5,13 @@ import 'package:app_tcc/models/event_notification.dart';
 import 'package:app_tcc/modules/user_data/user_data_repository.dart';
 import 'package:app_tcc/utils/inject.dart';
 import 'package:bloc/bloc.dart';
-import 'package:bloc_builder/annotations.dart';
+import 'package:bloc_code_generator/annotations.dart';
 
 import 'agenda_state.dart';
 
 part 'agenda_bloc.g.dart';
 
-@BuildBloc(AgendaState)
+@GenerateBloc(AgendaState)
 class AgendaBloc extends _$Bloc {
   final UserDataRepository _userData = inject();
   StreamSubscription<List<Event>> _eventsSubscription;

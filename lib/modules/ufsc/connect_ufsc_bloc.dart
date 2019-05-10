@@ -8,13 +8,13 @@ import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/subject_query.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
-import 'package:bloc_builder/annotations.dart';
+import 'package:bloc_code_generator/annotations.dart';
 
 part 'connect_ufsc_bloc.g.dart';
 
 enum ConnectUfscState { initial, connected }
 
-@BuildBloc(ConnectUfscState)
+@GenerateBloc(ConnectUfscState)
 class ConnectUfscBloc extends _$Bloc {
   final UserDataRepository _userData = inject();
   final NotificationsService _notifications = inject();

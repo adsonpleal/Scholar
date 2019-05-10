@@ -1,4 +1,4 @@
-class BuildBloc {
+class GenerateBloc {
   final Type stateType;
-  const BuildBloc(this.stateType);
+  const GenerateBloc(this.stateType);
 }

@@ -4,13 +4,13 @@ import 'package:app_tcc/models/schedule.dart';
 import 'package:app_tcc/modules/user_data/user_data_repository.dart';
 import 'package:app_tcc/utils/inject.dart';
 import 'package:bloc/bloc.dart';
-import 'package:bloc_builder/annotations.dart';
+import 'package:bloc_code_generator/annotations.dart';
 
 import 'schedules_state.dart';
 
 part 'schedules_bloc.g.dart';
 
-@BuildBloc(SchedulesState)
+@GenerateBloc(SchedulesState)
 class SchedulesBloc extends _$Bloc {
   final UserDataRepository _userData = inject();
   StreamSubscription<List<Schedule>> _schedulesSubscription;

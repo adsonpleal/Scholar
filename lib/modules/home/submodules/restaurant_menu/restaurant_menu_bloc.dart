@@ -4,13 +4,13 @@ import 'package:app_tcc/models/restaurant.dart';
 import 'package:app_tcc/modules/user_data/user_data_repository.dart';
 import 'package:app_tcc/utils/inject.dart';
 import 'package:bloc/bloc.dart';
-import 'package:bloc_builder/annotations.dart';
+import 'package:bloc_code_generator/annotations.dart';
 
 import 'restaurant_menu_state.dart';
 
 part 'restaurant_menu_bloc.g.dart';
 
-@BuildBloc(RestaurantMenuState)
+@GenerateBloc(RestaurantMenuState)
 class RestaurantMenuBloc extends _$Bloc {
   final UserDataRepository _userData = inject();
   StreamSubscription<Restaurant> _restaurantSubscription;

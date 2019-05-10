@@ -8,13 +8,13 @@ import 'package:app_tcc/modules/restaurants/restaurants_repository.dart';
 import 'package:app_tcc/modules/user_data/user_data_repository.dart';
 import 'package:app_tcc/utils/inject.dart';
 import 'package:bloc/bloc.dart';
-import 'package:bloc_builder/annotations.dart';
+import 'package:bloc_code_generator/annotations.dart';
 
 import 'profile_state.dart';
 
 part 'profile_bloc.g.dart';
 
-@BuildBloc(ProfileState)
+@GenerateBloc(ProfileState)
 class ProfileBloc extends _$Bloc {
   final AuthRepository _auth = inject();
   final UserDataRepository _userData = inject();
