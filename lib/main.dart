@@ -11,7 +11,6 @@ import 'package:intl/intl.dart';
 
 import 'modules/modules.dart';
 import 'modules/new_event/new_event_page.dart';
-import 'modules/ufsc/connect_ufsc_page.dart';
 
 class App extends StatelessWidget {
   final FirebaseAnalyticsObserver observer = inject();
@@ -29,7 +28,6 @@ class App extends StatelessWidget {
           Routes.root: (c) => SplashPage(),
           Routes.login: (c) => LoginSignUpPage(),
           Routes.main: (c) => MainPage(),
-          Routes.connectUfsc: (c) => ConnectUfscPage(),
           Routes.newEvent: (c) => NewEventPage(),
         },
         theme: ThemeData(

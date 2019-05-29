@@ -41,8 +41,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
-                    android:scheme="minhaufsc"
-                    android:host="minhaufsc.setic_oauth.ufsc.br" />
+                    android:scheme="tccleal"
+                    android:host="tccleal.setic_oauth.ufsc.br" />
             </intent-filter>
 
             <intent-filter>

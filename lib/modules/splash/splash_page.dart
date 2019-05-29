@@ -1,3 +1,4 @@
+import 'package:app_tcc/modules/login/components/logo.dart';
 import 'package:app_tcc/modules/splash/splash_bloc.dart';
 import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/widgets/routing_wrapper.dart';
@@ -20,9 +21,12 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   Widget build(BuildContext context) => BlocBuilder(
-      bloc: _splashBloc,
-      builder: (context, state) =>
-          RoutingWrapper(route: state.route?.value, child: Center(child: Text("Splash"))));
+        bloc: _splashBloc,
+        builder: (context, state) => RoutingWrapper(
+              route: state.route?.value,
+              child: Scaffold(),
+            ),
+      );
 
   @override
   void dispose() {

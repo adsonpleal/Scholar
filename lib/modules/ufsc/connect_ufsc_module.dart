@@ -1,12 +1,12 @@
 import 'package:app_tcc/modules/base/module.dart';
 import 'package:kiwi/kiwi.dart';
 
-import 'connect_ufsc_bloc.dart';
+import 'ufsc_service.dart';
 
 part 'connect_ufsc_module.g.dart';
 
 abstract class ConnectUfscInjector {
-  @Register.factory(ConnectUfscBloc)
+  @Register.factory(UfscService)
   void configure();
 }
 

@@ -12,9 +12,7 @@ abstract class SubjectTime implements Built<SubjectTime, SubjectTimeBuilder> {
   String get weekDay;
 
   String get startTime;
-
-  int get count;
-
+  
   String get center;
 
   String get room;

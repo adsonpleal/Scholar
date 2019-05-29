@@ -5,6 +5,7 @@ import 'package:app_tcc/models/settings.dart';
 import 'package:app_tcc/modules/auth/auth_repository.dart';
 import 'package:app_tcc/modules/notifications/notifications_service.dart';
 import 'package:app_tcc/modules/restaurants/restaurants_repository.dart';
+import 'package:app_tcc/modules/ufsc/ufsc_service.dart';
 import 'package:app_tcc/modules/user_data/user_data_repository.dart';
 import 'package:app_tcc/utils/inject.dart';
 import 'package:bloc/bloc.dart';
@@ -18,6 +19,7 @@ part 'profile_bloc.g.dart';
 class ProfileBloc extends _$Bloc {
   final AuthRepository _auth = inject();
   final UserDataRepository _userData = inject();
+  final UfscService _ufscService = inject();
   final NotificationsService _notifications = inject();
   final RestaurantsRepository _restaurantsRepository = inject();
   StreamSubscription<Settings> _settingsSubscription;
@@ -60,10 +62,15 @@ class ProfileBloc extends _$Bloc {
     _auth.signOut();
   }
 
+  Future<void> launchAuthorization() async {
+    await _ufscService.launchAuthorization();
+  }
+
   @override
   dispose() {
     _restaurantsSubscription?.cancel();
     _settingsSubscription?.cancel();
+    _ufscService.dispose();
     _notifications.dispose();
     super.dispose();
   }

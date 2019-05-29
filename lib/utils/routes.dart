@@ -1,5 +1,5 @@
 import 'package:app_tcc/models/event.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 
 const login = "/login";
 const main = "/main";
@@ -9,10 +9,6 @@ const agenda = "/agenda";
 const connectUfsc = "/connectUfsc";
 const newEvent = "/newEvent";
 const root = "/";
-
-void Function() toConnectUfsc(context) => () {
-      Navigator.pushNamed(context, connectUfsc);
-    };
 
 void Function() toNewEvent(context, EventType type) => () {
       Navigator.pushNamed(
