@@ -24,7 +24,9 @@ class _SplashPageState extends State<SplashPage> {
         bloc: _splashBloc,
         builder: (context, state) => RoutingWrapper(
               route: state.route?.value,
-              child: Scaffold(),
+              child: Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              ),
             ),
       );
 
