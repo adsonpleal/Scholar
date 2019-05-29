@@ -29,7 +29,9 @@ void main() {
   Firestore firestore;
 
   void _stubAllowNotifications({bool value = false}) {
-    final settings = Settings((b) => b..allowNotifications = value);
+    final settings = Settings((b) => b
+      ..allowNotifications = value
+      ..connected = false);
     when(userDataRepository.settings).thenAnswer((_) => Future.value(settings));
   }
 
@@ -87,8 +89,9 @@ void main() {
   group('toggle notifications', () {
     Future<void> testToggle(bool initialAllowNotifications) async {
       final settingsStreamController = StreamController<Settings>();
-      final settings =
-          Settings((b) => b..allowNotifications = initialAllowNotifications);
+      final settings = Settings((b) => b
+        ..allowNotifications = initialAllowNotifications
+        ..connected = false);
       settingsStreamController.add(settings);
       when(userDataRepository.settingsStream)
           .thenAnswer((_) => settingsStreamController.stream);
@@ -134,7 +137,9 @@ void main() {
   });
 
   test('onRestaurantChanged should call _userData.saveSettings', () async {
-    final settings = Settings((b) => b..allowNotifications = false);
+    final settings = Settings((b) => b
+      ..allowNotifications = false
+      ..connected = false);
     when(userDataRepository.settingsStream)
         .thenAnswer((_) => Stream.fromIterable([settings]));
     when(userDataRepository.currentUser)

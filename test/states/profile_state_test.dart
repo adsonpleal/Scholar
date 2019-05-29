@@ -13,6 +13,7 @@ void main() {
     test('is true when values are null', () {
       final settings = Settings((b) => b
         ..restaurantId = 'restaurantId'
+        ..connected = false
         ..allowNotifications = false);
       final List<Restaurant> restaurants = [];
       final profileState = ProfileState((b) => b
@@ -31,6 +32,7 @@ void main() {
     test('is a Restaurant when values are right', () {
       final settings = Settings((b) => b
         ..restaurantId = 'restaurantId'
+        ..connected = false
         ..allowNotifications = false);
       final restaurant = Restaurant((b) => b
         ..documentID = 'restaurantId'
