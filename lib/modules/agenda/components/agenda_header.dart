@@ -18,7 +18,7 @@ class AgendaHeader extends StatelessWidget {
         alignment: Alignment.centerLeft,
         child: SizedBox(
           height: 44.0,
-          width: 60.0,
+          width: 65.0,
           child: GestureDetector(
             onTap: () {},
             child: Column(

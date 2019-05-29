@@ -1,4 +1,3 @@
-import 'package:app_tcc/modules/login/components/logo.dart';
 import 'package:app_tcc/modules/splash/splash_bloc.dart';
 import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/widgets/routing_wrapper.dart';

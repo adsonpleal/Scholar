@@ -30,7 +30,7 @@ dependencies:
   cloud_firestore: ^0.9.13+1
   flutter_local_notifications: ^0.6.1
   flutter_speed_dial: ^1.1.1
-  flutter_sticky_header: ^0.3.4
+  flutter_sticky_header: ^0.4.0
   intl: ^0.15.8
   built_value: ^6.4.0
   firebase_messaging: ^4.0.0+4

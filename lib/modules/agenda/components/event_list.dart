@@ -14,7 +14,7 @@ class EventList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverPadding(
-        padding: EdgeInsets.only(left: 60.0),
+        padding: EdgeInsets.only(left: 65.0),
         sliver: SliverList(
           delegate: SliverChildBuilderDelegate(
               (context, index) => EventTile(
