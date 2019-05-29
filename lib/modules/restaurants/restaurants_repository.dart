@@ -14,8 +14,9 @@ class RestaurantsRepository {
             .toList(),
       );
 
-  Stream<Restaurant> restaurant(String restaurantId) => collection
-      .document(restaurantId)
-      .snapshots()
-      .map((s) => Restaurant.fromJson(s.data));
+  Stream<Restaurant> restaurant(String restaurantId) =>
+      collection.document(restaurantId).snapshots().map((s) {
+        if (s.data == null) return null;
+        return Restaurant.fromJson(s.data);
+      });
 }

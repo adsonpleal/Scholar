@@ -25,10 +25,12 @@ class RestaurantMenuBloc extends _$Bloc {
   Stream<RestaurantMenuState> _mapRestaurantChangedToState(
     Restaurant restaurant,
   ) async* {
-    yield currentState.rebuild((b) => b
-      ..restaurant.replace(restaurant)
-      ..selectedEntryIndex = 0
-      ..showDinner = false);
+    if (restaurant != null) {
+      yield currentState.rebuild((b) => b
+        ..restaurant.replace(restaurant)
+        ..selectedEntryIndex = 0
+        ..showDinner = false);
+    }
   }
 
   Stream<RestaurantMenuState> _mapToggleDinnerToState() async* {

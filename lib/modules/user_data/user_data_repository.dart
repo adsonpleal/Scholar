@@ -71,7 +71,8 @@ class UserDataRepository {
   }
 
   Stream<List<Schedule>> get schedulesStream => subjectsStream.map((subjects) {
-        final schedules = List<Schedule>.generate(7, (i) => Schedule(Day(i + 1)));
+        final schedules =
+            List<Schedule>.generate(7, (i) => Schedule(Day(i + 1)));
         subjects.forEach((sj) {
           sj.times.forEach((t) {
             final schedule = schedules.firstWhere(
@@ -88,22 +89,22 @@ class UserDataRepository {
 
   Future<List<Subject>> get subjects => subjectsStream.first;
 
-  Stream<Restaurant> get restaurantStream => settingsStream
-      .transform(
-        FlatMapStreamTransformer(
-          (settings) => _restaurantsRepository.restaurant(
-                settings.restaurantId,
-              ),
-        ),
-      )
-      .map((restaurant) => restaurant.rebuild((b) {
-            final limitDate = DateTime.now().subtract(Duration(days: 1));
-            return b
-              ..menu.sort((a, b) => a.date.compareTo(b.date))
-              ..menu.removeWhere((m) => m.date.isBefore(limitDate))
-              ..menuDinner.sort((a, b) => a.date.compareTo(b.date))
-              ..menuDinner.removeWhere((m) => m.date.isBefore(limitDate));
-          }));
+  Stream<Restaurant> get restaurantStream {
+    return settingsStream
+        .transform(FlatMapStreamTransformer((settings) =>
+            _restaurantsRepository.restaurant(settings.restaurantId)))
+        .map((restaurant) {
+      if (restaurant == null) return null;
+      return restaurant.rebuild((b) {
+        final limitDate = DateTime.now().subtract(Duration(days: 1));
+        return b
+          ..menu.sort((a, b) => a.date.compareTo(b.date))
+          ..menu.removeWhere((m) => m.date.isBefore(limitDate))
+          ..menuDinner.sort((a, b) => a.date.compareTo(b.date))
+          ..menuDinner.removeWhere((m) => m.date.isBefore(limitDate));
+      });
+    });
+  }
 
   Future<void> saveSettings(Settings settings) async {
     (await userDocument).setData(
