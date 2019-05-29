@@ -9,6 +9,7 @@ import 'package:app_tcc/modules/profile/link_repository.dart';
 import 'package:app_tcc/modules/profile/profile_bloc.dart';
 import 'package:app_tcc/modules/profile/profile_state.dart';
 import 'package:app_tcc/modules/restaurants/restaurants_repository.dart';
+import 'package:app_tcc/modules/ufsc/ufsc_service.dart';
 import 'package:app_tcc/modules/user_data/user_data_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -22,6 +23,7 @@ void main() {
   AuthRepository authRepository;
   RestaurantsRepository restaurantsRepository;
   UserDataRepository userDataRepository;
+  UfscService ufscService;
   LinkRepository linkRepository;
   NotificationsService notificationsService;
   Firestore firestore;
@@ -38,7 +40,9 @@ void main() {
     linkRepository = MockLinkRepository();
     notificationsService = MockNotificationsService();
     restaurantsRepository = MockRestaurantsRepository();
+    ufscService = MockUfscService();
     firestore = MockFirestore();
+    container.registerFactory((c) => ufscService);
     container.registerFactory((c) => notificationsService);
     container.registerSingleton((c) => authRepository);
     container.registerSingleton((c) => userDataRepository);

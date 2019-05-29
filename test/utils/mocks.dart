@@ -4,6 +4,7 @@ import 'package:app_tcc/modules/auth/auth_repository.dart';
 import 'package:app_tcc/modules/notifications/notifications_service.dart';
 import 'package:app_tcc/modules/profile/link_repository.dart';
 import 'package:app_tcc/modules/restaurants/restaurants_repository.dart';
+import 'package:app_tcc/modules/ufsc/ufsc_service.dart';
 import 'package:app_tcc/modules/user_data/user_data_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -24,3 +25,5 @@ class MockLinkRepository extends Mock implements LinkRepository {
 }
 
 class MockFirestore extends Mock implements Firestore {}
+
+class MockUfscService extends Mock implements UfscService {}
