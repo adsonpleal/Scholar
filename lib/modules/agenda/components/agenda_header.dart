@@ -19,19 +19,16 @@ class AgendaHeader extends StatelessWidget {
         child: SizedBox(
           height: 44.0,
           width: 65.0,
-          child: GestureDetector(
-            onTap: () {},
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  weekDay,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text(formattedDate),
-              ],
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                weekDay,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Text(formattedDate),
+            ],
           ),
         ),
       ),
