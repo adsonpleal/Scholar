@@ -4,6 +4,7 @@ import 'auth/auth_module.dart';
 import 'base/module.dart';
 import 'home/home_module.dart';
 import 'login/login_signup_module.dart';
+import 'main/main_module.dart';
 import 'new_event/new_event_module.dart';
 import 'notifications/notifications_module.dart';
 import 'profile/profile_module.dart';
@@ -26,5 +27,6 @@ void setupModules() {
     AgendaModule(),
     NewEventModule(),
     RestaurantsModule(),
+    MainModule(),
   ].forEach((module) => module.setup());
 }

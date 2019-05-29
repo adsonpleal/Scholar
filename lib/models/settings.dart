@@ -9,6 +9,7 @@ part 'settings.g.dart';
 
 abstract class Settings implements Built<Settings, SettingsBuilder> {
   bool get allowNotifications;
+  bool get connected;
   @nullable
   String get restaurantId;
 

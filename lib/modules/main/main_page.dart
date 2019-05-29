@@ -1,5 +1,7 @@
 import 'package:app_tcc/modules/agenda/agenda_page.dart';
 import 'package:app_tcc/modules/home/home_page.dart';
+import 'package:app_tcc/modules/main/main_bloc.dart';
+import 'package:app_tcc/modules/main/main_state.dart';
 import 'package:app_tcc/modules/profile/profile_page.dart';
 import 'package:app_tcc/resources/strings.dart' as Strings;
 import 'package:app_tcc/utils/inject.dart';
@@ -7,8 +9,8 @@ import 'package:app_tcc/utils/routes.dart' as Routes;
 import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-// TODO: refactor this file to use blocs
 class Tab {
   final String title;
   final Widget Function() page;
@@ -50,6 +52,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage>
     with SingleTickerProviderStateMixin, RouteAware {
   final FirebaseAnalyticsObserver _observer = inject();
+  final MainBloc _mainBloc = inject();
   final _firebaseMessaging = FirebaseMessaging();
   int _selectedIndex = 0;
 
@@ -70,14 +73,22 @@ class _MainPageState extends State<MainPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _currentPage(),
-      bottomNavigationBar: BottomNavigationBar(
-        items: tabs.map((tab) => tab.asNavItem()).toList(),
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-      ),
-    );
+    return BlocBuilder(
+        bloc: _mainBloc,
+        builder: (context, MainState state) {
+          if (state.settings?.connected == true) {
+            return Scaffold(
+                body: _currentPage(),
+                bottomNavigationBar: BottomNavigationBar(
+                  items: tabs.map((tab) => tab.asNavItem()).toList(),
+                  currentIndex: _selectedIndex,
+                  onTap: _onItemTapped,
+                ));
+          }
+          return Scaffold(
+            body: tabs.last.page(),
+          );
+        });
   }
 
   Future<void> _processNotificationClick(Map<String, dynamic> message) async {
@@ -113,6 +124,7 @@ class _MainPageState extends State<MainPage>
 
   @override
   void dispose() {
+    _mainBloc.dispose();
     _observer.unsubscribe(this);
     super.dispose();
   }

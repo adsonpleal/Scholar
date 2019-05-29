@@ -62,10 +62,12 @@ class UfscService {
       _notifications.addNotifications(subjects);
     }
     await _userData.saveSettings(
-      settings.rebuild((b) => b..restaurantId = 'trindade'),
+      settings.rebuild((b) => b
+        ..restaurantId = 'trindade'
+        ..connected = true),
     );
   }
 
   String _parseAccessToken(String str) =>
-      RegExp(r"access_token=(.*)&").firstMatch(str).group(1);
+      RegExp(r"access_token=(.*)&").firstMatch(str)?.group(1);
 }
