@@ -314,7 +314,7 @@ String fullDateAndTime(DateTime date) => Intl.message(
     );
 
 String hourMinute(Time time) => Intl.message(
-      '${time.hour}:${time.minute}',
+      '${time.hour}:${time.minute.toString().padLeft(2, '0')}',
       name: "hourMinute",
       args: [time],
     );

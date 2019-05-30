@@ -28,7 +28,8 @@ class _SchedulesState extends State<Schedules> {
   }
 
   List<Widget> children(SchedulesState state) {
-    final times = state.selectedSchedule.times;
+    final times = state.selectedSchedule.times
+      ..sort((a, b) => a.minutes - b.minutes);
     return <Widget>[
       _buildPageHeader(state),
       if (times.isEmpty)

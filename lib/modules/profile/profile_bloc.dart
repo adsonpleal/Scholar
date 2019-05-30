@@ -24,6 +24,7 @@ class ProfileBloc extends _$Bloc {
   final RestaurantsRepository _restaurantsRepository = inject();
   StreamSubscription<Settings> _settingsSubscription;
   StreamSubscription<List<Restaurant>> _restaurantsSubscription;
+  StreamSubscription<bool> _loadingUfscSubscription;
 
   ProfileBloc() {
     _setupNotifications();
@@ -56,20 +57,29 @@ class ProfileBloc extends _$Bloc {
     yield currentState.rebuild((b) => b..restaurants = restaurants);
   }
 
+  Stream<ProfileState> _mapLoadingChangedToState(
+    bool loading,
+  ) async* {
+    yield currentState.rebuild((b) => b..loading = loading);
+  }
+
   Stream<ProfileState> _mapLogoutToState() async* {
     await _removeNotifications();
     yield ProfileState.login();
     _auth.signOut();
   }
 
-  Future<void> launchAuthorization() async {
-    await _ufscService.launchAuthorization();
+  void launchAuthorization() {
+    _loadingUfscSubscription = _ufscService.launchAuthorization().listen(
+          dispatchLoadingChangedEvent,
+        );
   }
 
   @override
   dispose() {
     _restaurantsSubscription?.cancel();
     _settingsSubscription?.cancel();
+    _loadingUfscSubscription?.cancel();
     _ufscService.dispose();
     _notifications.dispose();
     super.dispose();

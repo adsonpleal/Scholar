@@ -6,4 +6,6 @@ class ScheduleTime {
   final Subject subject;
 
   ScheduleTime({this.time, this.subject});
+
+  int get minutes => time.hour * 60 + time.minute;
 }

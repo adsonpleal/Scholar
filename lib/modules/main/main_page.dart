@@ -76,7 +76,12 @@ class _MainPageState extends State<MainPage>
     return BlocBuilder(
         bloc: _mainBloc,
         builder: (context, MainState state) {
-          if (state.settings?.connected == true) {
+          if (state.settings == null) {
+            return Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+          if (state.settings.connected) {
             return Scaffold(
                 body: _currentPage(),
                 bottomNavigationBar: BottomNavigationBar(

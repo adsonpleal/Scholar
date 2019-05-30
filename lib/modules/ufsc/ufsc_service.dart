@@ -26,11 +26,13 @@ class UfscService {
   final UserDataRepository _userData = inject();
   final NotificationsService _notifications = inject();
 
-  Future<void> launchAuthorization() async {
+  Stream<bool> launchAuthorization() async* {
     await launch(_authorizationUrl);
     final url = await getLinksStream().first;
+    yield true;
     final code = Uri.parse(url).queryParameters['code'];
-    _fetchSubjects(code);
+    await _fetchSubjects(code);
+    yield false;
   }
 
   Uri _buildAccessTokenUri(String code) => Uri.parse(

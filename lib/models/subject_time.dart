@@ -12,7 +12,7 @@ abstract class SubjectTime implements Built<SubjectTime, SubjectTimeBuilder> {
   String get weekDay;
 
   String get startTime;
-  
+
   String get center;
 
   String get room;
@@ -20,8 +20,9 @@ abstract class SubjectTime implements Built<SubjectTime, SubjectTimeBuilder> {
   SubjectTime._();
 
   Time get time {
-    var hour = int.parse(startTime.substring(0, 2));
-    var minute = int.parse(startTime.substring(2));
+    final splitIndex = startTime.length - 2;
+    final hour = int.parse(startTime.substring(0, splitIndex));
+    final minute = int.parse(startTime.substring(splitIndex));
     return Time(hour, minute);
   }
 
