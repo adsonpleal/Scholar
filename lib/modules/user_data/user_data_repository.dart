@@ -38,8 +38,13 @@ class UserDataRepository {
     final document = await userDocument;
     yield* document.snapshots().map((s) {
       final data = s.data ?? {};
-      final json = data['settings'] ?? {'allowNotifications': true, 'connected': false};
-      return Settings.fromJson(Map<String, dynamic>.from(json));
+      final defaultValues = <String, dynamic>{
+        'allowNotifications': true,
+        'connected': false
+      };
+      final json = Map<String, dynamic>.from(data['settings'] ?? {});
+      defaultValues.addAll(json);
+      return Settings.fromJson(Map<String, dynamic>.from(defaultValues));
     });
   }
 

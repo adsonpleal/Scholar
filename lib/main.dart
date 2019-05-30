@@ -7,6 +7,7 @@ import 'package:app_tcc/utils/routes.dart' as Routes;
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:intl/intl.dart';
 
 import 'modules/modules.dart';
@@ -41,17 +42,22 @@ class App extends StatelessWidget {
       );
 }
 
-void main() {
-  final supportedLocales = setupLocales();
-  setupModules();
-  runApp(App(
-    supportedLocales,
-  ));
-}
-
 List<Locale> setupLocales() {
   Intl.defaultLocale = 'pt';
   return [
     const Locale('pt'),
   ];
+}
+
+void main() {
+  final supportedLocales = setupLocales();
+  setupModules();
+  // Only enable this if you want to test Crashlytics
+  // Crashlytics.instance.enableInDevMode = true;
+  FlutterError.onError = (FlutterErrorDetails details) {
+    Crashlytics.instance.onError(details);
+  };
+  runApp(App(
+    supportedLocales,
+  ));
 }
