@@ -66,7 +66,7 @@ class NotificationsService {
   void addNotifications(List<Subject> subjects) {
     removeAllNotifications();
     subjects.forEach((subject) {
-      subject.times.forEach((time) {
+      subject.uniqueTimes.forEach((time) {
         scheduleWeeklyNotification(
           title: Strings.classNotification,
           content: subject.name,

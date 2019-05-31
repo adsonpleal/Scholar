@@ -81,7 +81,7 @@ class UserDataRepository {
         subjects.forEach((sj) {
           sj.times.forEach((t) {
             final schedule = schedules.firstWhere(
-              (s) => s.weekDay.value == t.dayOfTheWeek.value,
+              (s) => s.weekDay.value == t.dayOfTheWeek.value - 1,
             );
             schedule.times.add(ScheduleTime(
               time: t.time,

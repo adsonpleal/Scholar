@@ -37,7 +37,9 @@ abstract class SubjectTime implements Built<SubjectTime, SubjectTimeBuilder> {
     return Time(hour, minute);
   }
 
-  Day get dayOfTheWeek => Day(int.parse(weekDay) - 1);
+  Day get dayOfTheWeek => Day(int.parse(weekDay));
+
+  int get minutes => time.hour * 60 + time.minute;
 
   factory SubjectTime([Function(SubjectTimeBuilder b) updates]) = _$SubjectTime;
 
