@@ -8,7 +8,13 @@ class InfoAlert extends StatelessWidget {
   final Widget widgetContent;
   final bool shouldShow;
 
-  const InfoAlert({this.title, this.content, this.shouldShow, this.child, this.widgetContent});
+  const InfoAlert({
+    this.title,
+    this.content,
+    this.shouldShow,
+    this.child,
+    this.widgetContent,
+  });
 
   @override
   Widget build(BuildContext context) {

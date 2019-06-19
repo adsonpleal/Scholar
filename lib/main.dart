@@ -10,6 +10,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:intl/intl.dart';
 
+import 'modules/event_details/event_details_page.dart';
 import 'modules/modules.dart';
 import 'modules/new_event/new_event_page.dart';
 
@@ -30,6 +31,7 @@ class App extends StatelessWidget {
           Routes.login: (c) => LoginSignUpPage(),
           Routes.main: (c) => MainPage(),
           Routes.newEvent: (c) => NewEventPage(),
+          Routes.eventDetails: (c) => EventPage(),
         },
         theme: ThemeData(
           primarySwatch: Colors.blue,

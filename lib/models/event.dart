@@ -10,6 +10,8 @@ import 'serializers.dart';
 part 'event.g.dart';
 
 abstract class Event implements Built<Event, EventBuilder> {
+  @nullable
+  String get documentId;
   DateTime get date;
   Subject get subject;
   String get description;

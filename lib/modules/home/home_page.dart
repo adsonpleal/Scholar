@@ -8,7 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'home_bloc.dart';
 import 'home_state.dart';
 import 'submodules/restaurant_menu/restaurant_menu.dart';
-import 'submodules/schedules.dart/schedules.dart';
+import 'submodules/schedules/schedules.dart';
 import 'submodules/subjects/subjects.dart';
 
 class HomePage extends StatefulWidget {

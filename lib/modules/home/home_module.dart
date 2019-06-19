@@ -3,7 +3,7 @@ import 'package:kiwi/kiwi.dart';
 
 import 'home_bloc.dart';
 import 'submodules/restaurant_menu/restaurant_menu_module.dart';
-import 'submodules/schedules.dart/schedules_module.dart';
+import 'submodules/schedules/schedules_module.dart';
 import 'submodules/subjects/subjects_module.dart';
 
 part 'home_module.g.dart';

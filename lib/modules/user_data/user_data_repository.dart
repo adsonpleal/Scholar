@@ -55,8 +55,10 @@ class UserDataRepository {
         .where("date", isGreaterThan: DateTime.now())
         .orderBy("date")
         .snapshots()
-        .map((snapshot) =>
-            snapshot.documents.map((d) => Event.fromJson(d.data)).toList());
+        .map((snapshot) => snapshot.documents
+            .map((d) => Event.fromJson(d.data)
+                .rebuild((b) => b..documentId = d.documentID))
+            .toList());
   }
 
   Stream<List<EventNotification>> get notificationsStream async* {
@@ -101,12 +103,9 @@ class UserDataRepository {
         .map((restaurant) {
       if (restaurant == null) return null;
       return restaurant.rebuild((b) {
-        final limitDate = DateTime.now().subtract(Duration(days: 1));
         return b
           ..menu.sort((a, b) => a.date.compareTo(b.date))
-          ..menu.removeWhere((m) => m.date.isBefore(limitDate))
-          ..menuDinner.sort((a, b) => a.date.compareTo(b.date))
-          ..menuDinner.removeWhere((m) => m.date.isBefore(limitDate));
+          ..menuDinner.sort((a, b) => a.date.compareTo(b.date));
       });
     });
   }
@@ -126,6 +125,10 @@ class UserDataRepository {
 
   Future<void> createEvent(Event event) async {
     (await _eventsCollection).add(event.toJson());
+  }
+
+  Future<void> deleteEvent(String documentId) async {
+    await (await _eventsCollection).document(documentId).delete();
   }
 
   Future<User> get currentUser async {

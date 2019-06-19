@@ -8,6 +8,7 @@ const profile = "/profile";
 const agenda = "/agenda";
 const connectUfsc = "/connectUfsc";
 const newEvent = "/newEvent";
+const eventDetails = "/eventDetails";
 const root = "/";
 
 void Function() toNewEvent(context, EventType type) => () {
@@ -15,6 +16,14 @@ void Function() toNewEvent(context, EventType type) => () {
         context,
         newEvent,
         arguments: type,
+      );
+    };
+
+void Function() toEventDetails(context, Event event) => () {
+      Navigator.pushNamed(
+        context,
+        eventDetails,
+        arguments: event,
       );
     };
 

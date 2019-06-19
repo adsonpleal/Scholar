@@ -238,13 +238,18 @@ String get newHomework => Intl.message(
     );
 
 String get schedules => Intl.message(
-      'Horários',
+      'Grade de horários',
       name: "schedules",
     );
 
 String get eventDescriptionHint => Intl.message(
       'Digite a descrição do evento',
       name: "eventDescriptionHint",
+    );
+
+String get removeEvent => Intl.message(
+      'Remover evento',
+      name: "removeEvent",
     );
 
 String get description => Intl.message(
@@ -267,6 +272,26 @@ String get send => Intl.message(
       name: "send",
     );
 
+String get removeEventQuestion => Intl.message(
+      "Remover evento?",
+      name: "removeEventQuestion",
+    );
+
+String get removeEventDescription => Intl.message(
+      "O evento será removido permanentemente.",
+      name: "removeEventDescription",
+    );
+
+String get cancel => Intl.message(
+      "Cancelar",
+      name: "cancel",
+    );
+
+String get confirm => Intl.message(
+      "Confirmar",
+      name: "confirm",
+    );
+
 String get descriptionCantBeEmpty => Intl.message(
       "Descrição não pode ser vazia",
       name: "descriptionCantBeEmpty",
@@ -283,10 +308,16 @@ String absences(int absenceCount, int maxAbsence) => Intl.message(
       args: [absenceCount, maxAbsence],
     );
 
-String eventTitle(String eventCode, EventType eventType) => Intl.message(
-      "${eventType == EventType.test ? 'Prova' : 'Entrega de trabalho'} na matéria $eventCode",
+String eventTitle(String subjectName, EventType eventType) => Intl.message(
+      "${eventType == EventType.test ? 'Prova' : 'Entrega de trabalho'} da disciplina $subjectName",
       name: "eventTitle",
-      args: [eventCode, eventType],
+      args: [subjectName, eventType],
+    );
+
+String eventType(EventType eventType) => Intl.message(
+      "${eventType == EventType.test ? 'Prova' : 'Entrega de trabalho'}",
+      name: "eventType",
+      args: [eventType],
     );
 
 String newEvent(EventType eventType) => Intl.message(

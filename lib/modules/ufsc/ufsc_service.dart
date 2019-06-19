@@ -66,6 +66,7 @@ class UfscService {
     await _userData.saveSettings(
       settings.rebuild((b) => b
         ..restaurantId = 'trindade'
+        ..accessToken = accessToken
         ..connected = true),
     );
   }

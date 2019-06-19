@@ -66,14 +66,16 @@ class NotificationsService {
   void addNotifications(List<Subject> subjects) {
     removeAllNotifications();
     subjects.forEach((subject) {
-      subject.uniqueTimes.forEach((time) {
-        scheduleWeeklyNotification(
-          title: Strings.classNotification,
-          content: subject.name,
-          time: time.timeBeforeTenMinutes,
-          weekDay: time.dayOfTheWeek,
-        );
-      });
+      subject.times.toList()
+        ..sort((a, b) => a.minutes - b.minutes)
+        ..forEach((time) {
+          scheduleWeeklyNotification(
+            title: Strings.classNotification,
+            content: subject.name,
+            time: time.timeBeforeTenMinutes,
+            weekDay: time.dayOfTheWeek,
+          );
+        });
     });
   }
 

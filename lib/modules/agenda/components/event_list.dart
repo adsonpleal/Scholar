@@ -18,6 +18,7 @@ class EventList extends StatelessWidget {
         sliver: SliverList(
           delegate: SliverChildBuilderDelegate(
               (context, index) => EventTile(
+
                     event: events[index],
                   ),
               childCount: events.length),

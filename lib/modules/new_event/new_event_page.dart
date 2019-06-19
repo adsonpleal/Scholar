@@ -154,7 +154,7 @@ class _NewEventPageState extends State<NewEventPage> {
                                       Strings.dateCantBeEmpty),
                                   controller: dateTextController,
                                   decoration: InputDecoration(
-                                    icon: Icon(Icons.calendar_today),
+                                    icon: const Icon(Icons.calendar_today),
                                     labelText: Strings.date,
                                   ),
                                 ),

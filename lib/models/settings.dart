@@ -12,6 +12,8 @@ abstract class Settings implements Built<Settings, SettingsBuilder> {
   bool get connected;
   @nullable
   String get restaurantId;
+  @nullable
+  String get accessToken;
 
   Settings._();
 

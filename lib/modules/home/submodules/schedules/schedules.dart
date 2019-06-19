@@ -1,5 +1,5 @@
-import 'package:app_tcc/modules/home/submodules/schedules.dart/schedules_bloc.dart';
-import 'package:app_tcc/modules/home/submodules/schedules.dart/schedules_state.dart';
+import 'package:app_tcc/modules/home/submodules/schedules/schedules_bloc.dart';
+import 'package:app_tcc/modules/home/submodules/schedules/schedules_state.dart';
 import 'package:app_tcc/utils/inject.dart';
 import 'package:flutter/material.dart';
 import 'package:app_tcc/resources/strings.dart' as Strings;
@@ -40,7 +40,25 @@ class _SchedulesState extends State<Schedules> {
         for (final t in times)
           ListTile(
             title: Text(Strings.hourMinute(t.time)),
-            subtitle: Text(t.subject.name),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(t.subject.name),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(t.subject.times.firstWhere((time) => time.weekDay == "${state.selectedSchedule.weekDay.value + 1}").room),
+                ),
+                if (t.subject.professors != null)
+                  for (final p in t.subject.professors)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(p),
+                    ),
+              ],
+            ),
           ),
     ];
   }

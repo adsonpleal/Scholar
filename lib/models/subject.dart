@@ -29,6 +29,9 @@ abstract class Subject implements Built<Subject, SubjectBuilder> {
   int get absenceCount;
 
   BuiltList<SubjectTime> get times;
+  
+  @nullable
+  BuiltList<String> get professors;
 
   int get maxAbsence => (_weekCount * weeklyClassCount) ~/ _absenceFactor;
 
