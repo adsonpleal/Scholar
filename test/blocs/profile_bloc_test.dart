@@ -98,6 +98,7 @@ void main() {
       when(userDataRepository.settings)
           .thenAnswer((_) => Future.value(settings));
       when(userDataRepository.subjects).thenAnswer((_) => Future.value([]));
+      when(userDataRepository.schedules).thenAnswer((_) => Future.value([]));
       when(userDataRepository.currentUser)
           .thenAnswer((_) => Future.value(User((b) => b..email = '')));
       when(userDataRepository.saveSettings(any)).thenAnswer((_) {
