@@ -88,9 +88,9 @@ class ProfileBloc extends _$Bloc {
   Future<void> _setupNotifications() async {
     final allowNotifications = (await _userData.settings).allowNotifications;
     if (allowNotifications) {
-      final subjects = await _userData.subjects;
+      final schedules = await _userData.schedules;
       final notificationsToken = await _notifications.token;
-      if (subjects != null) _notifications.addNotifications(subjects);
+      if (schedules != null) _notifications.addNotifications(schedules);
       _userData.updateNotificationsToken(notificationsToken);
     } else {
       await _removeNotifications();

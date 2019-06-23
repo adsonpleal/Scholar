@@ -26,17 +26,6 @@ abstract class SubjectTime implements Built<SubjectTime, SubjectTimeBuilder> {
     return Time(hour, minute);
   }
 
-  Time get timeBeforeTenMinutes {
-    final oldTime = time;
-    var hour = oldTime.hour;
-    var minute = oldTime.minute - 10;
-    if (minute < 0) {
-      hour -= 1;
-      minute += 60;
-    }
-    return Time(hour, minute);
-  }
-
   Day get dayOfTheWeek => Day(int.parse(weekDay));
 
   int get minutes => time.hour * 60 + time.minute;

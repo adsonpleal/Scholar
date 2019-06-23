@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:app_tcc/models/schedule.dart';
 import 'package:app_tcc/models/subject.dart';
 import 'package:app_tcc/resources/strings.dart' as Strings;
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -63,19 +64,17 @@ class NotificationsService {
     _payloadStreamController.close();
   }
 
-  void addNotifications(List<Subject> subjects) {
+  void addNotifications(List<Schedule> schedules) {
     removeAllNotifications();
-    subjects.forEach((subject) {
-      subject.times.toList()
-        ..sort((a, b) => a.minutes - b.minutes)
-        ..forEach((time) {
-          scheduleWeeklyNotification(
-            title: Strings.classNotification,
-            content: subject.name,
-            time: time.timeBeforeTenMinutes,
-            weekDay: time.dayOfTheWeek,
-          );
-        });
+    schedules.forEach((s) {
+      s.times.forEach((t) {
+        scheduleWeeklyNotification(
+          title: Strings.classNotification,
+          content: t.subject.name,
+          time: t.timeBeforeTenMinutes,
+          weekDay: s.weekDay,
+        );
+      });
     });
   }
 

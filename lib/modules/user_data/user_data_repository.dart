@@ -91,8 +91,13 @@ class UserDataRepository {
             ));
           });
         });
+        schedules.forEach((s) {
+          s.times.sort((a, b) => a.minutes - b.minutes);
+        });
         return schedules;
       });
+
+  Future<List<Schedule>> get schedules => schedulesStream.first;
 
   Future<List<Subject>> get subjects => subjectsStream.first;
 

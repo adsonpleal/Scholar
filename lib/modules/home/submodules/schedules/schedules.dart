@@ -28,8 +28,7 @@ class _SchedulesState extends State<Schedules> {
   }
 
   List<Widget> children(SchedulesState state) {
-    final times = state.selectedSchedule.times
-      ..sort((a, b) => a.minutes - b.minutes);
+    final times = state.selectedSchedule.times;
     return <Widget>[
       _buildPageHeader(state),
       if (times.isEmpty)
@@ -49,7 +48,11 @@ class _SchedulesState extends State<Schedules> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
-                  child: Text(t.subject.times.firstWhere((time) => time.weekDay == "${state.selectedSchedule.weekDay.value + 1}").room),
+                  child: Text(t.subject.times
+                      .firstWhere((time) =>
+                          time.weekDay ==
+                          "${state.selectedSchedule.weekDay.value + 1}")
+                      .room),
                 ),
                 if (t.subject.professors != null)
                   for (final p in t.subject.professors)
@@ -57,6 +60,7 @@ class _SchedulesState extends State<Schedules> {
                       padding: const EdgeInsets.only(top: 8),
                       child: Text(p),
                     ),
+                Divider(color: Colors.black)
               ],
             ),
           ),

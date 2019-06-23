@@ -59,9 +59,10 @@ class UfscService {
     final timeGrid = await _performGet(_userTimeGrid, accessToken);
     final subjects = decodeSubjects(timeGrid);
     _userData.replaceSubjects(subjects);
+    final schedules = await _userData.schedules;
     final settings = await _userData.settings;
     if (settings.allowNotifications) {
-      _notifications.addNotifications(subjects);
+      _notifications.addNotifications(schedules);
     }
     await _userData.saveSettings(
       settings.rebuild((b) => b
