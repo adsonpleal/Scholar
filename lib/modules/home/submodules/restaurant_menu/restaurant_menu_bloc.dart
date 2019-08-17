@@ -26,9 +26,10 @@ class RestaurantMenuBloc extends _$Bloc {
     Restaurant restaurant,
   ) async* {
     if (restaurant != null) {
-      final limitDate = DateTime.now().subtract(Duration(days: 2));
-      var startIndex = restaurant.menu.indexWhere((m) => m.date.isAfter(limitDate));
-      if(startIndex == -1) {
+      final currentDate = DateTime.now();
+      var startIndex = restaurant.menu
+          .indexWhere((m) => m.date.difference(currentDate).inDays == 0);
+      if (startIndex == -1) {
         startIndex = 0;
       }
       yield currentState.rebuild((b) => b

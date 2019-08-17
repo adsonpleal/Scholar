@@ -21,7 +21,7 @@ class SchedulesBloc extends _$Bloc {
 
   @override
   SchedulesState get initialState {
-    final selectedScheduleIndex = DateTime.now().weekday - 1;
+    final selectedScheduleIndex = DateTime.now().weekday;
     return SchedulesState(
         (b) => b..selectedScheduleIndex = selectedScheduleIndex);
   }

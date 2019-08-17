@@ -53,7 +53,7 @@ class _MainPageState extends State<MainPage>
     with SingleTickerProviderStateMixin, RouteAware {
   final FirebaseAnalyticsObserver _observer = inject();
   final MainBloc _mainBloc = inject();
-  final _firebaseMessaging = FirebaseMessaging();
+  final FirebaseMessaging _firebaseMessaging = inject();
   int _selectedIndex = 0;
 
   @override

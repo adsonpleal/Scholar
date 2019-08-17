@@ -137,9 +137,19 @@ String get config => Intl.message(
       name: "config",
     );
 
+String get contact => Intl.message(
+      'Contato',
+      name: "contact",
+    );
+
 String get connectUfsc => Intl.message(
       'Conectar UFSC',
       name: "connectUfsc",
+    );
+
+String get foundABug => Intl.message(
+      'Encontrou um problema ou tem uma sugestão? ',
+      name: "foundABug",
     );
 
 String get notifications => Intl.message(
@@ -352,13 +362,13 @@ String hourMinute(Time time) => Intl.message(
 
 String weekDay(Day day) => Intl.message(
       [
+        'Domingo',
         'Segunda-feira',
         'Terça-feira',
         'Quarta-feira',
         'Quinta-feira',
         'Sexta-feira',
         'Sábado',
-        'Domingo',
       ][day.value - 1],
       name: "weekDay",
       args: [day],

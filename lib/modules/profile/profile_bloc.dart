@@ -10,6 +10,7 @@ import 'package:app_tcc/modules/user_data/user_data_repository.dart';
 import 'package:app_tcc/utils/inject.dart';
 import 'package:bloc/bloc.dart';
 import 'package:bloc_code_generator/annotations.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'profile_state.dart';
 
@@ -73,6 +74,10 @@ class ProfileBloc extends _$Bloc {
     _loadingUfscSubscription = _ufscService.launchAuthorization().listen(
           dispatchLoadingChangedEvent,
         );
+  }
+
+  void launchContactEmail() {
+    launch("mailto:contato.scholar@gmail.com");
   }
 
   @override

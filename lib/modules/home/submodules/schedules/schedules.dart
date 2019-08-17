@@ -51,8 +51,8 @@ class _SchedulesState extends State<Schedules> {
                   child: Text(t.subject.times
                       .firstWhere((time) =>
                           time.weekDay ==
-                          "${state.selectedSchedule.weekDay.value + 1}")
-                      .room),
+                          "${state.selectedSchedule.weekDay.value}")
+                      ?.room ?? ""),
                 ),
                 if (t.subject.professors != null)
                   for (final p in t.subject.professors)

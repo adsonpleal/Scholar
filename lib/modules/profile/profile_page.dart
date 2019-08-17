@@ -77,6 +77,18 @@ class _ProfilePageState extends State<ProfilePage> {
                       onChanged: (_) =>
                           _profileBloc.dispatchToggleNotificationsEvent(),
                     ),
+                    Divider(),
+                    ListTile(
+                      title: Text(
+                        Strings.contact,
+                        style: Theme.of(context).textTheme.headline,
+                      ),
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.help_outline),
+                      title: Text(Strings.foundABug),
+                      onTap: _profileBloc.launchContactEmail,
+                    ),
                   ],
                 ),
               ))));
