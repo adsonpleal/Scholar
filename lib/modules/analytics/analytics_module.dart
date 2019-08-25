@@ -3,12 +3,15 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:kiwi/kiwi.dart';
 
+import 'error_tracker.dart';
+
 class AnalyticsInjector {
   void configure() {
     final Container container = Container();
-    container
-        .registerSingleton((c) => FirebaseAnalyticsObserver(analytics: c<FirebaseAnalytics>()));
+    container.registerSingleton(
+        (c) => FirebaseAnalyticsObserver(analytics: c<FirebaseAnalytics>()));
     container.registerSingleton((c) => FirebaseAnalytics());
+    container.registerSingleton((c) => ErrorTracker());
   }
 }
 

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:app_tcc/modules/analytics/error_tracker.dart';
 import 'package:app_tcc/modules/notifications/notifications_service.dart';
 import 'package:app_tcc/modules/user_data/user_data_repository.dart';
 import 'package:app_tcc/utils/inject.dart';
@@ -25,13 +26,18 @@ const _userTimeGrid = 'getGradeHorarioAluno';
 class UfscService {
   final UserDataRepository _userData = inject();
   final NotificationsService _notifications = inject();
+  final ErrorTracker _errorTracker = inject();
 
   Stream<bool> launchAuthorization() async* {
     await launch(_authorizationUrl);
     final url = await getLinksStream().first;
     yield true;
     final code = Uri.parse(url).queryParameters['code'];
-    await _fetchSubjects(code);
+    try {
+      await _fetchSubjects(code);
+    } catch (e, stacktrace) {
+      _errorTracker.track(e, stacktrace);
+    }
     yield false;
   }
 
@@ -58,7 +64,7 @@ class UfscService {
     final accessToken = _parseAccessToken(response.body);
     final timeGrid = await _performGet(_userTimeGrid, accessToken);
     final subjects = decodeSubjects(timeGrid);
-    _userData.replaceSubjects(subjects);
+    await _userData.replaceSubjects(subjects);
     final schedules = await _userData.schedules;
     final settings = await _userData.settings;
     if (settings.allowNotifications) {

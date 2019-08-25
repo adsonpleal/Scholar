@@ -54,11 +54,10 @@ List<Locale> setupLocales() {
 void main() {
   final supportedLocales = setupLocales();
   setupModules();
+
   // Only enable this if you want to test Crashlytics
-  // Crashlytics.instance.enableInDevMode = true;
-  FlutterError.onError = (FlutterErrorDetails details) {
-    Crashlytics.instance.onError(details);
-  };
+  Crashlytics.instance.enableInDevMode = true;
+  FlutterError.onError = Crashlytics.instance.recordFlutterError;
   runApp(App(
     supportedLocales,
   ));

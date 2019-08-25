@@ -140,7 +140,7 @@ class UserDataRepository {
     final user = await _auth.currentUser;
     return User((b) => b..email = user?.email ?? "");
   }
-
+  
   Future<void> replaceSubjects(List<Subject> subjects) async {
     final collection = await _subjectsCollection;
     (await collection.getDocuments())

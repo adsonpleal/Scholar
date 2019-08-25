@@ -1,4 +1,5 @@
 import 'package:app_tcc/models/single_event.dart';
+import 'package:app_tcc/modules/analytics/error_tracker.dart';
 import 'package:app_tcc/modules/auth/auth_repository.dart';
 import 'package:app_tcc/resources/strings.dart' as Strings;
 import 'package:app_tcc/utils/inject.dart';
@@ -16,6 +17,7 @@ class LoginSignUpBloc extends _$Bloc {
   String _password;
 
   final AuthRepository _auth = inject();
+  final ErrorTracker _errorTracker = inject();
 
   @override
   LoginSignUpState get initialState => LoginSignUpState.initial();
@@ -52,6 +54,8 @@ class LoginSignUpBloc extends _$Bloc {
   }
 
   Stream<LoginSignUpState> _logUser() async* {
+    final user = await _auth.currentUser;
+    _errorTracker.initUser(user);
     yield currentState.rebuild((b) => b..route = SingleEvent(Routes.main));
   }
 
