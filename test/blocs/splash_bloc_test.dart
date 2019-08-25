@@ -1,3 +1,4 @@
+import 'package:app_tcc/modules/analytics/error_tracker.dart';
 import 'package:app_tcc/modules/auth/auth_repository.dart';
 import 'package:app_tcc/modules/splash/splash_bloc.dart';
 import 'package:app_tcc/modules/splash/splash_state.dart';
@@ -11,10 +12,13 @@ void main() {
   final Container container = Container();
   SplashBloc splashBloc;
   AuthRepository authRepository;
+  ErrorTracker errorTracker;
 
   setUp(() {
     authRepository = MockAuthRepository();
+    errorTracker = MockErrorTracker();
     container.registerSingleton((c) => authRepository);
+    container.registerSingleton((c) => errorTracker);
     splashBloc = SplashBloc();
   });
 

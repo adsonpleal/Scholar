@@ -1,4 +1,5 @@
-  import 'package:app_tcc/modules/auth/auth_repository.dart';
+import 'package:app_tcc/modules/analytics/error_tracker.dart';
+import 'package:app_tcc/modules/auth/auth_repository.dart';
 import 'package:app_tcc/modules/login/login_signup_bloc.dart';
 import 'package:app_tcc/modules/login/login_signup_state.dart';
 import 'package:app_tcc/modules/notifications/notifications_service.dart';
@@ -22,12 +23,15 @@ void main() {
   NotificationsService notificationsService;
   UserDataRepository userDataRepository;
   AuthRepository authRepository;
+  ErrorTracker errorTracker;
 
   setUp(() {
     authRepository = MockAuthRepository();
     notificationsService = MockNotificationsService();
     userDataRepository = MockUserDataRepository();
+    errorTracker = MockErrorTracker();
     container.registerSingleton((c) => userDataRepository);
+    container.registerSingleton((c) => errorTracker);
     container.registerSingleton((c) => authRepository);
     container.registerFactory((c) => notificationsService);
     loginSignUpBloc = LoginSignUpBloc();
