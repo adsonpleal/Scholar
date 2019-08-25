@@ -49,7 +49,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     ListTile(
                       leading: Icon(Icons.school),
-                      title: Text(Strings.connectUfsc),
+                      title: Text(state.settings?.connected == true
+                          ? Strings.refreshUfsc
+                          : Strings.connectUfsc),
                       onTap: _profileBloc.launchAuthorization,
                     ),
                     Visibility(

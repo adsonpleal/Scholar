@@ -33,7 +33,7 @@ class _NewEventPageState extends State<NewEventPage> {
           DateTime picked = await showDatePicker(
             context: context,
             initialDate: now,
-            firstDate: now,
+            firstDate: DateTime(now.year, now.month, now.day),
             lastDate: DateTime(now.year + 1),
           );
           if (picked != null) {

@@ -20,7 +20,7 @@ class UserDataRepository {
 
   Future<DocumentReference> get userDocument async {
     final user = await _auth.currentUser;
-    return _store.collection('users').document(user.uid);
+    return _store.collection('users').document(user?.uid);
   }
 
   Future<CollectionReference> collection(String name) async {

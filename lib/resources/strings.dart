@@ -147,6 +147,11 @@ String get connectUfsc => Intl.message(
       name: "connectUfsc",
     );
 
+String get refreshUfsc => Intl.message(
+      'Atualizar dados da UFSC',
+      name: "refreshUfsc",
+    );
+
 String get foundABug => Intl.message(
       'Encontrou um problema ou tem uma sugestão? ',
       name: "foundABug",
