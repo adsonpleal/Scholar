@@ -95,6 +95,12 @@ class LoginSignUpBloc extends _$Bloc {
         return Strings.errorTooManyRequests;
       case 'ERROR_OPERATION_NOT_ALLOWED':
         return Strings.errorOperationNotAllowed;
+      case 'ERROR_WEAK_PASSWORD':
+        return Strings.errorWeakPassword;
+      case 'ERROR_INVALID_CREDENTIAL':
+        return Strings.errorWrongCredential;
+      case 'ERROR_EMAIL_ALREADY_IN_USE':
+        return Strings.errorEmailAlreadyInUse;
       default:
         return Strings.unknownError;
     }

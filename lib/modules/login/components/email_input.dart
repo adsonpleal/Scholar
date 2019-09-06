@@ -1,5 +1,5 @@
 import 'package:app_tcc/resources/strings.dart' as Strings;
-import 'package:app_tcc/utils/action.dart';
+import 'package:app_tcc/utils/action.dart' as action;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -8,7 +8,7 @@ import '../login_signup_state.dart';
 class EmailInput extends StatelessWidget {
   final String Function(String) validator;
   final void Function() onFieldSubmitted;
-  final Action<String> onSaved;
+  final action.Action<String> onSaved;
   final FormMode formMode;
   final FocusNode focusNode;
 

@@ -99,7 +99,9 @@ class _NewEventPageState extends State<NewEventPage> {
           child: BlocBuilder(
             bloc: _newEventBloc,
             builder: (context, NewEventState newEventState) {
-              _subject ??= newEventState.subjects?.first;
+              if ((newEventState.subjects?.length ?? 0) > 0) {
+                _subject ??= newEventState.subjects?.first;
+              }
               return LoadingWrapper(
                 isLoading: newEventState.loading,
                 child: RoutingWrapper(

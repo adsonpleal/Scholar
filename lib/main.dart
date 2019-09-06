@@ -6,6 +6,7 @@ import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/routes.dart' as Routes;
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:intl/intl.dart';
@@ -21,27 +22,33 @@ class App extends StatelessWidget {
   App(this.supportedLocales);
 
   @override
-  Widget build(BuildContext context) => MaterialApp(
-        title: Strings.appName,
-        navigatorObservers: [
-          observer,
-        ],
-        routes: {
-          Routes.root: (c) => SplashPage(),
-          Routes.login: (c) => LoginSignUpPage(),
-          Routes.main: (c) => MainPage(),
-          Routes.newEvent: (c) => NewEventPage(),
-          Routes.eventDetails: (c) => EventPage(),
-        },
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        supportedLocales: supportedLocales,
-        localizationsDelegates: [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-        ],
-      );
+  Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    return MaterialApp(
+      title: Strings.appName,
+      navigatorObservers: [
+        observer,
+      ],
+      routes: {
+        Routes.root: (c) => SplashPage(),
+        Routes.login: (c) => LoginSignUpPage(),
+        Routes.main: (c) => MainPage(),
+        Routes.newEvent: (c) => NewEventPage(),
+        Routes.eventDetails: (c) => EventPage(),
+      },
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      supportedLocales: supportedLocales,
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+    );
+  }
 }
 
 List<Locale> setupLocales() {

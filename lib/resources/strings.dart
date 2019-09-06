@@ -57,6 +57,21 @@ String get errorOperationNotAllowed => Intl.message(
       name: "errorOperationNotAllowed",
     );
 
+String get errorWrongCredential => Intl.message(
+      'Credencial errada ou expirada.',
+      name: "errorWrongCredential",
+    );
+
+String get errorEmailAlreadyInUse => Intl.message(
+      'O email digitado já está em uso.',
+      name: "errorEmailAlreadyInUse",
+    );
+
+String get errorWeakPassword => Intl.message(
+      'A senha deve conter pelo menos 6 caracteres.',
+      name: "errorWeakPassword",
+    );
+
 String get errorInvalidEmail => Intl.message(
       'Email inválido, verifique o email digitado.',
       name: "errorInvalidEmail",
