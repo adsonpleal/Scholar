@@ -63,12 +63,16 @@ class UfscService {
     final response = await http.get(accessUri);
     final accessToken = _parseAccessToken(response.body);
     final timeGrid = await _performGet(_userTimeGrid, accessToken);
-    final subjects = decodeSubjects(timeGrid);
-    await _userData.replaceSubjects(subjects);
-    final schedules = await _userData.schedules;
     final settings = await _userData.settings;
-    if (settings.allowNotifications) {
-      _notifications.addNotifications(schedules);
+    try {
+      final subjects = decodeSubjects(timeGrid);
+      await _userData.replaceSubjects(subjects);
+      final schedules = await _userData.schedules;
+      if (settings.allowNotifications) {
+        _notifications.addNotifications(schedules);
+      }
+    } catch (e, stacktrace) {
+      _errorTracker.track(e, stacktrace);
     }
     await _userData.saveSettings(
       settings.rebuild((b) => b

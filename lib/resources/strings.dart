@@ -167,6 +167,16 @@ String get refreshUfsc => Intl.message(
       name: "refreshUfsc",
     );
 
+String get refreshData => Intl.message(
+      'Atualizar dados?',
+      name: "refreshData",
+    );
+
+String get refreshDataContent => Intl.message(
+      'Ao atualizar, seus controles de faltas serão zerados. Essa funcionalidade é para ser utilizada no início de cada semestre.',
+      name: "refreshDataContent",
+    );
+
 String get foundABug => Intl.message(
       'Encontrou um problema ou tem uma sugestão? ',
       name: "foundABug",
@@ -313,12 +323,12 @@ String get removeEventDescription => Intl.message(
     );
 
 String get cancel => Intl.message(
-      "Cancelar",
+      "CANCELAR",
       name: "cancel",
     );
 
 String get confirm => Intl.message(
-      "Confirmar",
+      "CONFIRMAR",
       name: "confirm",
     );
 

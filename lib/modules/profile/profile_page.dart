@@ -21,79 +21,110 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) => BlocBuilder(
       bloc: _profileBloc,
-      builder: (context, ProfileState state) => RoutingWrapper(
-          route: state.route?.value,
-          child: Scaffold(
-              appBar: AppBar(
-                title: Text(Strings.profile),
-              ),
-              body: LoadingWrapper(
-                isLoading: state.loading,
-                child: ListView(
-                  children: <Widget>[
-                    ListTile(
-                      leading: Icon(Icons.email),
-                      title: Text(state.user?.email ?? ""),
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.exit_to_app),
-                      title: Text(Strings.exit),
-                      onTap: _profileBloc.dispatchLogoutEvent,
-                    ),
-                    Divider(),
-                    ListTile(
-                      title: Text(
-                        Strings.config,
-                        style: Theme.of(context).textTheme.headline,
+      builder: (context, ProfileState state) {
+        final isConnected = state.settings?.connected == true;
+        return RoutingWrapper(
+            route: state.route?.value,
+            child: Scaffold(
+                appBar: AppBar(
+                  title: Text(Strings.profile),
+                ),
+                body: LoadingWrapper(
+                  isLoading: state.loading,
+                  child: ListView(
+                    children: <Widget>[
+                      ListTile(
+                        leading: Icon(Icons.email),
+                        title: Text(state.user?.email ?? ""),
                       ),
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.school),
-                      title: Text(state.settings?.connected == true
-                          ? Strings.refreshUfsc
-                          : Strings.connectUfsc),
-                      onTap: _profileBloc.launchAuthorization,
-                    ),
-                    Visibility(
-                      visible: state.hasRestaurant,
-                      child: ListTile(
-                        onTap: () {},
-                        leading: Icon(Icons.restaurant),
-                        title: DropdownButton<Restaurant>(
-                          underline: Container(),
-                          isExpanded: true,
-                          items: state.restaurants
-                              ?.map((value) => DropdownMenuItem(
-                                    value: value,
-                                    child: Text(value.name),
-                                  ))
-                              ?.toList(),
-                          value: state.selectedRestaurant,
-                          onChanged: _profileBloc.onRestaurantChanged,
+                      ListTile(
+                        leading: Icon(Icons.exit_to_app),
+                        title: Text(Strings.exit),
+                        onTap: _profileBloc.dispatchLogoutEvent,
+                      ),
+                      Divider(),
+                      ListTile(
+                        title: Text(
+                          Strings.config,
+                          style: Theme.of(context).textTheme.headline,
                         ),
                       ),
-                    ),
-                    SwitchListTile(
-                      title: Text(Strings.notifications),
-                      value: state.settings?.allowNotifications ?? false,
-                      onChanged: (_) =>
-                          _profileBloc.dispatchToggleNotificationsEvent(),
-                    ),
-                    Divider(),
-                    ListTile(
-                      title: Text(
-                        Strings.contact,
-                        style: Theme.of(context).textTheme.headline,
+                      ListTile(
+                        leading: Icon(Icons.school),
+                        title: Text(isConnected
+                            ? Strings.refreshUfsc
+                            : Strings.connectUfsc),
+                        onTap: showAlertIfConnected(isConnected),
                       ),
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.help_outline),
-                      title: Text(Strings.foundABug),
-                      onTap: _profileBloc.launchContactEmail,
-                    ),
-                  ],
-                ),
-              ))));
+                      Visibility(
+                        visible: state.hasRestaurant,
+                        child: ListTile(
+                          onTap: () {},
+                          leading: Icon(Icons.restaurant),
+                          title: DropdownButton<Restaurant>(
+                            underline: Container(),
+                            isExpanded: true,
+                            items: state.restaurants
+                                ?.map((value) => DropdownMenuItem(
+                                      value: value,
+                                      child: Text(value.name),
+                                    ))
+                                ?.toList(),
+                            value: state.selectedRestaurant,
+                            onChanged: _profileBloc.onRestaurantChanged,
+                          ),
+                        ),
+                      ),
+                      SwitchListTile(
+                        title: Text(Strings.notifications),
+                        value: state.settings?.allowNotifications ?? false,
+                        onChanged: (_) =>
+                            _profileBloc.dispatchToggleNotificationsEvent(),
+                      ),
+                      Divider(),
+                      ListTile(
+                        title: Text(
+                          Strings.contact,
+                          style: Theme.of(context).textTheme.headline,
+                        ),
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.help_outline),
+                        title: Text(Strings.foundABug),
+                        onTap: _profileBloc.launchContactEmail,
+                      ),
+                    ],
+                  ),
+                )));
+      });
+
+  Function showAlertIfConnected(bool isConnected) {
+    if (!isConnected) {
+      return _profileBloc.launchAuthorization;
+    }
+    return () => showDialog<void>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: Text(Strings.refreshData),
+            content: Text(Strings.refreshDataContent),
+            actions: <Widget>[
+              FlatButton(
+                child: Text(Strings.cancel),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text(Strings.confirm),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _profileBloc.launchAuthorization();
+                },
+              ),
+            ],
+          ),
+        );
+  }
 
   @override
   void dispose() {
