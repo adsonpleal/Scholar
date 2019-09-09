@@ -22,6 +22,7 @@ const _authorizationUrl =
 const _accessTokenUrl = "$_ufscCas/oauth2.0/accessToken";
 const _apiUrl = 'https://ws.ufsc.br/rest/CAGRUsuarioService/';
 const _userTimeGrid = 'getGradeHorarioAluno';
+const _userInfo = 'getInformacaoAluno';
 
 class UfscService {
   final UserDataRepository _userData = inject();
@@ -58,6 +59,11 @@ class UfscService {
     return json.decode(response.body);
   }
 
+  Future<void> _saveUserInformation(String accessToken) async {
+    final userInformation = await _performGet(_userInfo, accessToken);
+    await _userData.saveInformation(userInformation);
+  }
+
   Future<void> _fetchSubjects(String code) async {
     final accessUri = _buildAccessTokenUri(code);
     final response = await http.get(accessUri);
@@ -71,6 +77,7 @@ class UfscService {
       if (settings.allowNotifications) {
         _notifications.addNotifications(schedules);
       }
+      await _saveUserInformation(accessToken);
     } catch (e, stacktrace) {
       _errorTracker.track(e, stacktrace);
     }

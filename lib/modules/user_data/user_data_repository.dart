@@ -122,6 +122,10 @@ class UserDataRepository {
     );
   }
 
+  Future<void> saveInformation(Map<String, dynamic> information) async {
+    (await userDocument).setData({"information": information});
+  }
+
   Future<void> saveSubject(Subject subject) async {
     (await _subjectsCollection)
         .document(subject.documentID)
@@ -140,7 +144,7 @@ class UserDataRepository {
     final user = await _auth.currentUser;
     return User((b) => b..email = user?.email ?? "");
   }
-  
+
   Future<void> replaceSubjects(List<Subject> subjects) async {
     final collection = await _subjectsCollection;
     (await collection.getDocuments())
