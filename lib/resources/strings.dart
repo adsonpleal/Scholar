@@ -332,6 +332,26 @@ String get confirm => Intl.message(
       name: "confirm",
     );
 
+String get files => Intl.message(
+      "Arquivos",
+      name: "files",
+    );
+
+String get curricularControl => Intl.message(
+      "Controle curricular",
+      name: "curricularControl",
+    );
+
+String get courseCurriculum => Intl.message(
+      "Currículo do curso",
+      name: "courseCurriculum",
+    );
+
+String get registrationCertificate => Intl.message(
+      "Atestado de matrícula",
+      name: "registrationCertificate",
+    );
+
 String get descriptionCantBeEmpty => Intl.message(
       "Descrição não pode ser vazia",
       name: "descriptionCantBeEmpty",

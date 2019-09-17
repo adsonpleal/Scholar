@@ -10,6 +10,7 @@ import 'home_state.dart';
 import 'submodules/restaurant_menu/restaurant_menu.dart';
 import 'submodules/schedules/schedules.dart';
 import 'submodules/subjects/subjects.dart';
+import 'submodules/files/files.dart';
 
 class HomePage extends StatefulWidget {
   static Widget instantiate() => HomePage();
@@ -49,6 +50,7 @@ class _HomePageState extends State<HomePage> {
                     Subjects(),
                     Schedules(),
                     RestaurantMenu(),
+                    Files(),
                   ],
                 ),
               ),
