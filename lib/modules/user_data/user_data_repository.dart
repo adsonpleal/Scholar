@@ -1,3 +1,4 @@
+import 'package:app_tcc/models/day.dart';
 import 'package:app_tcc/models/event.dart';
 import 'package:app_tcc/models/event_notification.dart';
 import 'package:app_tcc/models/restaurant.dart';
@@ -9,35 +10,35 @@ import 'package:app_tcc/models/user.dart';
 import 'package:app_tcc/modules/auth/auth_repository.dart';
 import 'package:app_tcc/modules/restaurants/restaurants_repository.dart';
 import 'package:app_tcc/utils/inject.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:firebase/firestore.dart' as fs;
 import 'package:rxdart/transformers.dart';
 
 class UserDataRepository {
   final AuthRepository _auth = inject();
   final RestaurantsRepository _restaurantsRepository = inject();
-  final Firestore _store = inject();
+  final fs.Firestore _store = inject();
 
-  Future<DocumentReference> get userDocument async {
+  Future<fs.DocumentReference> get userDocument async {
     final user = await _auth.currentUser;
-    return _store.collection('users').document(user?.uid);
+    return _store.collection('users').doc(user?.uid);
   }
 
-  Future<CollectionReference> collection(String name) async {
+  Future<fs.CollectionReference> collection(String name) async {
     return (await userDocument).collection(name);
   }
 
-  Future<CollectionReference> get _subjectsCollection => collection('subjects');
+  Future<fs.CollectionReference> get _subjectsCollection =>
+      collection('subjects');
 
-  Future<CollectionReference> get _eventsCollection => collection('events');
+  Future<fs.CollectionReference> get _eventsCollection => collection('events');
 
-  Future<CollectionReference> get _notificationsCollection =>
+  Future<fs.CollectionReference> get _notificationsCollection =>
       collection('notifications');
 
   Stream<Settings> get settingsStream async* {
     final document = await userDocument;
-    yield* document.snapshots().map((s) {
-      final data = s.data ?? {};
+    yield* document.onSnapshot.map((s) {
+      final data = s.data() ?? {};
       final defaultValues = <String, dynamic>{
         'allowNotifications': true,
         'connected': false
@@ -52,28 +53,28 @@ class UserDataRepository {
 
   Stream<List<Event>> get eventsStream async* {
     yield* (await _eventsCollection)
-        .where("date", isGreaterThan: DateTime.now())
+        .where("date", ">", DateTime.now())
         .orderBy("date")
-        .snapshots()
-        .map((snapshot) => snapshot.documents
-            .map((d) => Event.fromJson(d.data)
-                .rebuild((b) => b..documentId = d.documentID))
+        .onSnapshot
+        .map((snapshot) => snapshot.docs
+            .map((d) =>
+                Event.fromJson(d.data()).rebuild((b) => b..documentId = d.id))
             .toList());
   }
 
   Stream<List<EventNotification>> get notificationsStream async* {
-    yield* (await _notificationsCollection).snapshots().map((snapshot) =>
-        snapshot.documents
-            .map((d) => EventNotification.fromJson(d.data)
-                .rebuild((b) => b..documentID = d.documentID))
+    yield* (await _notificationsCollection).onSnapshot.map((snapshot) =>
+        snapshot.docs
+            .map((d) => EventNotification.fromJson(d.data())
+                .rebuild((b) => b..documentID = d.id))
             .toList());
   }
 
   Stream<List<Subject>> get subjectsStream async* {
-    yield* (await _subjectsCollection).snapshots().map((snapshot) => snapshot
-        .documents
-        .map((d) => Subject.fromJson(d.data)
-            .rebuild((b) => b..documentID = d.documentID))
+    yield* (await _subjectsCollection).onSnapshot.map((snapshot) => snapshot
+        .docs
+        .map((d) =>
+            Subject.fromJson(d.data()).rebuild((b) => b..documentID = d.id))
         .toList());
   }
 
@@ -116,20 +117,22 @@ class UserDataRepository {
   }
 
   Future<void> saveSettings(Settings settings) async {
-    (await userDocument).setData(
+    (await userDocument).set(
       {"settings": settings.toJson()},
-      merge: true,
+      fs.SetOptions(merge: true),
     );
   }
 
+  Future<void> clearConnection() async {
+    await saveSettings((await settings)..rebuild((b) => b.connected = false));
+  }
+
   Future<void> saveInformation(Map<String, dynamic> information) async {
-    (await userDocument).setData({"information": information});
+    (await userDocument).set({"information": information});
   }
 
   Future<void> saveSubject(Subject subject) async {
-    (await _subjectsCollection)
-        .document(subject.documentID)
-        .setData(subject.toJson());
+    (await _subjectsCollection).doc(subject.documentID).set(subject.toJson());
   }
 
   Future<void> createEvent(Event event) async {
@@ -137,7 +140,7 @@ class UserDataRepository {
   }
 
   Future<void> deleteEvent(String documentId) async {
-    await (await _eventsCollection).document(documentId).delete();
+    await (await _eventsCollection).doc(documentId).delete();
   }
 
   Future<User> get currentUser async {
@@ -147,21 +150,21 @@ class UserDataRepository {
 
   Future<void> replaceSubjects(List<Subject> subjects) async {
     final collection = await _subjectsCollection;
-    (await collection.getDocuments())
-        .documents
-        .forEach((d) async => await d.reference.delete());
+    (await collection.onSnapshot.first)
+        .docs
+        .forEach((d) async => await d.ref.delete());
     subjects.forEach((s) async => await collection.add(s.toJson()));
   }
 
   Future<void> removeNotification(EventNotification notification) async {
     final collection = await _notificationsCollection;
-    collection.document(notification.documentID).delete();
+    collection.doc(notification.documentID).delete();
   }
 
   Future<void> updateNotificationsToken(String token) async {
-    (await userDocument).setData(
+    (await userDocument).set(
       {"notificationsToken": token},
-      merge: true,
+      fs.SetOptions(merge: true),
     );
   }
 }

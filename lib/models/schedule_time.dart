@@ -1,5 +1,5 @@
 import 'package:app_tcc/models/subject.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:app_tcc/models/time.dart';
 
 class ScheduleTime {
   final Time time;

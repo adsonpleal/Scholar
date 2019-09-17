@@ -2,13 +2,11 @@ import 'package:app_tcc/modules/login/login_signup_page.dart';
 import 'package:app_tcc/modules/main/main_page.dart';
 import 'package:app_tcc/modules/splash/splash_page.dart';
 import 'package:app_tcc/resources/strings.dart' as Strings;
-import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/routes.dart' as Routes;
-import 'package:firebase_analytics/observer.dart';
+import 'package:firebase/firebase.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:intl/intl.dart';
 
 import 'modules/event_details/event_details_page.dart';
@@ -16,7 +14,6 @@ import 'modules/modules.dart';
 import 'modules/new_event/new_event_page.dart';
 
 class App extends StatelessWidget {
-  final FirebaseAnalyticsObserver observer = inject();
   final List<Locale> supportedLocales;
 
   App(this.supportedLocales);
@@ -29,9 +26,6 @@ class App extends StatelessWidget {
     ]);
     return MaterialApp(
       title: Strings.appName,
-      navigatorObservers: [
-        observer,
-      ],
       routes: {
         Routes.root: (c) => SplashPage(),
         Routes.login: (c) => LoginSignUpPage(),
@@ -58,14 +52,19 @@ List<Locale> setupLocales() {
   ];
 }
 
-void main() {
-  final supportedLocales = setupLocales();
-  setupModules();
+void initFirebase() {
+  initializeApp(
+    apiKey: "AIzaSyBY5AB_c0AHnKcqonFFbWcVsJxNOVqHMeQ",
+    authDomain: "adson-tcc.firebaseapp.com",
+    databaseURL: "https://adson-tcc.firebaseio.com",
+    projectId: "adson-tcc",
+    storageBucket: "adson-tcc.appspot.com",
+    messagingSenderId: "333894565881",
+  );
+}
 
-  // Only enable this if you want to test Crashlytics
-  Crashlytics.instance.enableInDevMode = true;
-  FlutterError.onError = Crashlytics.instance.recordFlutterError;
-  runApp(App(
-    supportedLocales,
-  ));
+Future main() async {
+  setupModules();
+  initFirebase();
+  runApp(App(setupLocales()));
 }

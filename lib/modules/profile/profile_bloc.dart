@@ -3,14 +3,14 @@ import 'dart:async';
 import 'package:app_tcc/models/restaurant.dart';
 import 'package:app_tcc/models/settings.dart';
 import 'package:app_tcc/modules/auth/auth_repository.dart';
-import 'package:app_tcc/modules/notifications/notifications_service.dart';
 import 'package:app_tcc/modules/restaurants/restaurants_repository.dart';
 import 'package:app_tcc/modules/ufsc/ufsc_service.dart';
 import 'package:app_tcc/modules/user_data/user_data_repository.dart';
 import 'package:app_tcc/utils/inject.dart';
 import 'package:bloc/bloc.dart';
 import 'package:bloc_code_generator/annotations.dart';
-import 'package:url_launcher/url_launcher.dart';
+// ignore: uri_does_not_exist
+import 'dart:js' as js;
 
 import 'profile_state.dart';
 
@@ -21,16 +21,16 @@ class ProfileBloc extends _$Bloc {
   final AuthRepository _auth = inject();
   final UserDataRepository _userData = inject();
   final UfscService _ufscService = inject();
-  final NotificationsService _notifications = inject();
   final RestaurantsRepository _restaurantsRepository = inject();
   StreamSubscription<Settings> _settingsSubscription;
   StreamSubscription<List<Restaurant>> _restaurantsSubscription;
   StreamSubscription<bool> _loadingUfscSubscription;
+  StreamSubscription<bool> _checkingUfscSubscription;
 
   ProfileBloc() {
-    _setupNotifications();
     _trackUserData();
     _trackRestaurants();
+    _trackUfscLoading();
   }
 
   @override
@@ -42,7 +42,6 @@ class ProfileBloc extends _$Bloc {
     _userData.saveSettings(
       settings.rebuild((b) => b..allowNotifications = newNotificationsState),
     );
-    _setupNotifications();
   }
 
   Stream<ProfileState> _mapSettingsChangedToState(Settings settings) async* {
@@ -65,19 +64,19 @@ class ProfileBloc extends _$Bloc {
   }
 
   Stream<ProfileState> _mapLogoutToState() async* {
-    await _removeNotifications();
     yield ProfileState.login();
     _auth.signOut();
   }
 
-  void launchAuthorization() {
+  Future launchAuthorization() async {
+    await _userData.clearConnection();
     _loadingUfscSubscription = _ufscService.launchAuthorization().listen(
           dispatchLoadingChangedEvent,
         );
   }
 
   void launchContactEmail() {
-    launch("mailto:contato.scholar@gmail.com");
+    js.context.callMethod("open", ["mailto:contato.scholar@gmail.com"]);
   }
 
   @override
@@ -85,26 +84,8 @@ class ProfileBloc extends _$Bloc {
     _restaurantsSubscription?.cancel();
     _settingsSubscription?.cancel();
     _loadingUfscSubscription?.cancel();
-    _ufscService.dispose();
-    _notifications.dispose();
+    _checkingUfscSubscription?.cancel();
     super.dispose();
-  }
-
-  Future<void> _setupNotifications() async {
-    final allowNotifications = (await _userData.settings).allowNotifications;
-    if (allowNotifications) {
-      final schedules = await _userData.schedules;
-      final notificationsToken = await _notifications.token;
-      if (schedules != null) _notifications.addNotifications(schedules);
-      _userData.updateNotificationsToken(notificationsToken);
-    } else {
-      await _removeNotifications();
-    }
-  }
-
-  Future<void> _removeNotifications() async {
-    await _userData.updateNotificationsToken(null);
-    _notifications.removeAllNotifications();
   }
 
   void _trackUserData() {
@@ -117,6 +98,12 @@ class ProfileBloc extends _$Bloc {
     _restaurantsSubscription = _restaurantsRepository.restaurantsStream?.listen(
       dispatchRestaurantsChangedEvent,
     );
+  }
+
+  void _trackUfscLoading() {
+    _checkingUfscSubscription = _ufscService.checkAuthentication().listen(
+          dispatchLoadingChangedEvent,
+        );
   }
 
   void onRestaurantChanged(Restaurant value) {

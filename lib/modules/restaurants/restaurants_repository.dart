@@ -1,22 +1,22 @@
 import 'package:app_tcc/models/restaurant.dart';
 import 'package:app_tcc/utils/inject.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase/firestore.dart';
 
 class RestaurantsRepository {
   final Firestore _store = inject();
 
   CollectionReference get collection => _store.collection('restaurants');
 
-  Stream<List<Restaurant>> get restaurantsStream => collection.snapshots().map(
-        (snapshot) => snapshot.documents
+  Stream<List<Restaurant>> get restaurantsStream => collection.onSnapshot.map(
+        (snapshot) => snapshot.docs
             .map((documentSnapshot) =>
-                Restaurant.fromJson(documentSnapshot.data))
+                Restaurant.fromJson(documentSnapshot.data()))
             .toList(),
       );
 
   Stream<Restaurant> restaurant(String restaurantId) =>
-      collection.document(restaurantId).snapshots().map((s) {
+      collection.doc(restaurantId).onSnapshot.map((s) {
         if (s.data == null) return null;
-        return Restaurant.fromJson(s.data);
+        return Restaurant.fromJson(s.data());
       });
 }

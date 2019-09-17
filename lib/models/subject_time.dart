@@ -1,9 +1,10 @@
 library subject_time;
 
+import 'package:app_tcc/models/time.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+import 'day.dart';
 import 'serializers.dart';
 
 part 'subject_time.g.dart';

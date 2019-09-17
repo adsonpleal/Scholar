@@ -6,8 +6,6 @@ import 'package:app_tcc/modules/profile/profile_page.dart';
 import 'package:app_tcc/resources/strings.dart' as Strings;
 import 'package:app_tcc/utils/inject.dart';
 import 'package:app_tcc/utils/routes.dart' as Routes;
-import 'package:firebase_analytics/observer.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -51,25 +49,8 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage>
     with SingleTickerProviderStateMixin, RouteAware {
-  final FirebaseAnalyticsObserver _observer = inject();
   final MainBloc _mainBloc = inject();
-  final FirebaseMessaging _firebaseMessaging = inject();
   int _selectedIndex = 0;
-
-  @override
-  void initState() {
-    _firebaseMessaging.configure(
-      onResume: _processNotificationClick,
-      onLaunch: _processNotificationClick,
-    );
-    super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _observer.subscribe(this, ModalRoute.of(context));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,15 +77,6 @@ class _MainPageState extends State<MainPage>
         });
   }
 
-  Future<void> _processNotificationClick(Map<String, dynamic> message) async {
-    final data = message['data'] ?? {};
-    final destination = data['destination'];
-    final index = tabs.indexWhere((tab) => tab.route == destination);
-    if (index != -1) {
-      _onItemTapped(index);
-    }
-  }
-
   _currentPage() => Stack(
         children: tabs.map((tab) {
           final isSelected = tabs.indexOf(tab) == _selectedIndex;
@@ -123,30 +95,12 @@ class _MainPageState extends State<MainPage>
       setState(() {
         _selectedIndex = index;
       });
-      _sendCurrentTabToAnalytics();
     }
   }
 
   @override
   void dispose() {
     _mainBloc.dispose();
-    _observer.unsubscribe(this);
     super.dispose();
-  }
-
-  @override
-  void didPush() {
-    _sendCurrentTabToAnalytics();
-  }
-
-  @override
-  void didPopNext() {
-    _sendCurrentTabToAnalytics();
-  }
-
-  void _sendCurrentTabToAnalytics() {
-    _observer.analytics.setCurrentScreen(
-      screenName: 'mainPage${tabs[_selectedIndex].route}',
-    );
   }
 }

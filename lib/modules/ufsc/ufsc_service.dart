@@ -1,15 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
-
-import 'package:app_tcc/modules/analytics/error_tracker.dart';
-import 'package:app_tcc/modules/notifications/notifications_service.dart';
 import 'package:app_tcc/modules/user_data/user_data_repository.dart';
 import 'package:app_tcc/utils/inject.dart';
 import 'package:http/http.dart' as http;
-import 'package:uni_links/uni_links.dart';
-import 'package:url_launcher/url_launcher.dart';
-
 import 'ufsc_decoders.dart';
+// ignore: uri_does_not_exist
+import 'dart:js' as js;
 
 const _clientId = 'tccleal';
 const _redirectUri = 'tccleal://tccleal.setic_oauth.ufsc.br';
@@ -26,36 +22,32 @@ const _userInfo = 'getInformacaoAluno';
 
 class UfscService {
   final UserDataRepository _userData = inject();
-  final NotificationsService _notifications = inject();
-  final ErrorTracker _errorTracker = inject();
 
   Stream<bool> launchAuthorization() async* {
-    await launch(_authorizationUrl);
-    final url = await getLinksStream().first;
     yield true;
-    final code = Uri.parse(url).queryParameters['code'];
-    try {
-      await _fetchSubjects(code);
-    } catch (e, stacktrace) {
-      _errorTracker.track(e, stacktrace);
+    js.context['location'].callMethod('replace', [_authorizationUrl]);
+  }
+
+  Stream<bool> checkAuthentication() async* {
+    final code = _getCodeFromUrl();
+    if (code != null) {
+      yield true;
+      try {
+        await _fetchSubjects(code);
+      } catch (e, stacktrace) {
+        print("$e: $stacktrace");
+      }
+      yield false;
     }
-    yield false;
   }
 
   Uri _buildAccessTokenUri(String code) => Uri.parse(
       "$_accessTokenUrl?grant_type=authorization_code&code=$code&client_id=$_clientId&redirect_uri=$_redirectUri&client_secret=$_clientSecret");
 
-  void dispose() {
-    _notifications.dispose();
-  }
-
   Future<dynamic> _performGet(String path, String authToken) async {
-    final response = await http.get(
-      "$_apiUrl$path",
-      headers: {
-        'Authorization': "Bearer $authToken",
-      },
-    );
+    final response = await http.get(Uri.parse("https://scholar-cors.herokuapp.com/$_apiUrl$path"), headers: {
+      'Authorization': "Bearer $authToken",
+    });
     return json.decode(response.body);
   }
 
@@ -64,22 +56,30 @@ class UfscService {
     await _userData.saveInformation(userInformation);
   }
 
+  String _getCodeFromUrl() {
+    final paramsString = js.context['location']['search'];
+    final params =
+        paramsString.substring(1).split("&").fold({}, (newMap, param) {
+      final paramArray = param.split('=');
+      newMap[paramArray[0]] = paramArray[1];
+      return newMap;
+    });
+    return params['code'];
+  }
+
   Future<void> _fetchSubjects(String code) async {
     final accessUri = _buildAccessTokenUri(code);
-    final response = await http.get(accessUri);
+    final response = await http.get("https://scholar-cors.herokuapp.com/$accessUri");
+    response.headers.addAll({});
     final accessToken = _parseAccessToken(response.body);
     final timeGrid = await _performGet(_userTimeGrid, accessToken);
     final settings = await _userData.settings;
     try {
       final subjects = decodeSubjects(timeGrid);
       await _userData.replaceSubjects(subjects);
-      final schedules = await _userData.schedules;
-      if (settings.allowNotifications) {
-        _notifications.addNotifications(schedules);
-      }
       await _saveUserInformation(accessToken);
     } catch (e, stacktrace) {
-      _errorTracker.track(e, stacktrace);
+      print("$e: $stacktrace");
     }
     await _userData.saveSettings(
       settings.rebuild((b) => b

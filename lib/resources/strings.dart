@@ -1,5 +1,6 @@
+import 'package:app_tcc/models/day.dart';
 import 'package:app_tcc/models/event.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:app_tcc/models/time.dart';
 import 'package:intl/intl.dart';
 
 String get appName => Intl.message(

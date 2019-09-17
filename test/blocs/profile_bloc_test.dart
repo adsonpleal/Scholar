@@ -4,14 +4,12 @@ import 'package:app_tcc/models/restaurant.dart';
 import 'package:app_tcc/models/settings.dart';
 import 'package:app_tcc/models/user.dart';
 import 'package:app_tcc/modules/auth/auth_repository.dart';
-import 'package:app_tcc/modules/notifications/notifications_service.dart';
-import 'package:app_tcc/modules/profile/link_repository.dart';
 import 'package:app_tcc/modules/profile/profile_bloc.dart';
 import 'package:app_tcc/modules/profile/profile_state.dart';
 import 'package:app_tcc/modules/restaurants/restaurants_repository.dart';
 import 'package:app_tcc/modules/ufsc/ufsc_service.dart';
 import 'package:app_tcc/modules/user_data/user_data_repository.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase/firestore.dart' as fs;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kiwi/kiwi.dart';
 import 'package:mockito/mockito.dart';
@@ -24,9 +22,7 @@ void main() {
   RestaurantsRepository restaurantsRepository;
   UserDataRepository userDataRepository;
   UfscService ufscService;
-  LinkRepository linkRepository;
-  NotificationsService notificationsService;
-  Firestore firestore;
+  fs.Firestore firestore;
 
   void _stubAllowNotifications({bool value = false}) {
     final settings = Settings((b) => b
@@ -39,18 +35,14 @@ void main() {
     userDataRepository = MockUserDataRepository();
     _stubAllowNotifications();
     authRepository = MockAuthRepository();
-    linkRepository = MockLinkRepository();
-    notificationsService = MockNotificationsService();
     restaurantsRepository = MockRestaurantsRepository();
     ufscService = MockUfscService();
     firestore = MockFirestore();
     container.registerFactory((c) => ufscService);
-    container.registerFactory((c) => notificationsService);
     container.registerSingleton((c) => authRepository);
     container.registerSingleton((c) => userDataRepository);
     container.registerSingleton((c) => firestore);
     container.registerSingleton((c) => restaurantsRepository);
-    container.registerSingleton((c) => linkRepository);
   });
 
   tearDown(() {
@@ -132,7 +124,6 @@ void main() {
     test('toggle from true calls addNotifications and updateNotificationsToken',
         () async {
       await testToggle(true);
-      verify(notificationsService.addNotifications(any)).called(2);
       verify(userDataRepository.updateNotificationsToken(any)).called(2);
     });
   });
